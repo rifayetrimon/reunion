@@ -119,7 +119,10 @@ function doPost(e) {
 
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
-        if (String(values[i][10]) === clientId) { existingRow = i + 1; break; }
+        // Check new column 10 first, then old column 9 (before Mobile field was added)
+        if (String(values[i][10]) === clientId || String(values[i][9]) === clientId) {
+          existingRow = i + 1; break;
+        }
       }
     }
 
@@ -164,37 +167,40 @@ function doGet(e) {
     // Return a single user's own entry for pre-filling the form
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
-        if (String(values[i][10]) === clientId) {
-          var r = values[i];
+        var r = values[i];
+        if (String(r[10]) === clientId || String(r[9]) === clientId) {
+          var isNew = (String(r[10]) === clientId); // 11-col format
           return respond_({ ok: true, entry: {
             fullName:   String(r[2] || ""),
             nickname:   String(r[3] || ""),
             gender:     String(r[4] || ""),
             location:   String(r[5] || ""),
-            mobile:     String(r[6] || ""),
-            profession: String(r[7] || ""),
-            attending:  String(r[8] || ""),
-            photo:      String(r[9] || "")
+            mobile:     isNew ? String(r[6] || "") : "",
+            profession: isNew ? String(r[7] || "") : String(r[6] || ""),
+            attending:  isNew ? String(r[8] || "") : String(r[7] || ""),
+            photo:      isNew ? String(r[9] || "") : String(r[8] || "")
           }});
         }
       }
       return respond_({ ok: true, entry: null });
     }
 
-    // Return full public list
+    // Return full public list — handle both old (10-col) and new (11-col) rows
     var entries = [];
     for (var j = 1; j < values.length; j++) {
       var row = values[j];
       if (!row[2]) continue;
+      // Detect format: new rows have clientId at col 10, old rows at col 9
+      var newFmt = row.length > 10 && String(row[10]).length > 8;
       entries.push({
         name:       String(row[2]),
         nickname:   String(row[3] || ""),
         gender:     String(row[4] || ""),
         location:   String(row[5] || ""),
-        mobile:     String(row[6] || ""),
-        profession: String(row[7] || ""),
-        attending:  String(row[8] || ""),
-        photo:      String(row[9] || "")
+        mobile:     newFmt ? String(row[6] || "") : "",
+        profession: newFmt ? String(row[7] || "") : String(row[6] || ""),
+        attending:  newFmt ? String(row[8] || "") : String(row[7] || ""),
+        photo:      newFmt ? String(row[9] || "") : String(row[8] || "")
       });
     }
     return respond_({ ok: true, entries: entries });
