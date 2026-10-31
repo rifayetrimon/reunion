@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>School Reunion Roll Call</title>
+<title>School Reunion</title>
 <meta name="description" content="Answer the roll call for our school friends reunion.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,522 +11,726 @@
 <style>
 /* ── Tokens ── */
 :root {
-  --bg:          #08090a;
-  --surface-0:   #0f1011;
-  --surface-1:   rgba(255,255,255,0.025);
-  --surface-2:   rgba(255,255,255,0.04);
-  --surface-3:   rgba(255,255,255,0.06);
-  --text-1:      #f7f8f8;
-  --text-2:      #d0d6e0;
-  --text-3:      #8a8f98;
-  --text-4:      #62666d;
-  --accent:      #5e6ad2;
-  --accent-lit:  #7170ff;
-  --accent-hov:  #828fff;
-  --yes:         #10b981;
-  --maybe:       #c28020;
-  --no:          #62666d;
-  --male:        #7170ff;
-  --female:      #ef6b80;
-  --border:      rgba(255,255,255,0.08);
-  --border-sub:  rgba(255,255,255,0.05);
-  --border-s:    #23252a;
-  --f-sans:      'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
-  --f-mono:      'Berkeley Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  color-scheme:  dark;
+  --bg:         #f5f6f8;
+  --surface-0:  #ffffff;
+  --surface-1:  #f8f9fb;
+  --surface-2:  #eef0f3;
+  --text-1:     #111827;
+  --text-2:     #374151;
+  --text-3:     #6b7280;
+  --text-4:     #9ca3af;
+  --accent:     #5e6ad2;
+  --accent-lit: #4f5bc0;
+  --accent-hov: #3f4aaf;
+  --yes:        #059669;
+  --maybe:      #b45309;
+  --no:         #9ca3af;
+  --male:       #5e6ad2;
+  --female:     #e11d48;
+  --border:     rgba(0,0,0,0.08);
+  --border-sub: rgba(0,0,0,0.05);
+  --border-s:   #d1d5db;
+  --nav-h:      52px;
+  --bot-h:      60px;
+  --f-sans:     'Inter','SF Pro Display',-apple-system,system-ui,sans-serif;
+  --f-mono:     'Berkeley Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  color-scheme: light;
 }
 
 /* ── Reset ── */
-*, *::before, *::after { box-sizing: border-box; }
+*,*::before,*::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
   margin: 0; background: var(--bg); color: var(--text-1);
-  font: 400 16px/1.5 var(--f-sans);
+  font: 400 15px/1.55 var(--f-sans);
   font-feature-settings: "cv01","ss03";
-  padding-top: env(safe-area-inset-top,0px);
-  padding-bottom: env(safe-area-inset-bottom,0px);
+  padding-top: var(--nav-h);
 }
+@media (max-width: 767px) { body { padding-bottom: var(--bot-h); } }
 p { margin: 0; }
-h1, h2, h3 { margin: 0; font-weight: 400; }
+h1,h2,h3 { margin: 0; font-weight: 400; }
+button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 
-/* ── Page wrapper ── */
+/* ── Top nav ── */
+.topnav {
+  position: fixed; inset: 0 0 auto 0; z-index: 200; height: var(--nav-h);
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid var(--border-sub);
+  display: flex; align-items: center;
+  padding: 0 max(20px, env(safe-area-inset-left,0px));
+  gap: 0;
+}
+.nav-brand {
+  font-size: 14px; font-weight: 590; color: var(--text-1);
+  letter-spacing: -0.13px; white-space: nowrap; margin-right: auto;
+}
+.nav-brand span { color: var(--accent-lit); }
+
+.nav-tabs {
+  display: flex; gap: 2px;
+  margin: 0 16px;
+}
+@media (max-width: 767px) { .nav-tabs { display: none; } }
+
+.nav-tab {
+  background: none; border: none; border-radius: 6px;
+  padding: 6px 14px; font-size: 13px; font-weight: 510;
+  color: var(--text-3); letter-spacing: -0.13px;
+  transition: background .15s, color .15s;
+}
+.nav-tab:hover  { background: var(--surface-2); color: var(--text-2); }
+.nav-tab.active { background: var(--surface-2); color: var(--text-1); font-weight: 590; }
+
+.nav-cta { display: none; }
+@media (min-width: 900px) {
+  .nav-cta {
+    display: inline-flex; align-items: center;
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 6px; padding: 7px 16px;
+    font-size: 13px; font-weight: 510; letter-spacing: -0.13px;
+    white-space: nowrap; transition: background .15s, box-shadow .15s;
+    flex-shrink: 0; box-shadow: 0 1px 3px rgba(94,106,210,.35);
+  }
+  .nav-cta:hover { background: var(--accent-hov); box-shadow: 0 2px 6px rgba(94,106,210,.45); }
+}
+
+/* ── Mobile bottom nav ── */
+.bottomnav {
+  display: none;
+  position: fixed; inset: auto 0 0 0; z-index: 200; height: var(--bot-h);
+  background: rgba(255,255,255,0.96); backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-top: 1px solid var(--border-sub);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (max-width: 767px) { .bottomnav { display: flex; } }
+
+.bnav-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; border: none; background: none;
+  color: var(--text-4); font-size: 10px; font-weight: 510;
+  letter-spacing: .03em; padding: 8px 4px; transition: color .15s;
+}
+.bnav-tab svg { transition: color .15s; }
+.bnav-tab.active { color: var(--accent); }
+.bnav-tab:hover  { color: var(--text-2); }
+
+/* ── Pages ── */
+.page { display: none; min-height: calc(100vh - var(--nav-h)); }
+.page.active { display: block; }
+
+/* ── Shared wrap ── */
 .wrap {
-  max-width: 780px; margin: 0 auto;
-  display: grid; gap: 12px;
-  padding-block: 36px 72px;
-  padding-left:  max(16px, env(safe-area-inset-left,0px));
-  padding-right: max(16px, env(safe-area-inset-right,0px));
+  max-width: 860px; margin: 0 auto;
+  padding: 32px max(16px, env(safe-area-inset-left,0px)) 48px;
 }
+@media (max-width: 767px) { .wrap { padding-top: 20px; padding-bottom: 32px; } }
 
-/* ── Cover ── */
-.cover {
+/* ─────────────────────────────────────
+   HOME PAGE
+───────────────────────────────────── */
+.hero {
   background: var(--surface-0);
-  border: 1px solid var(--border-sub);
-  border-radius: 14px;
-  padding: 40px 36px 32px;
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 40px 36px 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
-@media (max-width: 500px) { .cover { padding: 28px 20px 24px; } }
+@media (max-width: 600px) { .hero { padding: 24px 18px 22px; } }
 
 .eyebrow {
-  font-family: var(--f-mono);
-  font-size: 11px; font-weight: 510;
-  letter-spacing: 0.13em; text-transform: uppercase;
+  font-family: var(--f-mono); font-size: 11px; font-weight: 510;
+  letter-spacing: .13em; text-transform: uppercase;
   color: var(--text-4); margin-bottom: 14px;
 }
-.cover h1 {
-  font-size: clamp(32px, 5.5vw, 52px);
-  font-weight: 510; line-height: 1.0;
-  letter-spacing: clamp(-0.704px, -0.022em, -1.144px);
+.hero h1 {
+  font-size: clamp(30px, 5vw, 50px); font-weight: 510;
+  line-height: 1.0; letter-spacing: clamp(-0.66px, -0.02em, -1.1px);
   color: var(--text-1);
 }
-.cover h1 mark { background: none; color: var(--accent-lit); padding: 0; }
-.cover .lede {
-  margin-top: 14px; font-size: 15px; font-weight: 400;
-  line-height: 1.65; color: var(--text-3); max-width: 52ch;
-  letter-spacing: -0.165px;
+.hero h1 mark { background: none; color: var(--accent); padding: 0; }
+.hero .lede {
+  margin-top: 14px; font-size: 15px; line-height: 1.65;
+  color: var(--text-3); max-width: 52ch; letter-spacing: -0.15px;
 }
-.stats {
-  display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 24px;
+.hero-stats {
+  display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 24px;
   font-family: var(--f-mono); font-size: 11px; color: var(--text-4);
 }
-.stats b { font-size: 15px; font-variant-numeric: tabular-nums; margin-right: 3px; font-weight: 510; }
+.hero-stats b { font-size: 17px; font-variant-numeric: tabular-nums; margin-right: 3px; font-weight: 510; }
 .s-yes   b { color: var(--yes); }
 .s-maybe b { color: var(--maybe); }
 .s-male  b { color: var(--male); }
 .s-fem   b { color: var(--female); }
 
-/* ── Banner ── */
-.banner {
-  background: var(--surface-1); border: 1px solid var(--border);
-  border-radius: 8px; padding: 12px 16px;
-  font-size: 13px; color: var(--text-3);
-}
-.banner strong { color: var(--maybe); font-weight: 510; }
-.banner code {
-  font-family: var(--f-mono); font-size: 12px;
-  background: rgba(255,255,255,0.06); border-radius: 4px; padding: 1px 5px;
-}
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 28px; }
 
-/* ── Cards ── */
+.home-section { margin-bottom: 8px; }
+.home-section-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin-bottom: 14px;
+}
+.home-section-head h2 { font-size: 16px; font-weight: 590; color: var(--text-1); letter-spacing: -0.13px; }
+.view-all {
+  font-size: 12px; font-weight: 510; color: var(--accent);
+  background: none; border: none; padding: 0; letter-spacing: -0.1px;
+  transition: color .15s;
+}
+.view-all:hover { color: var(--accent-hov); }
+
+/* ─────────────────────────────────────
+   ROLL CALL PAGE
+───────────────────────────────────── */
+.form-wrap { max-width: 620px; margin: 0 auto; padding: 32px 16px 48px; display: grid; gap: 12px; }
+@media (max-width: 767px) { .form-wrap { padding-top: 20px; } }
+
 .card {
-  background: var(--surface-1); border: 1px solid var(--border);
-  border-radius: 12px; padding: 26px 24px; display: grid; gap: 20px;
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px 22px; display: grid; gap: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 .card > header { display: grid; gap: 4px; }
-.card > header h2 {
-  font-size: 20px; font-weight: 590; letter-spacing: -0.24px; color: var(--text-1);
-}
-.card > header p { font-size: 13px; color: var(--text-3); }
+.card > header h2 { font-size: 19px; font-weight: 590; letter-spacing: -0.24px; color: var(--text-1); }
+.card > header p  { font-size: 13px; color: var(--text-3); }
 form { display: grid; gap: 18px; }
 
-/* ── Photo picker ── */
-.idrow { display: grid; grid-template-columns: 108px minmax(0,1fr); gap: 16px; align-items: start; }
-@media (max-width: 500px) { .idrow { grid-template-columns: 1fr; } }
+/* Photo */
+.idrow { display: grid; grid-template-columns: 104px minmax(0,1fr); gap: 16px; align-items: start; }
+@media (max-width: 480px) { .idrow { grid-template-columns: 1fr; } }
 
 .photo-pick { display: grid; gap: 6px; justify-items: start; }
 .photo-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .photo-box {
-  width: 108px; aspect-ratio: 1; max-width: 100%; border-radius: 10px;
-  border: 1px dashed var(--border);
-  background: rgba(255,255,255,0.03) center/cover no-repeat;
+  width: 104px; aspect-ratio: 1; max-width: 100%; border-radius: 10px;
+  border: 1.5px dashed var(--border-s); background: var(--surface-1) center/cover no-repeat;
   display: grid; place-items: center; text-align: center; cursor: pointer;
   color: var(--text-4); font-size: 11px; font-weight: 510;
   padding: 12px; line-height: 1.5; transition: background .15s, border-color .15s;
 }
-.photo-box:hover { background-color: var(--surface-2); border-color: var(--border); }
+.photo-box:hover { background-color: var(--surface-2); border-color: var(--accent); }
 .photo-box.has   { border-style: solid; color: transparent; }
 .photo-pick input:focus-visible + .photo-box { box-shadow: 0 0 0 2px var(--accent-lit); }
-.linkbtn {
-  background: none; border: 0; padding: 0;
-  color: var(--text-4); font: inherit; font-size: 11px; font-weight: 510;
-  cursor: pointer; transition: color .12s;
-}
+.linkbtn { background: none; border: 0; padding: 0; color: var(--text-4); font: inherit; font-size: 11px; font-weight: 510; cursor: pointer; transition: color .12s; }
 .linkbtn:hover { color: var(--text-2); }
+
 .stack { display: grid; gap: 14px; min-width: 0; }
 .row   { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0,1fr)); }
-@media (max-width: 500px) { .row { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
 
-/* ── Form fields ── */
+/* Fields */
 .field { display: grid; gap: 6px; min-width: 0; }
-label, .q {
-  font-size: 13px; font-weight: 510; color: var(--text-2); letter-spacing: -0.13px;
-}
+label,.q { font-size: 13px; font-weight: 510; color: var(--text-2); letter-spacing: -0.13px; }
 .req  { color: var(--accent-lit); margin-left: 2px; }
 .hint { font-size: 12px; color: var(--text-4); font-weight: 400; }
 
 input[type=text] {
-  width: 100%; font: inherit; font-size: 14px;
-  font-feature-settings: "cv01","ss03";
-  color: var(--text-1); background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border); border-radius: 6px;
-  padding: 10px 12px; min-width: 0;
+  width: 100%; font: inherit; font-size: 14px; font-feature-settings: "cv01","ss03";
+  color: var(--text-1); background: var(--surface-0);
+  border: 1px solid var(--border-s); border-radius: 6px;
+  padding: 9px 11px; min-width: 0;
   transition: border-color .15s, box-shadow .15s;
 }
 input[type=text]::placeholder { color: var(--text-4); }
-input[type=text]:hover        { border-color: rgba(255,255,255,0.13); }
-input[type=text]:focus-visible {
-  outline: none; border-color: var(--accent-lit);
-  box-shadow: 0 0 0 3px rgba(113,112,255,0.16);
-}
+input[type=text]:hover        { border-color: #9ca3af; }
+input[type=text]:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
 .field.invalid input[type=text] { border-color: var(--female); }
-
-input[type=search]                          { -webkit-appearance: none; }
+input[type=search] { -webkit-appearance: none; }
 input[type=search]::-webkit-search-cancel-button { display: none; }
 
-.err { color: var(--female); font-size: 12px; display: none; font-weight: 400; }
+.err { color: var(--female); font-size: 12px; display: none; }
 .invalid > .err { display: block; }
 
-/* ── Gender chips ── */
+/* Gender */
 .gender-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .g-chip { position: relative; }
 .g-chip input { position: absolute; opacity: 0; pointer-events: none; }
 .g-chip label {
   display: flex; align-items: center; gap: 8px; cursor: pointer;
-  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-  border-radius: 6px; padding: 9px 20px;
-  font-size: 14px; font-weight: 510; color: var(--text-2);
+  background: var(--surface-1); border: 1px solid var(--border-s);
+  border-radius: 6px; padding: 8px 18px;
+  font-size: 13px; font-weight: 510; color: var(--text-2);
   transition: background .15s, border-color .15s, color .15s;
 }
 .g-chip label:hover { background: var(--surface-2); }
-.g-chip label .dot  { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.g-chip label .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .g-chip.male   label .dot { background: var(--male); }
 .g-chip.female label .dot { background: var(--female); }
-.g-chip.male   input:checked + label { border-color: rgba(113,112,255,.55); color: var(--male);   background: rgba(113,112,255,.1); }
-.g-chip.female input:checked + label { border-color: rgba(239,107,128,.55); color: var(--female); background: rgba(239,107,128,.1); }
-.g-chip input:focus-visible + label  { box-shadow: 0 0 0 2px var(--accent-lit); }
-.field.invalid .g-chip label { border-color: var(--female); }
+.g-chip.male   input:checked + label { border-color: rgba(94,106,210,.6);  color: var(--male);   background: rgba(94,106,210,.08); }
+.g-chip.female input:checked + label { border-color: rgba(225,29,72,.5);   color: var(--female); background: rgba(225,29,72,.06); }
+.g-chip input:focus-visible + label  { box-shadow: 0 0 0 2px var(--accent); }
+.field.invalid .g-chip label { border-color: rgba(225,29,72,.5); }
 
-/* ── Rollcall (attendance) ── */
+/* Rollcall */
 .rollcall { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
-@media (max-width: 440px) { .rollcall { grid-template-columns: 1fr; } }
+@media (max-width: 400px) { .rollcall { grid-template-columns: 1fr; } }
 .rollcall input { position: absolute; opacity: 0; pointer-events: none; }
 .rollcall label {
   display: grid; gap: 2px; cursor: pointer;
-  border: 1px solid var(--border); border-radius: 8px;
-  padding: 14px 16px; background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-s); border-radius: 8px;
+  padding: 12px 14px; background: var(--surface-1);
   transition: background .15s, border-color .15s;
 }
 .rollcall label:hover { background: var(--surface-2); }
-.rollcall .big   { font-size: 17px; font-weight: 510; color: var(--text-1); letter-spacing: -0.24px; }
-.rollcall .small { font-size: 12px; color: var(--text-4); font-weight: 400; margin-top: 1px; }
-.rollcall input:focus-visible + label  { box-shadow: 0 0 0 2px var(--accent-lit); }
-.rollcall input:checked + label        { border-color: rgba(113,112,255,.4); background: rgba(113,112,255,.07); }
+.rollcall .big   { font-size: 16px; font-weight: 510; color: var(--text-1); letter-spacing: -0.22px; }
+.rollcall .small { font-size: 11px; color: var(--text-4); font-weight: 400; margin-top: 1px; }
+.rollcall input:focus-visible + label { box-shadow: 0 0 0 2px var(--accent); }
+.rollcall input:checked + label       { border-color: rgba(94,106,210,.5); background: rgba(94,106,210,.06); }
 .rollcall input[value="Yes"]:checked   + label .big { color: var(--yes); }
 .rollcall input[value="Maybe"]:checked + label .big { color: var(--maybe); }
 .rollcall input[value="No"]:checked    + label .big { color: var(--no); }
-.invalid .rollcall label { border-color: rgba(239,107,128,.5); }
+.invalid .rollcall label { border-color: rgba(225,29,72,.5); }
 
-/* ── Honeypot ── */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-/* ── Actions & buttons ── */
+/* Buttons */
 .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-
 .btn-primary {
-  font: 510 14px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
-  letter-spacing: -0.13px; cursor: pointer;
-  border-radius: 6px; padding: 10px 20px; border: 0;
-  background: var(--accent); color: #fff;
-  transition: background .15s;
+  font: 510 13px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
+  letter-spacing: -0.13px; cursor: pointer; border-radius: 6px;
+  padding: 10px 20px; border: 0; background: var(--accent); color: #fff;
+  transition: background .15s; white-space: nowrap;
 }
 .btn-primary:hover        { background: var(--accent-hov); }
-.btn-primary:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.45); }
+.btn-primary:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.25); }
 .btn-primary[disabled]    { opacity: .45; cursor: progress; }
-
 .btn-ghost {
-  font: 510 14px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
-  letter-spacing: -0.13px; cursor: pointer;
-  border-radius: 6px; padding: 10px 20px;
-  border: 1px solid var(--border-s);
-  background: rgba(255,255,255,0.02); color: var(--text-2);
-  transition: background .15s, color .15s, border-color .15s;
+  font: 510 13px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
+  letter-spacing: -0.13px; cursor: pointer; border-radius: 6px;
+  padding: 10px 20px; border: 1px solid var(--border-s);
+  background: var(--surface-0); color: var(--text-2);
+  transition: background .15s, color .15s; white-space: nowrap;
 }
-.btn-ghost:hover        { background: var(--surface-2); color: var(--text-1); border-color: rgba(255,255,255,.13); }
-.btn-ghost:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.25); }
+.btn-ghost:hover        { background: var(--surface-2); color: var(--text-1); }
+.btn-ghost:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
 
-.status { font-size: 13px; color: var(--text-3); }
+.status { font-size: 12px; color: var(--text-3); }
 .status.bad { color: var(--female); }
 
-/* ── Thanks ── */
 .stamp {
   display: inline-block; font-family: var(--f-mono);
   font-size: 10px; font-weight: 510; letter-spacing: .14em; text-transform: uppercase;
   border: 1.5px solid currentColor; border-radius: 4px;
   padding: 4px 10px; transform: rotate(-3deg); width: max-content;
 }
-.thanks h2 { font-size: 24px; font-weight: 510; letter-spacing: -0.288px; }
+.thanks h2 { font-size: 22px; font-weight: 510; letter-spacing: -0.24px; }
 .thanks p  { font-size: 14px; color: var(--text-3); line-height: 1.65; }
 
-/* ── Register ── */
-.register {
-  background: var(--surface-1); border: 1px solid var(--border);
-  border-radius: 12px; padding: 22px; display: grid; gap: 14px;
+/* ─────────────────────────────────────
+   REGISTER PAGE
+───────────────────────────────────── */
+.reg-page-wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding: 28px max(16px, env(safe-area-inset-left,0px)) 48px;
+}
+@media (max-width: 767px) { .reg-page-wrap { padding-top: 16px; } }
+
+/* Desktop: sidebar + main */
+.reg-layout { display: grid; gap: 20px; }
+@media (min-width: 900px) {
+  .reg-layout { grid-template-columns: 210px 1fr; align-items: start; }
 }
 
-.reg-header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 16px; align-items: center; }
-.reg-header h2 { font-size: 18px; font-weight: 590; letter-spacing: -0.24px; color: var(--text-1); }
+/* Sidebar */
+.reg-sidebar {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px; display: grid; gap: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+@media (min-width: 900px) {
+  .reg-sidebar { position: sticky; top: calc(var(--nav-h) + 16px); }
+}
 
-.count-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-.badge {
+.sidebar-section { display: grid; gap: 8px; }
+.sidebar-label {
   font-family: var(--f-mono); font-size: 10px; font-weight: 510;
-  padding: 3px 9px; border-radius: 9999px;
-  border: 1px solid var(--border-s);
-  white-space: nowrap; color: var(--text-4);
-  background: rgba(255,255,255,0.02);
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-4);
 }
-.badge.male   { color: var(--male);   border-color: rgba(113,112,255,.3); background: rgba(113,112,255,.06); }
-.badge.female { color: var(--female); border-color: rgba(239,107,128,.3); background: rgba(239,107,128,.06); }
+.sidebar-divider { border: none; border-top: 1px solid var(--border-sub); margin: 0; }
 
-/* ── Search ── */
+/* Search inside sidebar */
 .search-box { position: relative; }
-.search-box svg {
-  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
-  color: var(--text-4); pointer-events: none; flex: none;
-}
+.search-box svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-4); pointer-events: none; }
 .search-box input {
-  width: 100%; font: 400 14px/1.5 var(--f-sans); font-feature-settings: "cv01","ss03";
-  color: var(--text-1); background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border); border-radius: 6px;
-  padding: 9px 12px 9px 36px;
+  width: 100%; font: 400 13px/1.5 var(--f-sans); font-feature-settings: "cv01","ss03";
+  color: var(--text-1); background: var(--surface-1);
+  border: 1px solid var(--border-s); border-radius: 6px; padding: 8px 10px 8px 32px;
   transition: border-color .15s, box-shadow .15s;
 }
 .search-box input::placeholder { color: var(--text-4); }
-.search-box input:focus-visible {
-  outline: none; border-color: var(--accent-lit);
-  box-shadow: 0 0 0 3px rgba(113,112,255,.16);
-}
+.search-box input:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
 
-/* ── Filter chips ── */
-.filter-area { display: grid; gap: 8px; }
-.filter-row  { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.filter-label {
-  font-family: var(--f-mono); font-size: 10px; font-weight: 510;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--text-4); margin-right: 2px;
-  white-space: nowrap;
+/* Sidebar radio filters — vertical on desktop */
+.sfilter-group { display: grid; gap: 2px; }
+.sfilter-item { position: relative; }
+.sfilter-item input { position: absolute; opacity: 0; pointer-events: none; }
+.sfilter-item label {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 400; color: var(--text-3);
+  padding: 6px 10px; border-radius: 6px;
+  transition: background .12s, color .12s;
 }
+.sfilter-item label:hover { background: var(--surface-1); color: var(--text-2); }
+.sfilter-item input:checked + label { background: var(--surface-2); color: var(--text-1); font-weight: 510; }
+.sfilter-item.male   input:checked + label { color: var(--male); background: rgba(94,106,210,.08); }
+.sfilter-item.female input:checked + label { color: var(--female); background: rgba(225,29,72,.06); }
+.sfilter-item label .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.sfilter-item.male   label .dot { background: var(--male); }
+.sfilter-item.female label .dot { background: var(--female); }
+.sfilter-item input:focus-visible + label { box-shadow: 0 0 0 2px var(--accent-lit) inset; }
+
+/* Count badges inside sidebar */
+.badge-stack { display: flex; flex-direction: column; gap: 5px; }
+.badge-row   { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-3); }
+.badge-row b { font-variant-numeric: tabular-nums; font-weight: 510; }
+.badge-row.male   { color: var(--male); }
+.badge-row.female { color: var(--female); }
+
+/* Register main area */
+.reg-main { display: grid; gap: 14px; }
+.reg-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.reg-header h2 { font-size: 17px; font-weight: 590; letter-spacing: -0.2px; color: var(--text-1); }
+.reg-total { font-family: var(--f-mono); font-size: 11px; color: var(--text-4); }
+
+/* Mobile-only filter chips (hidden on desktop where sidebar handles it) */
+.mobile-filters { display: grid; gap: 8px; }
+@media (min-width: 900px) { .mobile-filters { display: none; } }
+
+.fchip-row { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.fchip-label { font-family: var(--f-mono); font-size: 10px; font-weight: 510; letter-spacing: .1em; text-transform: uppercase; color: var(--text-4); margin-right: 2px; }
 .fchip { position: relative; }
 .fchip input { position: absolute; opacity: 0; pointer-events: none; }
 .fchip span {
-  display: inline-block; padding: 4px 12px; border-radius: 9999px;
+  display: inline-block; padding: 4px 11px; border-radius: 9999px;
   border: 1px solid var(--border-s);
   font-size: 12px; font-weight: 510; cursor: pointer;
-  background: rgba(255,255,255,0.02); color: var(--text-3);
-  transition: background .15s, color .15s, border-color .15s; white-space: nowrap;
+  background: var(--surface-0); color: var(--text-3);
+  transition: background .12s, color .12s, border-color .12s; white-space: nowrap;
 }
 .fchip span:hover { background: var(--surface-2); color: var(--text-2); }
-.fchip input:checked + span { background: rgba(255,255,255,.06); color: var(--text-1); border-color: rgba(255,255,255,.18); }
-.fchip.male   input:checked + span { background: rgba(113,112,255,.12); color: var(--male);   border-color: rgba(113,112,255,.45); }
-.fchip.female input:checked + span { background: rgba(239,107,128,.12); color: var(--female); border-color: rgba(239,107,128,.45); }
-.fchip input:focus-visible + span  { box-shadow: 0 0 0 2px var(--accent-lit); }
+.fchip input:checked + span { background: var(--surface-2); color: var(--text-1); border-color: #9ca3af; }
+.fchip.male   input:checked + span { background: rgba(94,106,210,.1);  color: var(--male);   border-color: rgba(94,106,210,.5); }
+.fchip.female input:checked + span { background: rgba(225,29,72,.08);  color: var(--female); border-color: rgba(225,29,72,.45); }
+.fchip input:focus-visible + span { box-shadow: 0 0 0 2px var(--accent-lit); }
 
-/* ── Student cards ── */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 10px; }
+/* Mobile search (above grid, below tabs) */
+.mobile-search { display: block; }
+@media (min-width: 900px) { .mobile-search { display: none; } }
+
+/* ─────────────────────────────────────
+   STUDENT CARDS (shared)
+───────────────────────────────────── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr)); gap: 10px; }
 
 .friend {
   display: grid; min-width: 0; border-radius: 10px; overflow: hidden;
-  border: 1px solid var(--border); background: rgba(255,255,255,0.02);
-  transition: background .15s, border-color .15s;
+  border: 1px solid var(--border); background: var(--surface-0);
+  transition: background .15s, border-color .15s, box-shadow .15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
-.friend:hover  { background: var(--surface-2); border-color: rgba(255,255,255,.12); }
-.friend.male   { border-top: 2px solid rgba(113,112,255,.55); }
-.friend.female { border-top: 2px solid rgba(239,107,128,.55); }
+.friend:hover  { background: var(--surface-1); border-color: #c4c9d4; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.friend.Male   { border-top: 2px solid rgba(94,106,210,.55); }
+.friend.Female { border-top: 2px solid rgba(225,29,72,.5); }
 
 .friend .pic {
   aspect-ratio: 1; width: 100%;
-  background: rgba(255,255,255,0.04) center/cover no-repeat;
+  background: var(--surface-1) center/cover no-repeat;
   display: grid; place-items: center;
-  font-size: 34px; font-weight: 510;
-  color: var(--text-4); position: relative; user-select: none;
+  font-size: 32px; font-weight: 510; color: var(--text-3);
+  position: relative; user-select: none;
 }
 .friend .pill-wrap { position: absolute; left: 8px; bottom: 8px; }
-.friend .info { padding: 10px 12px 12px; display: grid; gap: 4px; }
-.friend .nm   {
-  font-size: 13px; font-weight: 590; line-height: 1.3;
-  overflow-wrap: anywhere; color: var(--text-1); letter-spacing: -0.13px;
-}
-.friend .nick { color: var(--text-4); font-weight: 400; font-size: 12px; }
-.friend .meta { font-size: 12px; color: var(--text-4); line-height: 1.55; margin-top: 2px; }
+.friend .info { padding: 9px 11px 11px; display: grid; gap: 3px; }
+.friend .nm   { font-size: 13px; font-weight: 590; line-height: 1.3; overflow-wrap: anywhere; color: var(--text-1); letter-spacing: -0.13px; }
+.friend .nick { color: var(--text-4); font-weight: 400; font-size: 11px; }
+.friend .meta { font-size: 11px; color: var(--text-4); line-height: 1.55; margin-top: 2px; }
 .friend .meta span { display: block; }
 
 .pill {
   display: inline-block; font-size: 10px; font-weight: 510; letter-spacing: .02em;
-  padding: 2px 8px; border-radius: 9999px;
-  background: rgba(8,9,10,.75); border: 1px solid currentColor;
+  padding: 2px 7px; border-radius: 9999px;
+  background: rgba(255,255,255,0.88); border: 1px solid currentColor;
   white-space: nowrap; backdrop-filter: blur(6px);
 }
 .pill.Yes   { color: var(--yes); }
 .pill.Maybe { color: var(--maybe); }
 .pill.No    { color: var(--no); }
 
-.empty { color: var(--text-4); font-size: 14px; grid-column: 1/-1; padding: 8px 0; }
-.ex-tag { font-family: var(--f-mono); font-size: 10px; color: var(--text-4); letter-spacing: .08em; text-transform: uppercase; padding: 0 12px 10px; }
-.no-results { grid-column: 1/-1; text-align: center; padding: 40px 16px; color: var(--text-4); }
-.no-results svg { opacity: .25; display: block; margin: 0 auto 12px; }
+.ex-tag { font-family: var(--f-mono); font-size: 10px; color: var(--text-4); letter-spacing: .08em; text-transform: uppercase; padding: 0 11px 9px; }
+.empty  { color: var(--text-4); font-size: 13px; grid-column: 1/-1; padding: 8px 0; }
+.no-results { grid-column: 1/-1; text-align: center; padding: 48px 16px; color: var(--text-4); }
+.no-results svg { opacity: .22; display: block; margin: 0 auto 12px; }
 .no-results p   { font-size: 13px; }
 
-footer.foot {
-  text-align: center; color: var(--text-4);
-  font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em;
+/* ── Banner ── */
+.banner {
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 8px; padding: 11px 15px; font-size: 13px; color: #92400e;
+  margin-bottom: 4px;
 }
+.banner strong { color: #92400e; font-weight: 590; }
+.banner code { font-family: var(--f-mono); font-size: 11px; background: rgba(0,0,0,.06); border-radius: 3px; padding: 1px 5px; }
+
+footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em; padding-top: 12px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
-<main class="wrap">
 
-  <!-- Cover -->
-  <section class="cover" aria-labelledby="title">
-    <p class="eyebrow" id="batchLine"></p>
-    <h1 id="title"></h1>
-    <p class="lede" id="lede"></p>
-    <div class="stats" aria-live="polite">
-      <span class="s-yes"><b id="sYes">0</b>coming</span>
-      <span class="s-maybe"><b id="sMaybe">0</b>maybe</span>
-      <span class="s-male"><b id="sMale">0</b>male</span>
-      <span class="s-fem"><b id="sFem">0</b>female</span>
+<!-- ── Top navigation ── -->
+<header class="topnav">
+  <span class="nav-brand" id="navBrand">Reunion <span>·</span></span>
+  <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
+    <button class="nav-tab active" data-page="home"     role="tab">Home</button>
+    <button class="nav-tab"        data-page="rollcall" role="tab">Roll Call</button>
+    <button class="nav-tab"        data-page="register" role="tab">Register</button>
+  </nav>
+  <button class="nav-cta" onclick="showPage('rollcall')">Answer roll call →</button>
+</header>
+
+<!-- ── Mobile bottom nav ── -->
+<nav class="bottomnav" aria-label="Mobile navigation">
+  <button class="bnav-tab active" data-page="home">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="bnav-tab" data-page="rollcall">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    <span>Roll Call</span>
+  </button>
+  <button class="bnav-tab" data-page="register">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Register</span>
+  </button>
+</nav>
+
+<!-- ════════════════════════════════
+     PAGE: HOME
+════════════════════════════════ -->
+<section id="page-home" class="page active" role="tabpanel">
+  <div class="wrap">
+
+    <div class="banner" id="demoBanner" hidden>
+      <strong>Preview mode.</strong> Answers aren't saved yet. Fill in <code>SCRIPT_URL</code> and Cloudinary details in CONFIG to go live.
     </div>
-  </section>
 
-  <div class="banner" id="demoBanner" hidden>
-    <strong>Preview mode.</strong> Answers aren't saved and the list shows examples. Fill in <code>SCRIPT_URL</code> and Cloudinary details in CONFIG to go live.
+    <div class="hero">
+      <p class="eyebrow" id="batchLine"></p>
+      <h1 id="heroTitle"></h1>
+      <p class="lede" id="lede"></p>
+      <div class="hero-stats" aria-live="polite">
+        <span class="s-yes"><b id="sYes">0</b>coming</span>
+        <span class="s-maybe"><b id="sMaybe">0</b>maybe</span>
+        <span class="s-male"><b id="sMale">0</b>male</span>
+        <span class="s-fem"><b id="sFem">0</b>female</span>
+      </div>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="showPage('rollcall')">Answer the roll call →</button>
+        <button class="btn-ghost"   onclick="showPage('register')">View class register</button>
+      </div>
+    </div>
+
+    <div class="home-section">
+      <div class="home-section-head">
+        <h2>Recent classmates</h2>
+        <button class="view-all" onclick="showPage('register')">View all →</button>
+      </div>
+      <div class="grid" id="previewGrid"><p class="empty">Loading…</p></div>
+    </div>
+
   </div>
+</section>
 
-  <!-- Form -->
-  <section class="card" id="formCard" aria-labelledby="formTitle">
-    <header>
-      <h2 id="formTitle">Answer the roll call</h2>
-      <p>Fill in your details — takes about a minute.</p>
-    </header>
+<!-- ════════════════════════════════
+     PAGE: ROLL CALL (form)
+════════════════════════════════ -->
+<section id="page-rollcall" class="page" role="tabpanel">
+  <div class="form-wrap">
 
-    <form id="rsvp" novalidate>
+    <section class="card" id="formCard" aria-labelledby="formTitle">
+      <header>
+        <h2 id="formTitle">Answer the roll call</h2>
+        <p>Fill in your details — takes about a minute.</p>
+      </header>
 
-      <!-- Photo + Name -->
-      <div class="idrow">
-        <div class="photo-pick">
-          <input type="file" id="photo" accept="image/*">
-          <label for="photo" class="photo-box" id="photoBox">
-            <span>Tap to add<br>your photo</span>
-          </label>
-          <button type="button" class="linkbtn" id="photoRemove" hidden>Remove</button>
+      <form id="rsvp" novalidate>
+
+        <div class="idrow">
+          <div class="photo-pick">
+            <input type="file" id="photo" accept="image/*">
+            <label for="photo" class="photo-box" id="photoBox"><span>Tap to add<br>your photo</span></label>
+            <button type="button" class="linkbtn" id="photoRemove" hidden>Remove</button>
+          </div>
+          <div class="stack">
+            <div class="field" id="fName">
+              <label for="fullName">Full name<span class="req">*</span></label>
+              <input type="text" id="fullName" autocomplete="name" maxlength="80" placeholder="Your full name">
+              <span class="err">Please write your name.</span>
+            </div>
+            <div class="field">
+              <label for="nickname">School nickname <span class="hint">(optional)</span></label>
+              <input type="text" id="nickname" maxlength="40" placeholder="What everyone called you">
+            </div>
+          </div>
         </div>
-        <div class="stack">
-          <div class="field" id="fName">
-            <label for="fullName">Full name<span class="req">*</span></label>
-            <input type="text" id="fullName" autocomplete="name" maxlength="80" placeholder="Your full name">
-            <span class="err">Please write your name.</span>
+
+        <div class="field" id="fGender">
+          <span class="q">Gender<span class="req">*</span></span>
+          <div class="gender-row" role="radiogroup" aria-label="Gender">
+            <div class="g-chip male">
+              <input type="radio" name="gender" id="g-male" value="Male">
+              <label for="g-male"><span class="dot"></span>Male</label>
+            </div>
+            <div class="g-chip female">
+              <input type="radio" name="gender" id="g-female" value="Female">
+              <label for="g-female"><span class="dot"></span>Female</label>
+            </div>
+          </div>
+          <span class="err">Please select your gender.</span>
+        </div>
+
+        <div class="row">
+          <div class="field" id="fLoc">
+            <label for="location">Where do you live now?<span class="req">*</span></label>
+            <input type="text" id="location" maxlength="60" placeholder="City, Country">
+            <span class="err">Please add your city.</span>
           </div>
           <div class="field">
-            <label for="nickname">School nickname <span class="hint">(optional)</span></label>
-            <input type="text" id="nickname" maxlength="40" placeholder="What everyone called you">
+            <label for="profession">What do you do now? <span class="hint">(optional)</span></label>
+            <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
           </div>
         </div>
-      </div>
 
-      <!-- Gender -->
-      <div class="field" id="fGender">
-        <span class="q">Gender<span class="req">*</span></span>
-        <div class="gender-row" role="radiogroup" aria-label="Gender">
-          <div class="g-chip male">
-            <input type="radio" name="gender" id="g-male" value="Male">
-            <label for="g-male"><span class="dot"></span>Male</label>
+        <div class="field" id="fAtt">
+          <span class="q" id="attQ">Will you join the reunion?<span class="req">*</span></span>
+          <div class="rollcall" role="radiogroup" aria-labelledby="attQ">
+            <input type="radio" name="attending" id="att-yes"   value="Yes">
+            <label for="att-yes"><span class="big">Present!</span><span class="small">Count me in</span></label>
+            <input type="radio" name="attending" id="att-maybe" value="Maybe">
+            <label for="att-maybe"><span class="big">Maybe</span><span class="small">Depends on date</span></label>
+            <input type="radio" name="attending" id="att-no"    value="No">
+            <label for="att-no"><span class="big">Absent</span><span class="small">Not this time</span></label>
           </div>
-          <div class="g-chip female">
-            <input type="radio" name="gender" id="g-female" value="Female">
-            <label for="g-female"><span class="dot"></span>Female</label>
-          </div>
+          <span class="err">Pick one so we can plan numbers.</span>
         </div>
-        <span class="err">Please select your gender.</span>
-      </div>
 
-      <!-- Location + Profession -->
-      <div class="row">
-        <div class="field" id="fLoc">
-          <label for="location">Where do you live now?<span class="req">*</span></label>
-          <input type="text" id="location" maxlength="60" placeholder="City, Country">
-          <span class="err">Please add your city.</span>
+        <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="submitBtn">Submit my answer</button>
+          <span class="status" id="status" role="status" aria-live="polite"></span>
         </div>
-        <div class="field">
-          <label for="profession">What do you do now? <span class="hint">(optional)</span></label>
-          <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
-        </div>
-      </div>
+      </form>
+    </section>
 
-      <!-- Attending -->
-      <div class="field" id="fAtt">
-        <span class="q" id="attQ">Will you join the reunion?<span class="req">*</span></span>
-        <div class="rollcall" role="radiogroup" aria-labelledby="attQ">
-          <input type="radio" name="attending" id="att-yes" value="Yes">
-          <label for="att-yes"><span class="big">Present!</span><span class="small">Count me in</span></label>
-          <input type="radio" name="attending" id="att-maybe" value="Maybe">
-          <label for="att-maybe"><span class="big">Maybe</span><span class="small">Depends on date</span></label>
-          <input type="radio" name="attending" id="att-no" value="No">
-          <label for="att-no"><span class="big">Absent</span><span class="small">Not this time</span></label>
-        </div>
-        <span class="err">Pick one so we can plan numbers.</span>
-      </div>
-
-      <!-- Honeypot -->
-      <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
-
+    <section class="card thanks" id="thanksCard" hidden aria-live="polite">
+      <span class="stamp" id="stampText"></span>
+      <h2 id="thanksTitle"></h2>
+      <p id="thanksBody"></p>
       <div class="actions">
-        <button type="submit" class="btn-primary" id="submitBtn">Submit my answer</button>
-        <span class="status" id="status" role="status" aria-live="polite"></span>
+        <button type="button" class="btn-primary" id="copyLink">Copy link to share</button>
+        <button type="button" class="btn-ghost"   id="editAgain">Change my answer</button>
+        <button type="button" class="btn-ghost"   onclick="showPage('register')">View class register</button>
+        <span class="status" id="copyStatus"></span>
       </div>
-    </form>
-  </section>
+    </section>
 
-  <!-- Thanks -->
-  <section class="card thanks" id="thanksCard" hidden aria-live="polite">
-    <span class="stamp" id="stampText"></span>
-    <h2 id="thanksTitle"></h2>
-    <p id="thanksBody"></p>
-    <div class="actions">
-      <button type="button" class="btn-primary" id="copyLink">Copy link to share</button>
-      <button type="button" class="btn-ghost"   id="editAgain">Change my answer</button>
-      <span class="status" id="copyStatus"></span>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Class Register -->
-  <section class="register" aria-labelledby="regTitle">
+<!-- ════════════════════════════════
+     PAGE: REGISTER
+════════════════════════════════ -->
+<section id="page-register" class="page" role="tabpanel">
+  <div class="reg-page-wrap">
+    <div class="reg-layout">
 
-    <div class="reg-header">
-      <h2 id="regTitle">Class Register</h2>
-      <div class="count-badges">
-        <span class="badge total"  id="badgeTotal">0 total</span>
-        <span class="badge male"   id="badgeMale">0 male</span>
-        <span class="badge female" id="badgeFem">0 female</span>
+      <!-- Sidebar (desktop) / collapsible area (mobile handled by .mobile-filters) -->
+      <aside class="reg-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Search</div>
+          <div class="search-box">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="searchInput" placeholder="Name, city, profession…" aria-label="Search students">
+          </div>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Status</div>
+          <div class="sfilter-group" role="radiogroup" aria-label="Filter by attendance">
+            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-all"   value="all" checked><label for="fAtt-all">All</label></div>
+            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-yes"   value="Yes"><label for="fAtt-yes">Coming</label></div>
+            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-maybe" value="Maybe"><label for="fAtt-maybe">Maybe</label></div>
+            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-no"    value="No"><label for="fAtt-no">Absent</label></div>
+          </div>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Gender</div>
+          <div class="sfilter-group" role="radiogroup" aria-label="Filter by gender">
+            <div class="sfilter-item"><input type="radio" name="fltGen" id="fGen-all"    value="all" checked><label for="fGen-all">All</label></div>
+            <div class="sfilter-item male"><input type="radio" name="fltGen" id="fGen-male"   value="Male"><label for="fGen-male"><span class="dot"></span>Male</label></div>
+            <div class="sfilter-item female"><input type="radio" name="fltGen" id="fGen-female" value="Female"><label for="fGen-female"><span class="dot"></span>Female</label></div>
+          </div>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Count</div>
+          <div class="badge-stack">
+            <div class="badge-row"><span>Total</span><b id="cTotal">0</b></div>
+            <div class="badge-row male"><span>Male</span><b id="cMale">0</b></div>
+            <div class="badge-row female"><span>Female</span><b id="cFem">0</b></div>
+            <div class="badge-row"><span>Coming</span><b id="cYes">0</b></div>
+            <div class="badge-row"><span>Maybe</span><b id="cMaybe">0</b></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="reg-main">
+        <div class="reg-header">
+          <h2>Class Register</h2>
+          <span class="reg-total" id="regTotal">0 students</span>
+        </div>
+
+        <!-- Mobile-only: search + filter chips -->
+        <div class="mobile-search">
+          <div class="search-box">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="searchInputMobile" placeholder="Search by name, city…" aria-label="Search students">
+          </div>
+        </div>
+        <div class="mobile-filters">
+          <div class="fchip-row">
+            <span class="fchip-label">Status</span>
+            <label class="fchip"><input type="radio" name="fltAttM" value="all" checked><span>All</span></label>
+            <label class="fchip"><input type="radio" name="fltAttM" value="Yes"><span>Coming</span></label>
+            <label class="fchip"><input type="radio" name="fltAttM" value="Maybe"><span>Maybe</span></label>
+            <label class="fchip"><input type="radio" name="fltAttM" value="No"><span>Absent</span></label>
+          </div>
+          <div class="fchip-row">
+            <span class="fchip-label">Gender</span>
+            <label class="fchip"><input type="radio" name="fltGenM" value="all" checked><span>All</span></label>
+            <label class="fchip male"><input type="radio" name="fltGenM" value="Male"><span>Male</span></label>
+            <label class="fchip female"><input type="radio" name="fltGenM" value="Female"><span>Female</span></label>
+          </div>
+        </div>
+
+        <div class="grid" id="grid"><p class="empty">Loading…</p></div>
       </div>
-    </div>
 
-    <div class="search-box">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="search" id="searchInput" placeholder="Search by name, city or profession…" aria-label="Search students">
-    </div>
+    </div><!-- /.reg-layout -->
 
-    <div class="filter-area">
-      <div class="filter-row" role="radiogroup" aria-label="Filter by attendance">
-        <span class="filter-label">Status</span>
-        <label class="fchip"><input type="radio" name="fltAtt" value="all" checked><span>All</span></label>
-        <label class="fchip"><input type="radio" name="fltAtt" value="Yes"><span>Coming</span></label>
-        <label class="fchip"><input type="radio" name="fltAtt" value="Maybe"><span>Maybe</span></label>
-        <label class="fchip"><input type="radio" name="fltAtt" value="No"><span>Absent</span></label>
-      </div>
-      <div class="filter-row" role="radiogroup" aria-label="Filter by gender">
-        <span class="filter-label">Gender</span>
-        <label class="fchip"><input type="radio" name="fltGen" value="all" checked><span>All</span></label>
-        <label class="fchip male"><input type="radio" name="fltGen" value="Male"><span>Male</span></label>
-        <label class="fchip female"><input type="radio" name="fltGen" value="Female"><span>Female</span></label>
-      </div>
-    </div>
-
-    <div class="grid" id="grid"><p class="empty">Loading…</p></div>
-
-  </section>
-
-  <footer class="foot" id="footNote"></footer>
-</main>
+    <footer class="foot" id="footNote"></footer>
+  </div>
+</section>
 
 <script>
 /* ============ EDIT THESE ============ */
@@ -547,23 +751,43 @@ const LIVE        = !!CONFIG.SCRIPT_URL;
 const CLOUD_READY = !!(CONFIG.CLOUDINARY_CLOUD_NAME && CONFIG.CLOUDINARY_UPLOAD_PRESET);
 
 const EXAMPLES = [
-  { name:"Rahim Uddin",   nickname:"Captain", gender:"Male",   location:"Dhaka, Bangladesh",     profession:"Bank Officer",  attending:"Yes"   },
-  { name:"Nusrat Jahan",  nickname:"",        gender:"Female", location:"Chittagong, Bangladesh", profession:"Doctor",        attending:"Maybe" },
-  { name:"Tanvir Ahmed",  nickname:"Tanu",    gender:"Male",   location:"Kuala Lumpur, Malaysia", profession:"Engineer",      attending:"Yes"   },
-  { name:"Farhana Akter", nickname:"Fari",    gender:"Female", location:"Dhaka, Bangladesh",      profession:"Teacher",       attending:"No"    },
-  { name:"Kabir Hossain", nickname:"",        gender:"Male",   location:"London, UK",             profession:"Accountant",    attending:"Maybe" },
-  { name:"Rima Begum",    nickname:"Rimi",    gender:"Female", location:"Toronto, Canada",        profession:"Nurse",         attending:"Yes"   }
+  { name:"Rahim Uddin",    nickname:"Captain", gender:"Male",   location:"Dhaka, Bangladesh",      profession:"Bank Officer",  attending:"Yes",   photo:"" },
+  { name:"Nusrat Jahan",   nickname:"",        gender:"Female", location:"Chittagong, Bangladesh",  profession:"Doctor",        attending:"Maybe", photo:"" },
+  { name:"Tanvir Ahmed",   nickname:"Tanu",    gender:"Male",   location:"Kuala Lumpur, Malaysia",  profession:"Engineer",      attending:"Yes",   photo:"" },
+  { name:"Farhana Akter",  nickname:"Fari",    gender:"Female", location:"Dhaka, Bangladesh",       profession:"Teacher",       attending:"No",    photo:"" },
+  { name:"Kabir Hossain",  nickname:"",        gender:"Male",   location:"London, UK",              profession:"Accountant",    attending:"Maybe", photo:"" },
+  { name:"Rima Begum",     nickname:"Rimi",    gender:"Female", location:"Toronto, Canada",         profession:"Nurse",         attending:"Yes",   photo:"" }
 ];
 let entries  = [];
 let photoData = "";
 
-$("batchLine").textContent = CONFIG.BATCH_LINE;
-$("title").innerHTML       = CONFIG.TITLE_HTML;
-$("lede").textContent      = CONFIG.LEDE;
-$("footNote").textContent  = CONFIG.FOOTER;
-document.title             = CONFIG.SCHOOL + " Reunion";
-$("demoBanner").hidden     = LIVE;
+// ── Apply CONFIG ──
+$("batchLine").textContent  = CONFIG.BATCH_LINE;
+$("heroTitle").innerHTML    = CONFIG.TITLE_HTML;
+$("lede").textContent       = CONFIG.LEDE;
+$("footNote").textContent   = CONFIG.FOOTER;
+$("navBrand").textContent   = CONFIG.SCHOOL;
+document.title              = CONFIG.SCHOOL + " Reunion";
+$("demoBanner").hidden      = LIVE;
 
+// ── Page navigation ──
+function showPage(name) {
+  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) => t.classList.toggle("active", t.dataset.page === name));
+  const pg = $("page-" + name); if (pg) pg.classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (history.pushState) history.pushState(null, "", "#" + name);
+}
+document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) =>
+  t.addEventListener("click", () => showPage(t.dataset.page))
+);
+// hash routing on load
+(function() {
+  const h = location.hash.slice(1);
+  if (["home","rollcall","register"].includes(h)) showPage(h);
+})();
+
+// ── Restore saved state ──
 const KEY = "reunion-rsvp-v3";
 function readSaved()   { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch { return null; } }
 function writeSaved(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} }
@@ -576,14 +800,12 @@ if (saved.fullName) {
   $("profession").value = saved.profession || "";
   const g = document.querySelector(`input[name=gender][value="${saved.gender}"]`);
   const r = document.querySelector(`input[name=attending][value="${saved.attending}"]`);
-  if (g) g.checked = true;
-  if (r) r.checked = true;
+  if (g) g.checked = true; if (r) r.checked = true;
 }
 
 // ── Photo resize ──
 $("photo").addEventListener("change", async () => {
-  const f = $("photo").files[0];
-  if (!f) return;
+  const f = $("photo").files[0]; if (!f) return;
   if (!f.type.startsWith("image/")) { setStatus("Please choose an image file.", true); return; }
   try {
     const url = URL.createObjectURL(f);
@@ -597,8 +819,7 @@ $("photo").addEventListener("change", async () => {
     $("photoBox").style.backgroundImage = `url("${photoData}")`;
     $("photoBox").classList.add("has");
     const sp = $("photoBox").querySelector("span"); if (sp) sp.hidden = true;
-    $("photoRemove").hidden = false;
-    setStatus("");
+    $("photoRemove").hidden = false; setStatus("");
   } catch { setStatus("Couldn't read that photo. Try another.", true); }
 });
 $("photoRemove").addEventListener("click", () => {
@@ -609,12 +830,11 @@ $("photoRemove").addEventListener("click", () => {
 });
 
 // ── Cloudinary upload ──
-function dataUrlToBlob(dataUrl) {
-  const [hdr, data] = dataUrl.split(",");
-  const mime = hdr.match(/:(.*?);/)[1];
-  const bytes = atob(data); const arr = new Uint8Array(bytes.length);
-  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-  return new Blob([arr], { type: mime });
+function dataUrlToBlob(d) {
+  const [h, data] = d.split(","); const mime = h.match(/:(.*?);/)[1];
+  const b = atob(data); const a = new Uint8Array(b.length);
+  for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i);
+  return new Blob([a], { type: mime });
 }
 async function uploadToCloudinary(dataUrl) {
   const fd = new FormData();
@@ -625,20 +845,18 @@ async function uploadToCloudinary(dataUrl) {
   return (await res.json()).secure_url;
 }
 
-// ── Collect & Validate ──
+// ── Form ──
 function collect() {
   const att = document.querySelector("input[name=attending]:checked");
   const gen = document.querySelector("input[name=gender]:checked");
-  return {
-    clientId,
+  return { clientId,
     fullName:   $("fullName").value.trim(),
     nickname:   $("nickname").value.trim(),
     gender:     gen ? gen.value : "",
     location:   $("location").value.trim(),
     profession: $("profession").value.trim(),
     attending:  att ? att.value : "",
-    website:    $("website").value
-  };
+    website:    $("website").value };
 }
 function validate(d) {
   let first = null;
@@ -657,7 +875,6 @@ document.querySelectorAll("input[name=attending], input[name=gender]").forEach((
   el.addEventListener("change", () => { const f = el.closest(".field"); if (f) f.classList.remove("invalid"); })
 );
 
-// ── Submit ──
 $("rsvp").addEventListener("submit", async (e) => {
   e.preventDefault();
   const d = collect();
@@ -669,8 +886,7 @@ $("rsvp").addEventListener("submit", async (e) => {
       if (photoData && CLOUD_READY) { setStatus("Uploading photo…"); photoUrl = await uploadToCloudinary(photoData); }
       setStatus("Saving…");
       const res = await fetch(CONFIG.SCRIPT_URL, { method:"POST", body:JSON.stringify({ ...d, photo:photoUrl }) });
-      const out = await res.json();
-      if (!out.ok) throw new Error(out.error);
+      const out = await res.json(); if (!out.ok) throw new Error(out.error);
     } else { await new Promise((r) => setTimeout(r, 600)); }
     const { website, ...keep } = d; writeSaved(keep);
     showThanks(d); loadList();
@@ -679,7 +895,6 @@ $("rsvp").addEventListener("submit", async (e) => {
 });
 function setStatus(t, bad) { const s = $("status"); s.textContent = t; s.classList.toggle("bad", !!bad); }
 
-// ── Thanks ──
 function showThanks(d) {
   setStatus("");
   const first = d.nickname || d.fullName.split(" ")[0];
@@ -688,73 +903,98 @@ function showThanks(d) {
     Maybe: ["Marked maybe",   `Thanks, ${first}. We'll keep you posted.`,  "maybe"],
     No:    ["Marked absent",  `Thanks, ${first}. We'll miss you this time.`,"no"]
   }[d.attending];
-  $("stampText").textContent   = t[0]; $("stampText").style.color = `var(--${t[2]})`;
+  $("stampText").textContent = t[0]; $("stampText").style.color = `var(--${t[2]})`;
   $("thanksTitle").textContent = t[1];
-  $("thanksBody").textContent  = LIVE
-    ? "Your answer is saved. Share this page with classmates you're still in touch with."
-    : "Preview mode — nothing was saved yet.";
+  $("thanksBody").textContent  = LIVE ? "Your answer is saved. Share this page with classmates." : "Preview mode — nothing was saved yet.";
   $("formCard").hidden = true; $("thanksCard").hidden = false;
-  $("thanksCard").scrollIntoView({ behavior:"smooth", block:"start" });
 }
 $("editAgain").addEventListener("click", () => { $("thanksCard").hidden = true; $("formCard").hidden = false; });
 $("copyLink").addEventListener("click", async () => {
-  const url = location.href.split("#")[0];
+  const url = location.origin + location.pathname;
   try { await navigator.clipboard.writeText(url); $("copyStatus").textContent = "Link copied!"; }
   catch { $("copyStatus").textContent = url; }
 });
 
-// ── Load & Render ──
+// ── Load data ──
 async function loadList() {
   if (!LIVE) { entries = EXAMPLES.map((x) => ({ ...x, example:true })); render(); return; }
   try {
     const out = await (await fetch(CONFIG.SCRIPT_URL + "?t=" + Date.now())).json();
     entries = out.ok ? out.entries : []; render();
-  } catch { $("grid").innerHTML = '<p class="empty">Couldn\'t load the list. Refresh to try again.</p>'; }
+  } catch {
+    $("grid").innerHTML       = '<p class="empty">Couldn\'t load the list. Refresh to try again.</p>';
+    $("previewGrid").innerHTML = '<p class="empty">Couldn\'t load.</p>';
+  }
+}
+
+// ── Render ──
+function getFilters() {
+  const isMobile = window.innerWidth < 900;
+  return {
+    att: isMobile
+      ? (document.querySelector("input[name=fltAttM]:checked") || {}).value || "all"
+      : (document.querySelector("input[name=fltAtt]:checked")  || {}).value || "all",
+    gen: isMobile
+      ? (document.querySelector("input[name=fltGenM]:checked") || {}).value || "all"
+      : (document.querySelector("input[name=fltGen]:checked")  || {}).value || "all",
+    q: ($("searchInput").value || $("searchInputMobile").value || "").trim().toLowerCase()
+  };
 }
 
 function render() {
-  const fltAtt = document.querySelector("input[name=fltAtt]:checked").value;
-  const fltGen = document.querySelector("input[name=fltGen]:checked").value;
-  const q      = $("searchInput").value.trim().toLowerCase();
+  const total  = entries.length;
+  const males  = entries.filter((x) => x.gender === "Male").length;
+  const fems   = entries.filter((x) => x.gender === "Female").length;
+  const coming = entries.filter((x) => x.attending === "Yes").length;
+  const maybes = entries.filter((x) => x.attending === "Maybe").length;
 
-  const total = entries.length;
-  const males = entries.filter((x) => x.gender === "Male").length;
-  const fems  = entries.filter((x) => x.gender === "Female").length;
-  $("sYes").textContent     = entries.filter((x) => x.attending === "Yes").length;
-  $("sMaybe").textContent   = entries.filter((x) => x.attending === "Maybe").length;
-  $("sMale").textContent    = males;
-  $("sFem").textContent     = fems;
-  $("badgeTotal").textContent = total + " total";
-  $("badgeMale").textContent  = males + " male";
-  $("badgeFem").textContent   = fems  + " female";
+  // Header stats
+  $("sYes").textContent   = coming;
+  $("sMaybe").textContent = maybes;
+  $("sMale").textContent  = males;
+  $("sFem").textContent   = fems;
 
-  const list = entries.filter((x) => {
-    if (fltAtt !== "all" && x.attending !== fltAtt) return false;
-    if (fltGen !== "all" && x.gender    !== fltGen) return false;
+
+  // Sidebar counts
+  $("cTotal").textContent = total;
+  $("cMale").textContent  = males;
+  $("cFem").textContent   = fems;
+  $("cYes").textContent   = coming;
+  $("cMaybe").textContent = maybes;
+
+  // Home preview — latest 6, no filters
+  renderGrid($("previewGrid"), entries.slice(0, 6));
+
+  // Register — filtered
+  const { att, gen, q } = getFilters();
+  const filtered = entries.filter((x) => {
+    if (att !== "all" && x.attending !== att) return false;
+    if (gen !== "all" && x.gender    !== gen) return false;
     if (q) {
       const hay = [x.name, x.nickname, x.location, x.profession].join(" ").toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
+  $("regTotal").textContent = filtered.length + " student" + (filtered.length !== 1 ? "s" : "");
+  renderGrid($("grid"), filtered, entries.length);
+}
 
-  const g = $("grid"); g.textContent = "";
+function renderGrid(container, list, totalCount) {
+  container.textContent = "";
   if (!list.length) {
-    g.innerHTML = `<div class="no-results"><svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>${q ? 'No students match "' + q + '".' : entries.length ? "Nobody in this group yet." : "No answers yet. Be the first!"}</p></div>`;
+    const noQ = ($("searchInput").value || $("searchInputMobile").value || "").trim();
+    container.innerHTML = `<div class="no-results"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>${noQ ? 'No results for "' + noQ + '".' : (totalCount ? "Nobody in this group yet." : "No answers yet. Be the first!")}</p></div>`;
     return;
   }
-
   const label = { Yes:"Coming", Maybe:"Maybe", No:"Absent" };
   list.forEach((x) => {
     const card = document.createElement("article");
     card.className = "friend " + (x.gender || "");
 
     const pic = document.createElement("div"); pic.className = "pic";
-    if (x.photo) {
-      pic.style.backgroundImage = `url("${x.photo}")`;
-    } else {
-      pic.textContent = (x.nickname || x.name || "?").trim().charAt(0).toUpperCase();
-    }
+    if (x.photo) pic.style.backgroundImage = `url("${x.photo}")`;
+    else pic.textContent = (x.nickname || x.name || "?").trim().charAt(0).toUpperCase();
     const pw = document.createElement("div"); pw.className = "pill-wrap";
     const pl = document.createElement("span"); pl.className = "pill " + x.attending;
     pl.textContent = label[x.attending] || x.attending; pw.append(pl); pic.append(pw);
@@ -763,7 +1003,6 @@ function render() {
     const nm   = document.createElement("div"); nm.className = "nm"; nm.textContent = x.name;
     if (x.nickname) { const nk = document.createElement("span"); nk.className = "nick"; nk.textContent = " “" + x.nickname + "”"; nm.append(nk); }
     info.append(nm);
-
     const meta = document.createElement("div"); meta.className = "meta";
     if (x.location)   { const s = document.createElement("span"); s.textContent = x.location;   meta.append(s); }
     if (x.profession) { const s = document.createElement("span"); s.textContent = x.profession; meta.append(s); }
@@ -771,12 +1010,16 @@ function render() {
 
     card.append(pic, info);
     if (x.example) { const ex = document.createElement("div"); ex.className = "ex-tag"; ex.textContent = "Example"; card.append(ex); }
-    g.append(card);
+    container.append(card);
   });
 }
 
-document.querySelectorAll("input[name=fltAtt], input[name=fltGen]").forEach((r) => r.addEventListener("change", render));
+// Filter / search listeners
+document.querySelectorAll("input[name=fltAtt], input[name=fltGen], input[name=fltAttM], input[name=fltGenM]")
+  .forEach((r) => r.addEventListener("change", render));
 $("searchInput").addEventListener("input", render);
+$("searchInputMobile").addEventListener("input", render);
+
 loadList();
 </script>
 </body>
