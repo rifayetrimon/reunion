@@ -1038,6 +1038,7 @@ function showPage(name) {
   const pg = $("page-" + name); if (pg) pg.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
   if (history.pushState) history.pushState(null, "", "#" + name);
+  if (name === "rollcall" && authState) loadUserEntry();
 }
 document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) =>
   t.addEventListener("click", () => showPage(t.dataset.page))
@@ -1098,16 +1099,34 @@ const saved = readSaved() || {};
 const clientId = (authState && authState.clientId) ||
                  saved.clientId ||
                  (crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(16).slice(2));
-if (saved.fullName) {
-  $("fullName").value   = saved.fullName;
-  $("nickname").value   = saved.nickname   || "";
-  $("location").value   = saved.location   || "";
-  $("mobile").value     = saved.mobile     || "";
-  $("profession").value = saved.profession || "";
-  const g = document.querySelector(`input[name=gender][value="${saved.gender}"]`);
-  const r = document.querySelector(`input[name=attending][value="${saved.attending}"]`);
+function fillForm(d) {
+  if (!d) return;
+  $("fullName").value   = d.fullName   || "";
+  $("nickname").value   = d.nickname   || "";
+  $("location").value   = d.location   || "";
+  $("mobile").value     = d.mobile     || "";
+  $("profession").value = d.profession || "";
+  const g = document.querySelector(`input[name=gender][value="${d.gender}"]`);
+  const r = document.querySelector(`input[name=attending][value="${d.attending}"]`);
   if (g) g.checked = true; if (r) r.checked = true;
 }
+
+async function loadUserEntry() {
+  if (!LIVE || !authState || !authState.clientId) return;
+  try {
+    const out = await scriptGet({ clientId: authState.clientId });
+    if (out.ok && out.entry && out.entry.fullName) {
+      fillForm(out.entry);
+      writeSaved({ ...out.entry, clientId: authState.clientId });
+    }
+  } catch {}
+}
+
+if (saved.fullName) {
+  fillForm(saved);
+}
+
+if (authState) loadUserEntry();
 
 // ── Photo resize ──
 $("photo").addEventListener("change", async () => {
@@ -1288,6 +1307,7 @@ $("signinForm").addEventListener("submit", async (e) => {
       writeAuth(authState); updateAuthUI();
       showToast("👋", "Welcome back, @" + username + "!");
       showPage("rollcall");
+      loadUserEntry();
     }
   } catch (err) { $("siStatus").textContent = err.message || "Network error."; $("siStatus").classList.add("bad"); }
   finally { btn.disabled = false; }

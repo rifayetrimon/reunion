@@ -158,19 +158,42 @@ function doGet(e) {
     var sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet) return respond_({ ok: true, entries: [] });
 
-    var values  = sheet.getDataRange().getValues();
+    var values   = sheet.getDataRange().getValues();
+    var clientId = (e && e.parameter && e.parameter.clientId) ? String(e.parameter.clientId) : "";
+
+    // Return a single user's own entry for pre-filling the form
+    if (clientId) {
+      for (var i = 1; i < values.length; i++) {
+        if (String(values[i][10]) === clientId) {
+          var r = values[i];
+          return respond_({ ok: true, entry: {
+            fullName:   String(r[2] || ""),
+            nickname:   String(r[3] || ""),
+            gender:     String(r[4] || ""),
+            location:   String(r[5] || ""),
+            mobile:     String(r[6] || ""),
+            profession: String(r[7] || ""),
+            attending:  String(r[8] || ""),
+            photo:      String(r[9] || "")
+          }});
+        }
+      }
+      return respond_({ ok: true, entry: null });
+    }
+
+    // Return full public list
     var entries = [];
-    for (var i = 1; i < values.length; i++) {
-      var r = values[i];
-      if (!r[2]) continue;
+    for (var j = 1; j < values.length; j++) {
+      var row = values[j];
+      if (!row[2]) continue;
       entries.push({
-        name:       String(r[2]),
-        nickname:   String(r[3] || ""),
-        gender:     String(r[4] || ""),
-        location:   String(r[5] || ""),
-        profession: String(r[7] || ""),
-        attending:  String(r[8] || ""),
-        photo:      String(r[9] || "")
+        name:       String(row[2]),
+        nickname:   String(row[3] || ""),
+        gender:     String(row[4] || ""),
+        location:   String(row[5] || ""),
+        profession: String(row[7] || ""),
+        attending:  String(row[8] || ""),
+        photo:      String(row[9] || "")
       });
     }
     return respond_({ ok: true, entries: entries });
