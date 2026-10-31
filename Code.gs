@@ -128,16 +128,20 @@ function doPost(e) {
     var values      = sheet.getDataRange().getValues();
     var existingRow = -1;
 
+    // Find clientId column from header
+    var header  = values[0] || [];
+    var cidCol  = header.indexOf("Client ID");
+    if (cidCol < 0) cidCol = 10; // fallback
+
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
-        // Check new column 10 first, then old column 9 (before Mobile field was added)
-        if (String(values[i][10]) === clientId || String(values[i][9]) === clientId) {
-          existingRow = i + 1; break;
-        }
+        if (String(values[i][cidCol]) === clientId) { existingRow = i + 1; break; }
       }
     }
 
-    var photoUrl = existingRow > 0 ? String(values[existingRow - 1][9] || "") : "";
+    var photoCol = header.indexOf("Photo URL");
+    if (photoCol < 0) photoCol = 9; // fallback
+    var photoUrl = existingRow > 0 ? String(values[existingRow - 1][photoCol] || "") : "";
     if (d.photo && String(d.photo).indexOf("https://") === 0) photoUrl = d.photo;
 
     var row = [
@@ -175,43 +179,49 @@ function doGet(e) {
     var values   = sheet.getDataRange().getValues();
     var clientId = (e && e.parameter && e.parameter.clientId) ? String(e.parameter.clientId) : "";
 
+    // Detect column layout from the header row
+    var header    = values[0] || [];
+    var hasMobile = header.indexOf("Mobile") >= 0;
+    var cidCol    = hasMobile ? 10 : 9; // Client ID column index
+
     // Return a single user's own entry for pre-filling the form
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
         var r = values[i];
-        if (String(r[10]) === clientId || String(r[9]) === clientId) {
-          var isNew = (String(r[10]) === clientId); // 11-col format
+        if (String(r[cidCol]) === clientId) {
           return respond_({ ok: true, entry: {
             fullName:   String(r[2] || ""),
             nickname:   String(r[3] || ""),
             gender:     String(r[4] || ""),
             location:   String(r[5] || ""),
-            mobile:     isNew ? String(r[6] || "") : "",
-            profession: isNew ? String(r[7] || "") : String(r[6] || ""),
-            attending:  isNew ? String(r[8] || "") : String(r[7] || ""),
-            photo:      isNew ? String(r[9] || "") : String(r[8] || "")
+            mobile:     hasMobile ? String(r[6] || "") : "",
+            profession: hasMobile ? String(r[7] || "") : String(r[6] || ""),
+            attending:  hasMobile ? String(r[8] || "") : String(r[7] || ""),
+            photo:      hasMobile ? String(r[9] || "") : String(r[8] || "")
           }});
         }
       }
       return respond_({ ok: true, entry: null });
     }
 
-    // Return full public list — handle both old (10-col) and new (11-col) rows
+    // Detect column layout from the header row
+    var header = values[0] || [];
+    var hasMobile = header.indexOf("Mobile") >= 0;
+
+    // Return full public list
     var entries = [];
     for (var j = 1; j < values.length; j++) {
       var row = values[j];
       if (!row[2]) continue;
-      // Detect format: new rows have clientId at col 10, old rows at col 9
-      var newFmt = row.length > 10 && String(row[10]).length > 8;
       entries.push({
         name:       String(row[2]),
         nickname:   String(row[3] || ""),
         gender:     String(row[4] || ""),
         location:   String(row[5] || ""),
-        mobile:     newFmt ? String(row[6] || "") : "",
-        profession: newFmt ? String(row[7] || "") : String(row[6] || ""),
-        attending:  newFmt ? String(row[8] || "") : String(row[7] || ""),
-        photo:      newFmt ? String(row[9] || "") : String(row[8] || "")
+        mobile:     hasMobile ? String(row[6] || "") : "",
+        profession: hasMobile ? String(row[7] || "") : String(row[6] || ""),
+        attending:  hasMobile ? String(row[8] || "") : String(row[7] || ""),
+        photo:      hasMobile ? String(row[9] || "") : String(row[8] || "")
       });
     }
     return respond_({ ok: true, entries: entries });
