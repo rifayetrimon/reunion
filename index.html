@@ -1519,9 +1519,14 @@ function openModal(x) {
   document.getElementById("mGender").textContent     = x.gender     || "—";
   document.getElementById("mLocation").textContent   = x.location   || "—";
   document.getElementById("mProfession").textContent = x.profession || "—";
-  const mobEl = document.getElementById("mMobile");
-  if (x.mobile) { mobEl.innerHTML = `<a href="tel:${x.mobile}">${x.mobile}</a>`; }
-  else { mobEl.textContent = "—"; }
+  const mobEl  = document.getElementById("mMobile");
+  const mobRow = mobEl.closest(".modal-row");
+  if (x.mobile) {
+    mobEl.innerHTML = `<a href="tel:${x.mobile}">${x.mobile}</a>`;
+    mobRow.hidden = false;
+  } else {
+    mobRow.hidden = true;
+  }
   modalBackdrop.classList.add("open");
   document.body.style.overflow = "hidden";
 }
