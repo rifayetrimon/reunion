@@ -740,9 +740,14 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
             <span class="err">Please add your city.</span>
           </div>
           <div class="field">
-            <label for="profession">What do you do now? <span class="hint">(optional)</span></label>
-            <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
+            <label for="mobile">Mobile number <span class="hint">(optional)</span></label>
+            <input type="text" id="mobile" maxlength="20" placeholder="+880 17XX XXX XXX" autocomplete="tel">
           </div>
+        </div>
+
+        <div class="field">
+          <label for="profession">What do you do now? <span class="hint">(optional)</span></label>
+          <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
         </div>
 
         <div class="field" id="fAtt">
@@ -1097,6 +1102,7 @@ if (saved.fullName) {
   $("fullName").value   = saved.fullName;
   $("nickname").value   = saved.nickname   || "";
   $("location").value   = saved.location   || "";
+  $("mobile").value     = saved.mobile     || "";
   $("profession").value = saved.profession || "";
   const g = document.querySelector(`input[name=gender][value="${saved.gender}"]`);
   const r = document.querySelector(`input[name=attending][value="${saved.attending}"]`);
@@ -1154,6 +1160,7 @@ function collect() {
     nickname:   $("nickname").value.trim(),
     gender:     gen ? gen.value : "",
     location:   $("location").value.trim(),
+    mobile:     $("mobile").value.trim(),
     profession: $("profession").value.trim(),
     attending:  att ? att.value : "",
     website:    $("website").value };
@@ -1183,7 +1190,11 @@ $("rsvp").addEventListener("submit", async (e) => {
   try {
     let photoUrl = "";
     if (LIVE) {
-      if (photoData && CLOUD_READY) { setStatus("Uploading photo…"); photoUrl = await uploadToCloudinary(photoData); }
+      if (photoData && CLOUD_READY) {
+        setStatus("Uploading photo…");
+        try { photoUrl = await uploadToCloudinary(photoData); }
+        catch (pe) { setStatus("Photo skipped (" + pe.message + "). Saving without photo…"); }
+      }
       setStatus("Saving…");
       const out = await scriptPost({ ...d, photo: photoUrl });
       if (!out.ok) throw new Error(out.error);

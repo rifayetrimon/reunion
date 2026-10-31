@@ -5,7 +5,7 @@ var USERS_NAME = "Users";
 
 var HEADERS = [
   "Submitted at", "Updated at", "Full name", "Nickname", "Gender",
-  "Location", "Profession", "Attending", "Photo URL", "Client ID"
+  "Location", "Mobile", "Profession", "Attending", "Photo URL", "Client ID"
 ];
 var USER_HEADERS = ["Username", "Password Hash", "Client ID", "Created At"];
 
@@ -119,11 +119,11 @@ function doPost(e) {
 
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
-        if (String(values[i][9]) === clientId) { existingRow = i + 1; break; }
+        if (String(values[i][10]) === clientId) { existingRow = i + 1; break; }
       }
     }
 
-    var photoUrl = existingRow > 0 ? String(values[existingRow - 1][8] || "") : "";
+    var photoUrl = existingRow > 0 ? String(values[existingRow - 1][9] || "") : "";
     if (d.photo && String(d.photo).indexOf("https://") === 0) photoUrl = d.photo;
 
     var row = [
@@ -133,6 +133,7 @@ function doPost(e) {
       clean_(d.nickname),
       clean_(d.gender),
       clean_(d.location),
+      clean_(d.mobile),
       clean_(d.profession),
       clean_(d.attending),
       photoUrl,
@@ -167,9 +168,9 @@ function doGet(e) {
         nickname:   String(r[3] || ""),
         gender:     String(r[4] || ""),
         location:   String(r[5] || ""),
-        profession: String(r[6] || ""),
-        attending:  String(r[7] || ""),
-        photo:      String(r[8] || "")
+        profession: String(r[7] || ""),
+        attending:  String(r[8] || ""),
+        photo:      String(r[9] || "")
       });
     }
     return respond_({ ok: true, entries: entries });
