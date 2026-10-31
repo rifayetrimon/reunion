@@ -1035,6 +1035,27 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   </div>
 </section>
 
+<!-- Detail modal -->
+<div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-label="Classmate details">
+  <div class="modal-box">
+    <div class="modal-photo" id="mPhoto">
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="modal-pill" id="mPill"></span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-name" id="mName"><span id="mNick"></span></div>
+      <div class="modal-rows">
+        <div class="modal-row"><span class="modal-row-label">Gender</span><span class="modal-row-val" id="mGender"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Location</span><span class="modal-row-val" id="mLocation"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Profession</span><span class="modal-row-val" id="mProfession"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Mobile</span><span class="modal-row-val" id="mMobile"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============ EDIT THESE ============ */
 const CONFIG = {
@@ -1512,27 +1533,5 @@ modalClose.addEventListener("click", closeModal);
 modalBackdrop.addEventListener("click", (e) => { if (e.target === modalBackdrop) closeModal(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 </script>
-
-<!-- Detail modal -->
-<div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-label="Classmate details">
-  <div class="modal-box">
-    <div class="modal-photo" id="mPhoto">
-      <button class="modal-close" id="modalClose" aria-label="Close">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-      <span class="modal-pill" id="mPill"></span>
-    </div>
-    <div class="modal-body">
-      <div class="modal-name" id="mName"><span id="mNick"></span></div>
-      <div class="modal-rows">
-        <div class="modal-row"><span class="modal-row-label">Gender</span><span class="modal-row-val" id="mGender"></span></div>
-        <div class="modal-row"><span class="modal-row-label">Location</span><span class="modal-row-val" id="mLocation"></span></div>
-        <div class="modal-row"><span class="modal-row-label">Profession</span><span class="modal-row-val" id="mProfession"></span></div>
-        <div class="modal-row"><span class="modal-row-label">Mobile</span><span class="modal-row-val" id="mMobile"></span></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
