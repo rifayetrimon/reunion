@@ -132,40 +132,85 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
    HOME PAGE
 ───────────────────────────────────── */
 .hero {
-  background: var(--surface-0);
-  border: 1px solid var(--border);
-  border-radius: 14px; padding: 40px 36px 32px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  background: linear-gradient(135deg, #5e6ad2 0%, #7c7fe8 60%, #a78bfa 100%);
+  border-radius: 16px; padding: 36px 32px 30px;
+  margin-bottom: 16px; position: relative; overflow: hidden;
 }
-@media (max-width: 600px) { .hero { padding: 24px 18px 22px; } }
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+@media (max-width: 600px) { .hero { padding: 24px 18px 22px; border-radius: 14px; } }
 
 .eyebrow {
   font-family: var(--f-mono); font-size: 11px; font-weight: 510;
   letter-spacing: .13em; text-transform: uppercase;
-  color: var(--text-4); margin-bottom: 14px;
+  color: rgba(255,255,255,0.7); margin-bottom: 12px;
 }
 .hero h1 {
-  font-size: clamp(30px, 5vw, 50px); font-weight: 510;
-  line-height: 1.0; letter-spacing: clamp(-0.66px, -0.02em, -1.1px);
-  color: var(--text-1);
+  font-size: clamp(26px, 5vw, 48px); font-weight: 700;
+  line-height: 1.05; letter-spacing: clamp(-0.5px, -0.02em, -1px);
+  color: #fff;
 }
-.hero h1 mark { background: none; color: var(--accent); padding: 0; }
+.hero h1 mark { background: none; color: rgba(255,255,255,0.85); padding: 0; }
 .hero .lede {
-  margin-top: 14px; font-size: 15px; line-height: 1.65;
-  color: var(--text-3); max-width: 52ch; letter-spacing: -0.15px;
+  margin-top: 12px; font-size: 14px; line-height: 1.65;
+  color: rgba(255,255,255,0.8); max-width: 46ch; letter-spacing: -0.1px;
 }
-.hero-stats {
-  display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 24px;
-  font-family: var(--f-mono); font-size: 11px; color: var(--text-4);
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 24px; }
+.hero-cta .btn-primary {
+  background: #fff; color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
-.hero-stats b { font-size: 17px; font-variant-numeric: tabular-nums; margin-right: 3px; font-weight: 510; }
-.s-yes   b { color: var(--yes); }
-.s-maybe b { color: var(--maybe); }
-.s-male  b { color: var(--male); }
-.s-fem   b { color: var(--female); }
+.hero-cta .btn-primary:hover { background: #f0f0ff; }
+.hero-cta .btn-ghost {
+  background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.35); color: #fff;
+}
+.hero-cta .btn-ghost:hover { background: rgba(255,255,255,0.25); }
 
-.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 28px; }
+/* Stat cards row */
+.stat-cards {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+}
+@media (max-width: 480px) { .stat-cards { grid-template-columns: repeat(2, 1fr); } }
+
+.stat-card {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 14px 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: center;
+}
+.stat-card .sc-val {
+  font-size: 28px; font-weight: 700; line-height: 1;
+  font-variant-numeric: tabular-nums; display: block; margin-bottom: 4px;
+}
+.stat-card .sc-lbl { font-size: 11px; font-weight: 510; color: var(--text-4); text-transform: uppercase; letter-spacing: .06em; }
+.sc-yes   .sc-val { color: var(--yes); }
+.sc-maybe .sc-val { color: var(--maybe); }
+.sc-male  .sc-val { color: var(--male); }
+.sc-fem   .sc-val { color: var(--female); }
+
+/* Quick action cards */
+.action-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+@media (min-width: 640px) { .action-cards { grid-template-columns: repeat(3, 1fr); } }
+
+.action-card {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px 16px; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: box-shadow .15s, border-color .15s, background .15s;
+  text-align: left; display: grid; gap: 8px;
+}
+.action-card:hover { border-color: #c4c9d4; box-shadow: 0 3px 10px rgba(0,0,0,0.09); background: var(--surface-1); }
+.action-card .ac-icon {
+  width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center;
+  font-size: 18px;
+}
+.action-card .ac-title { font-size: 13px; font-weight: 590; color: var(--text-1); letter-spacing: -0.13px; }
+.action-card .ac-desc  { font-size: 12px; color: var(--text-4); line-height: 1.5; }
+.ac-primary .ac-icon { background: rgba(94,106,210,.12); }
+.ac-view    .ac-icon { background: rgba(16,185,129,.1); }
+.ac-share   .ac-icon { background: rgba(180,83,9,.1); }
 
 .home-section { margin-bottom: 8px; }
 .home-section-head {
@@ -519,16 +564,49 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
       <p class="eyebrow" id="batchLine"></p>
       <h1 id="heroTitle"></h1>
       <p class="lede" id="lede"></p>
-      <div class="hero-stats" aria-live="polite">
-        <span class="s-yes"><b id="sYes">0</b>coming</span>
-        <span class="s-maybe"><b id="sMaybe">0</b>maybe</span>
-        <span class="s-male"><b id="sMale">0</b>male</span>
-        <span class="s-fem"><b id="sFem">0</b>female</span>
-      </div>
       <div class="hero-cta">
         <button class="btn-primary" onclick="showPage('rollcall')">Answer the roll call →</button>
         <button class="btn-ghost"   onclick="showPage('register')">View class register</button>
       </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-cards" aria-live="polite">
+      <div class="stat-card sc-yes">
+        <span class="sc-val" id="sYes">0</span>
+        <span class="sc-lbl">Coming</span>
+      </div>
+      <div class="stat-card sc-maybe">
+        <span class="sc-val" id="sMaybe">0</span>
+        <span class="sc-lbl">Maybe</span>
+      </div>
+      <div class="stat-card sc-male">
+        <span class="sc-val" id="sMale">0</span>
+        <span class="sc-lbl">Male</span>
+      </div>
+      <div class="stat-card sc-fem">
+        <span class="sc-val" id="sFem">0</span>
+        <span class="sc-lbl">Female</span>
+      </div>
+    </div>
+
+    <!-- Quick action cards -->
+    <div class="action-cards">
+      <button class="action-card ac-primary" onclick="showPage('rollcall')">
+        <div class="ac-icon">✏️</div>
+        <div class="ac-title">Answer Roll Call</div>
+        <div class="ac-desc">Add your name to the list</div>
+      </button>
+      <button class="action-card ac-view" onclick="showPage('register')">
+        <div class="ac-icon">👥</div>
+        <div class="ac-title">Class Register</div>
+        <div class="ac-desc">See who has answered</div>
+      </button>
+      <button class="action-card ac-share" onclick="shareLink()">
+        <div class="ac-icon">🔗</div>
+        <div class="ac-title">Share Link</div>
+        <div class="ac-desc">Invite your classmates</div>
+      </button>
     </div>
 
     <div class="home-section">
@@ -536,7 +614,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
         <h2>Recent classmates</h2>
         <button class="view-all" onclick="showPage('register')">View all →</button>
       </div>
-      <div class="grid" id="previewGrid"><p class="empty">Loading…</p></div>
+      <div class="grid" id="previewGrid"><p class="empty">No answers yet — be the first!</p></div>
     </div>
 
   </div>
@@ -906,6 +984,13 @@ $("copyLink").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(url); $("copyStatus").textContent = "Link copied!"; }
   catch { $("copyStatus").textContent = url; }
 });
+async function shareLink() {
+  const url = location.origin + location.pathname;
+  const text = "Answer the PSC Batch 2011 reunion roll call: " + url;
+  if (navigator.share) { try { await navigator.share({ title:"PSC Batch 2011 Reunion", text, url }); return; } catch {} }
+  try { await navigator.clipboard.writeText(url); alert("Link copied! Share it with your classmates."); }
+  catch { alert(url); }
+}
 
 // ── Load data ──
 async function loadList() {
