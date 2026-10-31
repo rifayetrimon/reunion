@@ -971,7 +971,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
           <div class="account-avatar" id="acctAvatar"></div>
           <div class="account-info">
             <h3 id="acctUsername"></h3>
-            <p>PSC Batch 2011</p>
+            <p>PSC Batch 2010</p>
           </div>
         </div>
         <div class="account-actions">
@@ -990,11 +990,11 @@ const CONFIG = {
   SCRIPT_URL:               "https://script.google.com/macros/s/AKfycbyXMXJ-pT-Wd-WUM2VsZ0yx2XcIaY2NqH5ona1ZE8_IWR9vf5ZG6h5HapTOFTVDmtS72A/exec",
   CLOUDINARY_CLOUD_NAME:    "hrjdqnxt",
   CLOUDINARY_UPLOAD_PRESET: "reunion_uploads",
-  SCHOOL:     "PSC Batch 2011",
-  BATCH_LINE: "PSC · Batch of 2011 · Roll call",
-  TITLE_HTML: 'PSC Batch 2011 <mark>Reunion</mark>',
+  SCHOOL:     "PSC Batch 2010",
+  BATCH_LINE: "PSC · Batch of 2010 · Roll call",
+  TITLE_HTML: 'PSC Batch 2010 <mark>Reunion</mark>',
   LEDE:       "It's been years since the last bell. Tell us where you are now and whether you can make it.",
-  FOOTER:     "Organised by PSC Batch 2011"
+  FOOTER:     "Organised by PSC Batch 2010"
 };
 /* ==================================== */
 
@@ -1295,7 +1295,7 @@ $("signinForm").addEventListener("submit", async (e) => {
 
 async function shareLink() {
   const url = location.origin + location.pathname;
-  const text = "Answer the PSC Batch 2011 reunion roll call: " + url;
+  const text = "Answer the PSC Batch 2010 reunion roll call: " + url;
   if (navigator.share) { try { await navigator.share({ title:"PSC Batch 2011 Reunion", text, url }); return; } catch {} }
   try { await navigator.clipboard.writeText(url); alert("Link copied! Share it with your classmates."); }
   catch { alert(url); }
