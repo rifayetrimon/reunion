@@ -13,18 +13,29 @@ var USER_HEADERS = ["Username", "Password Hash", "Client ID", "Created At"];
 var PW_SALT = "psc2011reunion";
 
 function setup() {
-  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
   var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-  sheet.clearContents();
-  sheet.appendRow(HEADERS);
-  sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
-  sheet.setFrozenRows(1);
+  // Only initialise if the sheet is truly empty (no header row yet)
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
+    sheet.setFrozenRows(1);
+    Logger.log("Responses sheet created.");
+  } else {
+    Logger.log("Responses sheet already has data — skipped to protect existing entries.");
+  }
 
   var users = ss.getSheetByName(USERS_NAME) || ss.insertSheet(USERS_NAME);
-  users.clearContents();
-  users.appendRow(USER_HEADERS);
-  users.getRange(1, 1, 1, USER_HEADERS.length).setFontWeight("bold");
-  users.setFrozenRows(1);
+  if (users.getLastRow() === 0) {
+    users.appendRow(USER_HEADERS);
+    users.getRange(1, 1, 1, USER_HEADERS.length).setFontWeight("bold");
+    users.setFrozenRows(1);
+    Logger.log("Users sheet created.");
+  } else {
+    Logger.log("Users sheet already has data — skipped to protect existing entries.");
+  }
+
   Logger.log("Setup complete.");
 }
 
