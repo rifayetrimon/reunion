@@ -750,14 +750,6 @@ const $ = (id) => document.getElementById(id);
 const LIVE        = !!CONFIG.SCRIPT_URL;
 const CLOUD_READY = !!(CONFIG.CLOUDINARY_CLOUD_NAME && CONFIG.CLOUDINARY_UPLOAD_PRESET);
 
-const EXAMPLES = [
-  { name:"Rahim Uddin",    nickname:"Captain", gender:"Male",   location:"Dhaka, Bangladesh",      profession:"Bank Officer",  attending:"Yes",   photo:"" },
-  { name:"Nusrat Jahan",   nickname:"",        gender:"Female", location:"Chittagong, Bangladesh",  profession:"Doctor",        attending:"Maybe", photo:"" },
-  { name:"Tanvir Ahmed",   nickname:"Tanu",    gender:"Male",   location:"Kuala Lumpur, Malaysia",  profession:"Engineer",      attending:"Yes",   photo:"" },
-  { name:"Farhana Akter",  nickname:"Fari",    gender:"Female", location:"Dhaka, Bangladesh",       profession:"Teacher",       attending:"No",    photo:"" },
-  { name:"Kabir Hossain",  nickname:"",        gender:"Male",   location:"London, UK",              profession:"Accountant",    attending:"Maybe", photo:"" },
-  { name:"Rima Begum",     nickname:"Rimi",    gender:"Female", location:"Toronto, Canada",         profession:"Nurse",         attending:"Yes",   photo:"" }
-];
 let entries  = [];
 let photoData = "";
 
@@ -917,12 +909,12 @@ $("copyLink").addEventListener("click", async () => {
 
 // ── Load data ──
 async function loadList() {
-  if (!LIVE) { entries = EXAMPLES.map((x) => ({ ...x, example:true })); render(); return; }
+  if (!LIVE) { entries = []; render(); return; }
   try {
     const out = await (await fetch(CONFIG.SCRIPT_URL + "?t=" + Date.now())).json();
     entries = out.ok ? out.entries : []; render();
   } catch {
-    $("grid").innerHTML       = '<p class="empty">Couldn\'t load the list. Refresh to try again.</p>';
+    $("grid").innerHTML        = '<p class="empty">Couldn\'t load the list. Refresh to try again.</p>';
     $("previewGrid").innerHTML = '<p class="empty">Couldn\'t load.</p>';
   }
 }
@@ -1009,7 +1001,6 @@ function renderGrid(container, list, totalCount) {
     info.append(meta);
 
     card.append(pic, info);
-    if (x.example) { const ex = document.createElement("div"); ex.className = "ex-tag"; ex.textContent = "Example"; card.append(ex); }
     container.append(card);
   });
 }
