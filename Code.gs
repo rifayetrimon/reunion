@@ -204,10 +204,6 @@ function doGet(e) {
       return respond_({ ok: true, entry: null });
     }
 
-    // Detect column layout from the header row
-    var header = values[0] || [];
-    var hasMobile = header.indexOf("Mobile") >= 0;
-
     // Return full public list
     var entries = [];
     for (var j = 1; j < values.length; j++) {
