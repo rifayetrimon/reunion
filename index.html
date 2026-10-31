@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>School Reunion Roll Call</title>
+<meta name="description" content="Answer the roll call for our school friends reunion.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+<style>
+/* ── Tokens ── */
+:root {
+  --bg:          #08090a;
+  --surface-0:   #0f1011;
+  --surface-1:   rgba(255,255,255,0.025);
+  --surface-2:   rgba(255,255,255,0.04);
+  --surface-3:   rgba(255,255,255,0.06);
+  --text-1:      #f7f8f8;
+  --text-2:      #d0d6e0;
+  --text-3:      #8a8f98;
+  --text-4:      #62666d;
+  --accent:      #5e6ad2;
+  --accent-lit:  #7170ff;
+  --accent-hov:  #828fff;
+  --yes:         #10b981;
+  --maybe:       #c28020;
+  --no:          #62666d;
+  --male:        #7170ff;
+  --female:      #ef6b80;
+  --border:      rgba(255,255,255,0.08);
+  --border-sub:  rgba(255,255,255,0.05);
+  --border-s:    #23252a;
+  --f-sans:      'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+  --f-mono:      'Berkeley Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color-scheme:  dark;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text-1);
+  font: 400 16px/1.5 var(--f-sans);
+  font-feature-settings: "cv01","ss03";
+  padding-top: env(safe-area-inset-top,0px);
+  padding-bottom: env(safe-area-inset-bottom,0px);
+}
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: 400; }
+
+/* ── Page wrapper ── */
+.wrap {
+  max-width: 780px; margin: 0 auto;
+  display: grid; gap: 12px;
+  padding-block: 36px 72px;
+  padding-left:  max(16px, env(safe-area-inset-left,0px));
+  padding-right: max(16px, env(safe-area-inset-right,0px));
+}
+
+/* ── Cover ── */
+.cover {
+  background: var(--surface-0);
+  border: 1px solid var(--border-sub);
+  border-radius: 14px;
+  padding: 40px 36px 32px;
+}
+@media (max-width: 500px) { .cover { padding: 28px 20px 24px; } }
+
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 11px; font-weight: 510;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--text-4); margin-bottom: 14px;
+}
+.cover h1 {
+  font-size: clamp(32px, 5.5vw, 52px);
+  font-weight: 510; line-height: 1.0;
+  letter-spacing: clamp(-0.704px, -0.022em, -1.144px);
+  color: var(--text-1);
+}
+.cover h1 mark { background: none; color: var(--accent-lit); padding: 0; }
+.cover .lede {
+  margin-top: 14px; font-size: 15px; font-weight: 400;
+  line-height: 1.65; color: var(--text-3); max-width: 52ch;
+  letter-spacing: -0.165px;
+}
+.stats {
+  display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 24px;
+  font-family: var(--f-mono); font-size: 11px; color: var(--text-4);
+}
+.stats b { font-size: 15px; font-variant-numeric: tabular-nums; margin-right: 3px; font-weight: 510; }
+.s-yes   b { color: var(--yes); }
+.s-maybe b { color: var(--maybe); }
+.s-male  b { color: var(--male); }
+.s-fem   b { color: var(--female); }
+
+/* ── Banner ── */
+.banner {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 16px;
+  font-size: 13px; color: var(--text-3);
+}
+.banner strong { color: var(--maybe); font-weight: 510; }
+.banner code {
+  font-family: var(--f-mono); font-size: 12px;
+  background: rgba(255,255,255,0.06); border-radius: 4px; padding: 1px 5px;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 26px 24px; display: grid; gap: 20px;
+}
+.card > header { display: grid; gap: 4px; }
+.card > header h2 {
+  font-size: 20px; font-weight: 590; letter-spacing: -0.24px; color: var(--text-1);
+}
+.card > header p { font-size: 13px; color: var(--text-3); }
+form { display: grid; gap: 18px; }
+
+/* ── Photo picker ── */
+.idrow { display: grid; grid-template-columns: 108px minmax(0,1fr); gap: 16px; align-items: start; }
+@media (max-width: 500px) { .idrow { grid-template-columns: 1fr; } }
+
+.photo-pick { display: grid; gap: 6px; justify-items: start; }
+.photo-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.photo-box {
+  width: 108px; aspect-ratio: 1; max-width: 100%; border-radius: 10px;
+  border: 1px dashed var(--border);
+  background: rgba(255,255,255,0.03) center/cover no-repeat;
+  display: grid; place-items: center; text-align: center; cursor: pointer;
+  color: var(--text-4); font-size: 11px; font-weight: 510;
+  padding: 12px; line-height: 1.5; transition: background .15s, border-color .15s;
+}
+.photo-box:hover { background-color: var(--surface-2); border-color: var(--border); }
+.photo-box.has   { border-style: solid; color: transparent; }
+.photo-pick input:focus-visible + .photo-box { box-shadow: 0 0 0 2px var(--accent-lit); }
+.linkbtn {
+  background: none; border: 0; padding: 0;
+  color: var(--text-4); font: inherit; font-size: 11px; font-weight: 510;
+  cursor: pointer; transition: color .12s;
+}
+.linkbtn:hover { color: var(--text-2); }
+.stack { display: grid; gap: 14px; min-width: 0; }
+.row   { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+@media (max-width: 500px) { .row { grid-template-columns: 1fr; } }
+
+/* ── Form fields ── */
+.field { display: grid; gap: 6px; min-width: 0; }
+label, .q {
+  font-size: 13px; font-weight: 510; color: var(--text-2); letter-spacing: -0.13px;
+}
+.req  { color: var(--accent-lit); margin-left: 2px; }
+.hint { font-size: 12px; color: var(--text-4); font-weight: 400; }
+
+input[type=text] {
+  width: 100%; font: inherit; font-size: 14px;
+  font-feature-settings: "cv01","ss03";
+  color: var(--text-1); background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 10px 12px; min-width: 0;
+  transition: border-color .15s, box-shadow .15s;
+}
+input[type=text]::placeholder { color: var(--text-4); }
+input[type=text]:hover        { border-color: rgba(255,255,255,0.13); }
+input[type=text]:focus-visible {
+  outline: none; border-color: var(--accent-lit);
+  box-shadow: 0 0 0 3px rgba(113,112,255,0.16);
+}
+.field.invalid input[type=text] { border-color: var(--female); }
+
+input[type=search]                          { -webkit-appearance: none; }
+input[type=search]::-webkit-search-cancel-button { display: none; }
+
+.err { color: var(--female); font-size: 12px; display: none; font-weight: 400; }
+.invalid > .err { display: block; }
+
+/* ── Gender chips ── */
+.gender-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.g-chip { position: relative; }
+.g-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.g-chip label {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 6px; padding: 9px 20px;
+  font-size: 14px; font-weight: 510; color: var(--text-2);
+  transition: background .15s, border-color .15s, color .15s;
+}
+.g-chip label:hover { background: var(--surface-2); }
+.g-chip label .dot  { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.g-chip.male   label .dot { background: var(--male); }
+.g-chip.female label .dot { background: var(--female); }
+.g-chip.male   input:checked + label { border-color: rgba(113,112,255,.55); color: var(--male);   background: rgba(113,112,255,.1); }
+.g-chip.female input:checked + label { border-color: rgba(239,107,128,.55); color: var(--female); background: rgba(239,107,128,.1); }
+.g-chip input:focus-visible + label  { box-shadow: 0 0 0 2px var(--accent-lit); }
+.field.invalid .g-chip label { border-color: var(--female); }
+
+/* ── Rollcall (attendance) ── */
+.rollcall { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+@media (max-width: 440px) { .rollcall { grid-template-columns: 1fr; } }
+.rollcall input { position: absolute; opacity: 0; pointer-events: none; }
+.rollcall label {
+  display: grid; gap: 2px; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; background: rgba(255,255,255,0.03);
+  transition: background .15s, border-color .15s;
+}
+.rollcall label:hover { background: var(--surface-2); }
+.rollcall .big   { font-size: 17px; font-weight: 510; color: var(--text-1); letter-spacing: -0.24px; }
+.rollcall .small { font-size: 12px; color: var(--text-4); font-weight: 400; margin-top: 1px; }
+.rollcall input:focus-visible + label  { box-shadow: 0 0 0 2px var(--accent-lit); }
+.rollcall input:checked + label        { border-color: rgba(113,112,255,.4); background: rgba(113,112,255,.07); }
+.rollcall input[value="Yes"]:checked   + label .big { color: var(--yes); }
+.rollcall input[value="Maybe"]:checked + label .big { color: var(--maybe); }
+.rollcall input[value="No"]:checked    + label .big { color: var(--no); }
+.invalid .rollcall label { border-color: rgba(239,107,128,.5); }
+
+/* ── Honeypot ── */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ── Actions & buttons ── */
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+.btn-primary {
+  font: 510 14px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
+  letter-spacing: -0.13px; cursor: pointer;
+  border-radius: 6px; padding: 10px 20px; border: 0;
+  background: var(--accent); color: #fff;
+  transition: background .15s;
+}
+.btn-primary:hover        { background: var(--accent-hov); }
+.btn-primary:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.45); }
+.btn-primary[disabled]    { opacity: .45; cursor: progress; }
+
+.btn-ghost {
+  font: 510 14px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
+  letter-spacing: -0.13px; cursor: pointer;
+  border-radius: 6px; padding: 10px 20px;
+  border: 1px solid var(--border-s);
+  background: rgba(255,255,255,0.02); color: var(--text-2);
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn-ghost:hover        { background: var(--surface-2); color: var(--text-1); border-color: rgba(255,255,255,.13); }
+.btn-ghost:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.25); }
+
+.status { font-size: 13px; color: var(--text-3); }
+.status.bad { color: var(--female); }
+
+/* ── Thanks ── */
+.stamp {
+  display: inline-block; font-family: var(--f-mono);
+  font-size: 10px; font-weight: 510; letter-spacing: .14em; text-transform: uppercase;
+  border: 1.5px solid currentColor; border-radius: 4px;
+  padding: 4px 10px; transform: rotate(-3deg); width: max-content;
+}
+.thanks h2 { font-size: 24px; font-weight: 510; letter-spacing: -0.288px; }
+.thanks p  { font-size: 14px; color: var(--text-3); line-height: 1.65; }
+
+/* ── Register ── */
+.register {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 22px; display: grid; gap: 14px;
+}
+
+.reg-header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 16px; align-items: center; }
+.reg-header h2 { font-size: 18px; font-weight: 590; letter-spacing: -0.24px; color: var(--text-1); }
+
+.count-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 510;
+  padding: 3px 9px; border-radius: 9999px;
+  border: 1px solid var(--border-s);
+  white-space: nowrap; color: var(--text-4);
+  background: rgba(255,255,255,0.02);
+}
+.badge.male   { color: var(--male);   border-color: rgba(113,112,255,.3); background: rgba(113,112,255,.06); }
+.badge.female { color: var(--female); border-color: rgba(239,107,128,.3); background: rgba(239,107,128,.06); }
+
+/* ── Search ── */
+.search-box { position: relative; }
+.search-box svg {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  color: var(--text-4); pointer-events: none; flex: none;
+}
+.search-box input {
+  width: 100%; font: 400 14px/1.5 var(--f-sans); font-feature-settings: "cv01","ss03";
+  color: var(--text-1); background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 9px 12px 9px 36px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-box input::placeholder { color: var(--text-4); }
+.search-box input:focus-visible {
+  outline: none; border-color: var(--accent-lit);
+  box-shadow: 0 0 0 3px rgba(113,112,255,.16);
+}
+
+/* ── Filter chips ── */
+.filter-area { display: grid; gap: 8px; }
+.filter-row  { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.filter-label {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 510;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-4); margin-right: 2px;
+  white-space: nowrap;
+}
+.fchip { position: relative; }
+.fchip input { position: absolute; opacity: 0; pointer-events: none; }
+.fchip span {
+  display: inline-block; padding: 4px 12px; border-radius: 9999px;
+  border: 1px solid var(--border-s);
+  font-size: 12px; font-weight: 510; cursor: pointer;
+  background: rgba(255,255,255,0.02); color: var(--text-3);
+  transition: background .15s, color .15s, border-color .15s; white-space: nowrap;
+}
+.fchip span:hover { background: var(--surface-2); color: var(--text-2); }
+.fchip input:checked + span { background: rgba(255,255,255,.06); color: var(--text-1); border-color: rgba(255,255,255,.18); }
+.fchip.male   input:checked + span { background: rgba(113,112,255,.12); color: var(--male);   border-color: rgba(113,112,255,.45); }
+.fchip.female input:checked + span { background: rgba(239,107,128,.12); color: var(--female); border-color: rgba(239,107,128,.45); }
+.fchip input:focus-visible + span  { box-shadow: 0 0 0 2px var(--accent-lit); }
+
+/* ── Student cards ── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 10px; }
+
+.friend {
+  display: grid; min-width: 0; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.02);
+  transition: background .15s, border-color .15s;
+}
+.friend:hover  { background: var(--surface-2); border-color: rgba(255,255,255,.12); }
+.friend.male   { border-top: 2px solid rgba(113,112,255,.55); }
+.friend.female { border-top: 2px solid rgba(239,107,128,.55); }
+
+.friend .pic {
+  aspect-ratio: 1; width: 100%;
+  background: rgba(255,255,255,0.04) center/cover no-repeat;
+  display: grid; place-items: center;
+  font-size: 34px; font-weight: 510;
+  color: var(--text-4); position: relative; user-select: none;
+}
+.friend .pill-wrap { position: absolute; left: 8px; bottom: 8px; }
+.friend .info { padding: 10px 12px 12px; display: grid; gap: 4px; }
+.friend .nm   {
+  font-size: 13px; font-weight: 590; line-height: 1.3;
+  overflow-wrap: anywhere; color: var(--text-1); letter-spacing: -0.13px;
+}
+.friend .nick { color: var(--text-4); font-weight: 400; font-size: 12px; }
+.friend .meta { font-size: 12px; color: var(--text-4); line-height: 1.55; margin-top: 2px; }
+.friend .meta span { display: block; }
+
+.pill {
+  display: inline-block; font-size: 10px; font-weight: 510; letter-spacing: .02em;
+  padding: 2px 8px; border-radius: 9999px;
+  background: rgba(8,9,10,.75); border: 1px solid currentColor;
+  white-space: nowrap; backdrop-filter: blur(6px);
+}
+.pill.Yes   { color: var(--yes); }
+.pill.Maybe { color: var(--maybe); }
+.pill.No    { color: var(--no); }
+
+.empty { color: var(--text-4); font-size: 14px; grid-column: 1/-1; padding: 8px 0; }
+.ex-tag { font-family: var(--f-mono); font-size: 10px; color: var(--text-4); letter-spacing: .08em; text-transform: uppercase; padding: 0 12px 10px; }
+.no-results { grid-column: 1/-1; text-align: center; padding: 40px 16px; color: var(--text-4); }
+.no-results svg { opacity: .25; display: block; margin: 0 auto 12px; }
+.no-results p   { font-size: 13px; }
+
+footer.foot {
+  text-align: center; color: var(--text-4);
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em;
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <!-- Cover -->
+  <section class="cover" aria-labelledby="title">
+    <p class="eyebrow" id="batchLine"></p>
+    <h1 id="title"></h1>
+    <p class="lede" id="lede"></p>
+    <div class="stats" aria-live="polite">
+      <span class="s-yes"><b id="sYes">0</b>coming</span>
+      <span class="s-maybe"><b id="sMaybe">0</b>maybe</span>
+      <span class="s-male"><b id="sMale">0</b>male</span>
+      <span class="s-fem"><b id="sFem">0</b>female</span>
+    </div>
+  </section>
+
+  <div class="banner" id="demoBanner" hidden>
+    <strong>Preview mode.</strong> Answers aren't saved and the list shows examples. Fill in <code>SCRIPT_URL</code> and Cloudinary details in CONFIG to go live.
+  </div>
+
+  <!-- Form -->
+  <section class="card" id="formCard" aria-labelledby="formTitle">
+    <header>
+      <h2 id="formTitle">Answer the roll call</h2>
+      <p>Fill in your details — takes about a minute.</p>
+    </header>
+
+    <form id="rsvp" novalidate>
+
+      <!-- Photo + Name -->
+      <div class="idrow">
+        <div class="photo-pick">
+          <input type="file" id="photo" accept="image/*">
+          <label for="photo" class="photo-box" id="photoBox">
+            <span>Tap to add<br>your photo</span>
+          </label>
+          <button type="button" class="linkbtn" id="photoRemove" hidden>Remove</button>
+        </div>
+        <div class="stack">
+          <div class="field" id="fName">
+            <label for="fullName">Full name<span class="req">*</span></label>
+            <input type="text" id="fullName" autocomplete="name" maxlength="80" placeholder="Your full name">
+            <span class="err">Please write your name.</span>
+          </div>
+          <div class="field">
+            <label for="nickname">School nickname <span class="hint">(optional)</span></label>
+            <input type="text" id="nickname" maxlength="40" placeholder="What everyone called you">
+          </div>
+        </div>
+      </div>
+
+      <!-- Gender -->
+      <div class="field" id="fGender">
+        <span class="q">Gender<span class="req">*</span></span>
+        <div class="gender-row" role="radiogroup" aria-label="Gender">
+          <div class="g-chip male">
+            <input type="radio" name="gender" id="g-male" value="Male">
+            <label for="g-male"><span class="dot"></span>Male</label>
+          </div>
+          <div class="g-chip female">
+            <input type="radio" name="gender" id="g-female" value="Female">
+            <label for="g-female"><span class="dot"></span>Female</label>
+          </div>
+        </div>
+        <span class="err">Please select your gender.</span>
+      </div>
+
+      <!-- Location + Profession -->
+      <div class="row">
+        <div class="field" id="fLoc">
+          <label for="location">Where do you live now?<span class="req">*</span></label>
+          <input type="text" id="location" maxlength="60" placeholder="City, Country">
+          <span class="err">Please add your city.</span>
+        </div>
+        <div class="field">
+          <label for="profession">What do you do now? <span class="hint">(optional)</span></label>
+          <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
+        </div>
+      </div>
+
+      <!-- Attending -->
+      <div class="field" id="fAtt">
+        <span class="q" id="attQ">Will you join the reunion?<span class="req">*</span></span>
+        <div class="rollcall" role="radiogroup" aria-labelledby="attQ">
+          <input type="radio" name="attending" id="att-yes" value="Yes">
+          <label for="att-yes"><span class="big">Present!</span><span class="small">Count me in</span></label>
+          <input type="radio" name="attending" id="att-maybe" value="Maybe">
+          <label for="att-maybe"><span class="big">Maybe</span><span class="small">Depends on date</span></label>
+          <input type="radio" name="attending" id="att-no" value="No">
+          <label for="att-no"><span class="big">Absent</span><span class="small">Not this time</span></label>
+        </div>
+        <span class="err">Pick one so we can plan numbers.</span>
+      </div>
+
+      <!-- Honeypot -->
+      <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" id="submitBtn">Submit my answer</button>
+        <span class="status" id="status" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </section>
+
+  <!-- Thanks -->
+  <section class="card thanks" id="thanksCard" hidden aria-live="polite">
+    <span class="stamp" id="stampText"></span>
+    <h2 id="thanksTitle"></h2>
+    <p id="thanksBody"></p>
+    <div class="actions">
+      <button type="button" class="btn-primary" id="copyLink">Copy link to share</button>
+      <button type="button" class="btn-ghost"   id="editAgain">Change my answer</button>
+      <span class="status" id="copyStatus"></span>
+    </div>
+  </section>
+
+  <!-- Class Register -->
+  <section class="register" aria-labelledby="regTitle">
+
+    <div class="reg-header">
+      <h2 id="regTitle">Class Register</h2>
+      <div class="count-badges">
+        <span class="badge total"  id="badgeTotal">0 total</span>
+        <span class="badge male"   id="badgeMale">0 male</span>
+        <span class="badge female" id="badgeFem">0 female</span>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="Search by name, city or profession…" aria-label="Search students">
+    </div>
+
+    <div class="filter-area">
+      <div class="filter-row" role="radiogroup" aria-label="Filter by attendance">
+        <span class="filter-label">Status</span>
+        <label class="fchip"><input type="radio" name="fltAtt" value="all" checked><span>All</span></label>
+        <label class="fchip"><input type="radio" name="fltAtt" value="Yes"><span>Coming</span></label>
+        <label class="fchip"><input type="radio" name="fltAtt" value="Maybe"><span>Maybe</span></label>
+        <label class="fchip"><input type="radio" name="fltAtt" value="No"><span>Absent</span></label>
+      </div>
+      <div class="filter-row" role="radiogroup" aria-label="Filter by gender">
+        <span class="filter-label">Gender</span>
+        <label class="fchip"><input type="radio" name="fltGen" value="all" checked><span>All</span></label>
+        <label class="fchip male"><input type="radio" name="fltGen" value="Male"><span>Male</span></label>
+        <label class="fchip female"><input type="radio" name="fltGen" value="Female"><span>Female</span></label>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"><p class="empty">Loading…</p></div>
+
+  </section>
+
+  <footer class="foot" id="footNote"></footer>
+</main>
+
+<script>
+/* ============ EDIT THESE ============ */
+const CONFIG = {
+  SCRIPT_URL:                "",
+  CLOUDINARY_CLOUD_NAME:     "",
+  CLOUDINARY_UPLOAD_PRESET:  "",
+  SCHOOL:     "Our School",
+  BATCH_LINE: "Batch of 20XX · Roll call",
+  TITLE_HTML: 'Our school friends <mark>reunion</mark>',
+  LEDE:       "It's been years since the last bell. Tell us where you are now and whether you can make it.",
+  FOOTER:     "Organised by your old classmates"
+};
+/* ==================================== */
+
+const $ = (id) => document.getElementById(id);
+const LIVE        = !!CONFIG.SCRIPT_URL;
+const CLOUD_READY = !!(CONFIG.CLOUDINARY_CLOUD_NAME && CONFIG.CLOUDINARY_UPLOAD_PRESET);
+
+const EXAMPLES = [
+  { name:"Rahim Uddin",   nickname:"Captain", gender:"Male",   location:"Dhaka, Bangladesh",     profession:"Bank Officer",  attending:"Yes"   },
+  { name:"Nusrat Jahan",  nickname:"",        gender:"Female", location:"Chittagong, Bangladesh", profession:"Doctor",        attending:"Maybe" },
+  { name:"Tanvir Ahmed",  nickname:"Tanu",    gender:"Male",   location:"Kuala Lumpur, Malaysia", profession:"Engineer",      attending:"Yes"   },
+  { name:"Farhana Akter", nickname:"Fari",    gender:"Female", location:"Dhaka, Bangladesh",      profession:"Teacher",       attending:"No"    },
+  { name:"Kabir Hossain", nickname:"",        gender:"Male",   location:"London, UK",             profession:"Accountant",    attending:"Maybe" },
+  { name:"Rima Begum",    nickname:"Rimi",    gender:"Female", location:"Toronto, Canada",        profession:"Nurse",         attending:"Yes"   }
+];
+let entries  = [];
+let photoData = "";
+
+$("batchLine").textContent = CONFIG.BATCH_LINE;
+$("title").innerHTML       = CONFIG.TITLE_HTML;
+$("lede").textContent      = CONFIG.LEDE;
+$("footNote").textContent  = CONFIG.FOOTER;
+document.title             = CONFIG.SCHOOL + " Reunion";
+$("demoBanner").hidden     = LIVE;
+
+const KEY = "reunion-rsvp-v3";
+function readSaved()   { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch { return null; } }
+function writeSaved(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} }
+const saved    = readSaved() || {};
+const clientId = saved.clientId || (crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(16).slice(2));
+if (saved.fullName) {
+  $("fullName").value   = saved.fullName;
+  $("nickname").value   = saved.nickname   || "";
+  $("location").value   = saved.location   || "";
+  $("profession").value = saved.profession || "";
+  const g = document.querySelector(`input[name=gender][value="${saved.gender}"]`);
+  const r = document.querySelector(`input[name=attending][value="${saved.attending}"]`);
+  if (g) g.checked = true;
+  if (r) r.checked = true;
+}
+
+// ── Photo resize ──
+$("photo").addEventListener("change", async () => {
+  const f = $("photo").files[0];
+  if (!f) return;
+  if (!f.type.startsWith("image/")) { setStatus("Please choose an image file.", true); return; }
+  try {
+    const url = URL.createObjectURL(f);
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const s = Math.min(1, 600 / Math.max(img.width, img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    photoData = c.toDataURL("image/jpeg", 0.82);
+    URL.revokeObjectURL(url);
+    $("photoBox").style.backgroundImage = `url("${photoData}")`;
+    $("photoBox").classList.add("has");
+    const sp = $("photoBox").querySelector("span"); if (sp) sp.hidden = true;
+    $("photoRemove").hidden = false;
+    setStatus("");
+  } catch { setStatus("Couldn't read that photo. Try another.", true); }
+});
+$("photoRemove").addEventListener("click", () => {
+  photoData = ""; $("photo").value = "";
+  $("photoBox").style.backgroundImage = ""; $("photoBox").classList.remove("has");
+  const sp = $("photoBox").querySelector("span"); if (sp) sp.hidden = false;
+  $("photoRemove").hidden = true;
+});
+
+// ── Cloudinary upload ──
+function dataUrlToBlob(dataUrl) {
+  const [hdr, data] = dataUrl.split(",");
+  const mime = hdr.match(/:(.*?);/)[1];
+  const bytes = atob(data); const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+async function uploadToCloudinary(dataUrl) {
+  const fd = new FormData();
+  fd.append("file", dataUrlToBlob(dataUrl));
+  fd.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_CLOUD_NAME}/image/upload`, { method:"POST", body:fd });
+  if (!res.ok) throw new Error("Photo upload failed (" + res.status + ")");
+  return (await res.json()).secure_url;
+}
+
+// ── Collect & Validate ──
+function collect() {
+  const att = document.querySelector("input[name=attending]:checked");
+  const gen = document.querySelector("input[name=gender]:checked");
+  return {
+    clientId,
+    fullName:   $("fullName").value.trim(),
+    nickname:   $("nickname").value.trim(),
+    gender:     gen ? gen.value : "",
+    location:   $("location").value.trim(),
+    profession: $("profession").value.trim(),
+    attending:  att ? att.value : "",
+    website:    $("website").value
+  };
+}
+function validate(d) {
+  let first = null;
+  const mark = (el, bad) => { el.classList.toggle("invalid", bad); if (bad && !first) first = el; };
+  mark($("fName"),   d.fullName.length < 2);
+  mark($("fGender"), !d.gender);
+  mark($("fLoc"),    d.location.length < 2);
+  mark($("fAtt"),    !d.attending);
+  if (first) { first.scrollIntoView({ behavior:"smooth", block:"center" }); const i = first.querySelector("input"); if (i) i.focus({ preventScroll:true }); }
+  return !first;
+}
+document.querySelectorAll("#rsvp input[type=text]").forEach((el) =>
+  el.addEventListener("input", () => { const f = el.closest(".field"); if (f) f.classList.remove("invalid"); })
+);
+document.querySelectorAll("input[name=attending], input[name=gender]").forEach((el) =>
+  el.addEventListener("change", () => { const f = el.closest(".field"); if (f) f.classList.remove("invalid"); })
+);
+
+// ── Submit ──
+$("rsvp").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const d = collect();
+  if (!validate(d)) { setStatus("Please fill in the highlighted fields.", true); return; }
+  const btn = $("submitBtn"); btn.disabled = true;
+  try {
+    let photoUrl = "";
+    if (LIVE) {
+      if (photoData && CLOUD_READY) { setStatus("Uploading photo…"); photoUrl = await uploadToCloudinary(photoData); }
+      setStatus("Saving…");
+      const res = await fetch(CONFIG.SCRIPT_URL, { method:"POST", body:JSON.stringify({ ...d, photo:photoUrl }) });
+      const out = await res.json();
+      if (!out.ok) throw new Error(out.error);
+    } else { await new Promise((r) => setTimeout(r, 600)); }
+    const { website, ...keep } = d; writeSaved(keep);
+    showThanks(d); loadList();
+  } catch { setStatus("Couldn't save. Check your connection and try again.", true); }
+  finally { btn.disabled = false; }
+});
+function setStatus(t, bad) { const s = $("status"); s.textContent = t; s.classList.toggle("bad", !!bad); }
+
+// ── Thanks ──
+function showThanks(d) {
+  setStatus("");
+  const first = d.nickname || d.fullName.split(" ")[0];
+  const t = {
+    Yes:   ["Marked present", `Thanks, ${first}! See you there.`,          "yes"],
+    Maybe: ["Marked maybe",   `Thanks, ${first}. We'll keep you posted.`,  "maybe"],
+    No:    ["Marked absent",  `Thanks, ${first}. We'll miss you this time.`,"no"]
+  }[d.attending];
+  $("stampText").textContent   = t[0]; $("stampText").style.color = `var(--${t[2]})`;
+  $("thanksTitle").textContent = t[1];
+  $("thanksBody").textContent  = LIVE
+    ? "Your answer is saved. Share this page with classmates you're still in touch with."
+    : "Preview mode — nothing was saved yet.";
+  $("formCard").hidden = true; $("thanksCard").hidden = false;
+  $("thanksCard").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+$("editAgain").addEventListener("click", () => { $("thanksCard").hidden = true; $("formCard").hidden = false; });
+$("copyLink").addEventListener("click", async () => {
+  const url = location.href.split("#")[0];
+  try { await navigator.clipboard.writeText(url); $("copyStatus").textContent = "Link copied!"; }
+  catch { $("copyStatus").textContent = url; }
+});
+
+// ── Load & Render ──
+async function loadList() {
+  if (!LIVE) { entries = EXAMPLES.map((x) => ({ ...x, example:true })); render(); return; }
+  try {
+    const out = await (await fetch(CONFIG.SCRIPT_URL + "?t=" + Date.now())).json();
+    entries = out.ok ? out.entries : []; render();
+  } catch { $("grid").innerHTML = '<p class="empty">Couldn\'t load the list. Refresh to try again.</p>'; }
+}
+
+function render() {
+  const fltAtt = document.querySelector("input[name=fltAtt]:checked").value;
+  const fltGen = document.querySelector("input[name=fltGen]:checked").value;
+  const q      = $("searchInput").value.trim().toLowerCase();
+
+  const total = entries.length;
+  const males = entries.filter((x) => x.gender === "Male").length;
+  const fems  = entries.filter((x) => x.gender === "Female").length;
+  $("sYes").textContent     = entries.filter((x) => x.attending === "Yes").length;
+  $("sMaybe").textContent   = entries.filter((x) => x.attending === "Maybe").length;
+  $("sMale").textContent    = males;
+  $("sFem").textContent     = fems;
+  $("badgeTotal").textContent = total + " total";
+  $("badgeMale").textContent  = males + " male";
+  $("badgeFem").textContent   = fems  + " female";
+
+  const list = entries.filter((x) => {
+    if (fltAtt !== "all" && x.attending !== fltAtt) return false;
+    if (fltGen !== "all" && x.gender    !== fltGen) return false;
+    if (q) {
+      const hay = [x.name, x.nickname, x.location, x.profession].join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const g = $("grid"); g.textContent = "";
+  if (!list.length) {
+    g.innerHTML = `<div class="no-results"><svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>${q ? 'No students match "' + q + '".' : entries.length ? "Nobody in this group yet." : "No answers yet. Be the first!"}</p></div>`;
+    return;
+  }
+
+  const label = { Yes:"Coming", Maybe:"Maybe", No:"Absent" };
+  list.forEach((x) => {
+    const card = document.createElement("article");
+    card.className = "friend " + (x.gender || "");
+
+    const pic = document.createElement("div"); pic.className = "pic";
+    if (x.photo) {
+      pic.style.backgroundImage = `url("${x.photo}")`;
+    } else {
+      pic.textContent = (x.nickname || x.name || "?").trim().charAt(0).toUpperCase();
+    }
+    const pw = document.createElement("div"); pw.className = "pill-wrap";
+    const pl = document.createElement("span"); pl.className = "pill " + x.attending;
+    pl.textContent = label[x.attending] || x.attending; pw.append(pl); pic.append(pw);
+
+    const info = document.createElement("div"); info.className = "info";
+    const nm   = document.createElement("div"); nm.className = "nm"; nm.textContent = x.name;
+    if (x.nickname) { const nk = document.createElement("span"); nk.className = "nick"; nk.textContent = " “" + x.nickname + "”"; nm.append(nk); }
+    info.append(nm);
+
+    const meta = document.createElement("div"); meta.className = "meta";
+    if (x.location)   { const s = document.createElement("span"); s.textContent = x.location;   meta.append(s); }
+    if (x.profession) { const s = document.createElement("span"); s.textContent = x.profession; meta.append(s); }
+    info.append(meta);
+
+    card.append(pic, info);
+    if (x.example) { const ex = document.createElement("div"); ex.className = "ex-tag"; ex.textContent = "Example"; card.append(ex); }
+    g.append(card);
+  });
+}
+
+document.querySelectorAll("input[name=fltAtt], input[name=fltGen]").forEach((r) => r.addEventListener("change", render));
+$("searchInput").addEventListener("input", render);
+loadList();
+</script>
+</body>
+</html>
