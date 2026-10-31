@@ -470,6 +470,22 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 .mobile-search { display: block; }
 @media (min-width: 900px) { .mobile-search { display: none; } }
 
+/* ── Toast popup ── */
+.toast {
+  position: fixed; bottom: calc(var(--bot-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
+  z-index: 9999; background: #111827; color: #fff;
+  border-radius: 10px; padding: 12px 20px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 510; letter-spacing: -0.13px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.toast-icon { font-size: 18px; flex-shrink: 0; }
+@media (min-width: 768px) { .toast { bottom: 24px; } }
+
 /* ─────────────────────────────────────
    STUDENT CARDS (shared)
 ───────────────────────────────────── */
@@ -552,6 +568,12 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 </style>
 </head>
 <body>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast" role="alert" aria-live="polite">
+  <span class="toast-icon" id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
 
 <!-- ── Top navigation ── -->
 <header class="topnav">
@@ -1030,6 +1052,19 @@ updateAuthUI();
 
 function signOut() {
   authState = null; writeAuth(null); updateAuthUI(); showPage("home");
+  showToast("✌️", "Signed out successfully.");
+}
+
+// ── Toast ──
+let toastTimer;
+function showToast(icon, msg, duration) {
+  duration = duration || 3500;
+  $("toastIcon").textContent = icon;
+  $("toastMsg").textContent  = msg;
+  const t = $("toast");
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), duration);
 }
 
 // ── Restore saved state ──
@@ -1201,6 +1236,7 @@ $("signupForm").addEventListener("submit", async (e) => {
     else {
       authState = { username: out.username, clientId: out.clientId || clientId };
       writeAuth(authState); updateAuthUI();
+      showToast("🎉", "Account created! Welcome, @" + out.username);
       showPage("rollcall");
     }
   } catch { $("suStatus").textContent = "Network error. Try again."; $("suStatus").classList.add("bad"); }
@@ -1233,6 +1269,7 @@ $("signinForm").addEventListener("submit", async (e) => {
     else {
       authState = { username: out.username, clientId: out.clientId };
       writeAuth(authState); updateAuthUI();
+      showToast("👋", "Welcome back, @" + out.username + "!");
       showPage("rollcall");
     }
   } catch { $("siStatus").textContent = "Network error. Try again."; $("siStatus").classList.add("bad"); }
