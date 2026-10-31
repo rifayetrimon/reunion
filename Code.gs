@@ -189,15 +189,17 @@ function doGet(e) {
       for (var i = 1; i < values.length; i++) {
         var r = values[i];
         if (String(r[cidCol]) === clientId) {
+          var c10 = String(r[10] || "");
+          var rNew = c10.length > 0 && c10.indexOf("https://") < 0;
           return respond_({ ok: true, entry: {
             fullName:   String(r[2] || ""),
             nickname:   String(r[3] || ""),
             gender:     String(r[4] || ""),
             location:   String(r[5] || ""),
-            mobile:     hasMobile ? String(r[6] || "") : "",
-            profession: hasMobile ? String(r[7] || "") : String(r[6] || ""),
-            attending:  hasMobile ? String(r[8] || "") : String(r[7] || ""),
-            photo:      hasMobile ? String(r[9] || "") : String(r[8] || "")
+            mobile:     rNew ? String(r[6] || "") : "",
+            profession: rNew ? String(r[7] || "") : String(r[6] || ""),
+            attending:  rNew ? String(r[8] || "") : String(r[7] || ""),
+            photo:      rNew ? String(r[9] || "") : String(r[8] || "")
           }});
         }
       }
@@ -209,15 +211,19 @@ function doGet(e) {
     for (var j = 1; j < values.length; j++) {
       var row = values[j];
       if (!row[2]) continue;
+      // Per-row format: old rows have clientId at col 9 (col 10 is empty/absent)
+      // New rows have clientId at col 10 (non-empty, not a URL)
+      var col10 = String(row[10] || "");
+      var rowNew = col10.length > 0 && col10.indexOf("https://") < 0;
       entries.push({
         name:       String(row[2]),
         nickname:   String(row[3] || ""),
         gender:     String(row[4] || ""),
         location:   String(row[5] || ""),
-        mobile:     hasMobile ? String(row[6] || "") : "",
-        profession: hasMobile ? String(row[7] || "") : String(row[6] || ""),
-        attending:  hasMobile ? String(row[8] || "") : String(row[7] || ""),
-        photo:      hasMobile ? String(row[9] || "") : String(row[8] || "")
+        mobile:     rowNew ? String(row[6] || "") : "",
+        profession: rowNew ? String(row[7] || "") : String(row[6] || ""),
+        attending:  rowNew ? String(row[8] || "") : String(row[7] || ""),
+        photo:      rowNew ? String(row[9] || "") : String(row[8] || "")
       });
     }
     return respond_({ ok: true, entries: entries });
