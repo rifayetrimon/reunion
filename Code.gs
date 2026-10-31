@@ -191,6 +191,7 @@ function doGet(e) {
         nickname:   String(row[3] || ""),
         gender:     String(row[4] || ""),
         location:   String(row[5] || ""),
+        mobile:     String(row[6] || ""),
         profession: String(row[7] || ""),
         attending:  String(row[8] || ""),
         photo:      String(row[9] || "")
