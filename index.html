@@ -66,11 +66,11 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
   font-size: 14px; font-weight: 590; color: var(--text-1);
   letter-spacing: -0.13px; white-space: nowrap; margin-right: auto;
 }
-.nav-brand span { color: var(--accent-lit); }
+.nav-brand span { color: var(--accent); }
 
 .nav-tabs {
   display: flex; gap: 2px;
-  margin: 0 16px;
+  margin: 0 12px;
 }
 @media (max-width: 767px) { .nav-tabs { display: none; } }
 
@@ -83,17 +83,24 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 .nav-tab:hover  { background: var(--surface-2); color: var(--text-2); }
 .nav-tab.active { background: var(--surface-2); color: var(--text-1); font-weight: 590; }
 
-.nav-cta { display: none; }
-@media (min-width: 900px) {
-  .nav-cta {
-    display: inline-flex; align-items: center;
-    background: var(--accent); color: #fff; border: none;
-    border-radius: 6px; padding: 7px 16px;
-    font-size: 13px; font-weight: 510; letter-spacing: -0.13px;
-    white-space: nowrap; transition: background .15s, box-shadow .15s;
-    flex-shrink: 0; box-shadow: 0 1px 3px rgba(94,106,210,.35);
-  }
-  .nav-cta:hover { background: var(--accent-hov); box-shadow: 0 2px 6px rgba(94,106,210,.45); }
+/* Desktop auth area */
+.nav-auth { display: none; gap: 6px; align-items: center; flex-shrink: 0; }
+@media (min-width: 768px) { .nav-auth { display: flex; } }
+
+.nav-cta {
+  display: inline-flex; align-items: center;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 6px; padding: 7px 16px;
+  font-size: 13px; font-weight: 510; letter-spacing: -0.13px;
+  white-space: nowrap; transition: background .15s, box-shadow .15s;
+  flex-shrink: 0; box-shadow: 0 1px 3px rgba(94,106,210,.35); cursor: pointer;
+}
+.nav-cta:hover { background: var(--accent-hov); box-shadow: 0 2px 6px rgba(94,106,210,.45); }
+
+.nav-username {
+  font-size: 13px; font-weight: 590; color: var(--text-1);
+  background: var(--surface-2); border-radius: 6px; padding: 6px 12px;
+  border: 1px solid var(--border); letter-spacing: -0.13px;
 }
 
 /* ── Mobile bottom nav ── */
@@ -517,6 +524,29 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 .banner strong { color: #92400e; font-weight: 590; }
 .banner code { font-family: var(--f-mono); font-size: 11px; background: rgba(0,0,0,.06); border-radius: 3px; padding: 1px 5px; }
 
+/* ── Auth pages ── */
+.auth-wrap { max-width: 420px; margin: 0 auto; padding: 40px 16px 48px; display: grid; gap: 12px; }
+@media (max-width: 767px) { .auth-wrap { padding-top: 24px; } }
+
+.auth-toggle { text-align: center; font-size: 13px; color: var(--text-3); }
+.auth-toggle button { background: none; border: none; color: var(--accent); font: inherit; font-weight: 510; cursor: pointer; padding: 0; }
+.auth-toggle button:hover { color: var(--accent-hov); }
+
+.account-card {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px 22px; display: grid; gap: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.account-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  display: grid; place-items: center;
+  font-size: 26px; font-weight: 700; color: #fff; user-select: none;
+}
+.account-info h3 { font-size: 18px; font-weight: 590; letter-spacing: -0.2px; color: var(--text-1); }
+.account-info p  { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+.account-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
 footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em; padding-top: 12px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -531,7 +561,16 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
     <button class="nav-tab"        data-page="rollcall" role="tab">Roll Call</button>
     <button class="nav-tab"        data-page="register" role="tab">Register</button>
   </nav>
-  <button class="nav-cta" onclick="showPage('rollcall')">Answer roll call →</button>
+  <!-- logged-out -->
+  <div class="nav-auth" id="navAnon">
+    <button class="nav-tab" onclick="showPage('signin')">Sign in</button>
+    <button class="nav-cta" onclick="showPage('signup')">Sign up</button>
+  </div>
+  <!-- logged-in -->
+  <div class="nav-auth" id="navUser" hidden>
+    <span class="nav-username" id="navUsername"></span>
+    <button class="nav-tab" onclick="signOut()">Sign out</button>
+  </div>
 </header>
 
 <!-- ── Mobile bottom nav ── -->
@@ -547,6 +586,10 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   <button class="bnav-tab" data-page="register">
     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     <span>Register</span>
+  </button>
+  <button class="bnav-tab" data-page="account">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <span id="bnavAccLabel">Account</span>
   </button>
 </nav>
 
@@ -810,6 +853,110 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   </div>
 </section>
 
+<!-- ════════════════════════════════
+     PAGE: SIGN UP
+════════════════════════════════ -->
+<section id="page-signup" class="page" role="tabpanel">
+  <div class="auth-wrap">
+    <section class="card">
+      <header>
+        <h2>Create account</h2>
+        <p>Pick a username and password to save your details.</p>
+      </header>
+      <form id="signupForm" novalidate>
+        <div class="field" id="fSuUser">
+          <label for="suUsername">Username<span class="req">*</span></label>
+          <input type="text" id="suUsername" maxlength="20" placeholder="letters, numbers, underscore" autocomplete="username">
+          <span class="err" id="suUserErr">At least 3 characters, letters/numbers/underscore only.</span>
+        </div>
+        <div class="field" id="fSuPw">
+          <label for="suPassword">Password<span class="req">*</span></label>
+          <input type="text" id="suPassword" maxlength="60" placeholder="At least 6 characters" autocomplete="new-password" style="letter-spacing:.1em">
+          <span class="err" id="suPwErr">At least 6 characters.</span>
+        </div>
+        <div class="field" id="fSuPw2">
+          <label for="suPassword2">Confirm password<span class="req">*</span></label>
+          <input type="text" id="suPassword2" maxlength="60" placeholder="Same password again" autocomplete="new-password" style="letter-spacing:.1em">
+          <span class="err" id="suPw2Err">Passwords do not match.</span>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="suBtn">Create account</button>
+          <span class="status" id="suStatus" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+    <p class="auth-toggle">Already have an account? <button onclick="showPage('signin')">Sign in</button></p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     PAGE: SIGN IN
+════════════════════════════════ -->
+<section id="page-signin" class="page" role="tabpanel">
+  <div class="auth-wrap">
+    <section class="card">
+      <header>
+        <h2>Sign in</h2>
+        <p>Sign in to view or update your details.</p>
+      </header>
+      <form id="signinForm" novalidate>
+        <div class="field" id="fSiUser">
+          <label for="siUsername">Username<span class="req">*</span></label>
+          <input type="text" id="siUsername" maxlength="20" placeholder="Your username" autocomplete="username">
+          <span class="err">Please enter your username.</span>
+        </div>
+        <div class="field" id="fSiPw">
+          <label for="siPassword">Password<span class="req">*</span></label>
+          <input type="text" id="siPassword" maxlength="60" placeholder="Your password" autocomplete="current-password" style="letter-spacing:.1em">
+          <span class="err">Please enter your password.</span>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="siBtn">Sign in</button>
+          <span class="status" id="siStatus" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+    <p class="auth-toggle">No account yet? <button onclick="showPage('signup')">Sign up</button></p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     PAGE: ACCOUNT
+════════════════════════════════ -->
+<section id="page-account" class="page" role="tabpanel">
+  <div class="auth-wrap">
+
+    <!-- Logged out state -->
+    <div id="acctLoggedOut">
+      <section class="card">
+        <header><h2>Account</h2><p>Sign in to manage your reunion details from any device.</p></header>
+        <div class="actions">
+          <button class="btn-primary" onclick="showPage('signin')">Sign in</button>
+          <button class="btn-ghost"   onclick="showPage('signup')">Create account</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Logged in state -->
+    <div id="acctLoggedIn" hidden>
+      <section class="account-card">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="account-avatar" id="acctAvatar"></div>
+          <div class="account-info">
+            <h3 id="acctUsername"></h3>
+            <p>PSC Batch 2011</p>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button class="btn-primary" onclick="showPage('rollcall')">Edit my details</button>
+          <button class="btn-ghost"   onclick="signOut()">Sign out</button>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</section>
+
 <script>
 /* ============ EDIT THESE ============ */
 const CONFIG = {
@@ -854,15 +1001,46 @@ document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) =>
 // hash routing on load
 (function() {
   const h = location.hash.slice(1);
-  if (["home","rollcall","register"].includes(h)) showPage(h);
+  if (["home","rollcall","register","signup","signin","account"].includes(h)) showPage(h);
 })();
+
+// ── Auth state ──
+const AUTH_KEY = "reunion-auth-v1";
+function readAuth()   { try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch { return null; } }
+function writeAuth(v) { try { if (v) localStorage.setItem(AUTH_KEY, JSON.stringify(v)); else localStorage.removeItem(AUTH_KEY); } catch {} }
+
+let authState = readAuth(); // { username, clientId } or null
+
+function updateAuthUI() {
+  const loggedIn = !!(authState && authState.username);
+  $("navAnon").hidden  = loggedIn;
+  $("navUser").hidden  = !loggedIn;
+  if (loggedIn) {
+    $("navUsername").textContent  = "@" + authState.username;
+    $("acctAvatar").textContent   = authState.username.charAt(0).toUpperCase();
+    $("acctUsername").textContent = "@" + authState.username;
+    $("bnavAccLabel").textContent = authState.username;
+  } else {
+    $("bnavAccLabel").textContent = "Account";
+  }
+  $("acctLoggedOut").hidden = loggedIn;
+  $("acctLoggedIn").hidden  = !loggedIn;
+}
+updateAuthUI();
+
+function signOut() {
+  authState = null; writeAuth(null); updateAuthUI(); showPage("home");
+}
 
 // ── Restore saved state ──
 const KEY = "reunion-rsvp-v3";
 function readSaved()   { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch { return null; } }
 function writeSaved(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} }
-const saved    = readSaved() || {};
-const clientId = saved.clientId || (crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(16).slice(2));
+const saved = readSaved() || {};
+// If logged in, use the account's clientId; otherwise fall back to device clientId
+const clientId = (authState && authState.clientId) ||
+                 saved.clientId ||
+                 (crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(16).slice(2));
 if (saved.fullName) {
   $("fullName").value   = saved.fullName;
   $("nickname").value   = saved.nickname   || "";
@@ -984,6 +1162,83 @@ $("copyLink").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(url); $("copyStatus").textContent = "Link copied!"; }
   catch { $("copyStatus").textContent = url; }
 });
+// ── Sign Up ──
+$("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = $("suUsername").value.trim().toLowerCase();
+  const password = $("suPassword").value;
+  const password2 = $("suPassword2").value;
+  let valid = true;
+
+  const markSu = (id, bad, msg) => {
+    $("f" + id).classList.toggle("invalid", bad);
+    if (bad && msg) $(id.replace("Su","su") + "Err").textContent = msg;
+    if (bad) valid = false;
+  };
+
+  if (!username || username.length < 3 || !/^[a-z0-9_]+$/.test(username))
+    markSu("SuUser", true, "3–20 chars, letters/numbers/underscore only.");
+  else markSu("SuUser", false);
+
+  if (!password || password.length < 6) markSu("SuPw", true, "At least 6 characters.");
+  else markSu("SuPw", false);
+
+  if (password !== password2) markSu("SuPw2", true, "Passwords do not match.");
+  else markSu("SuPw2", false);
+
+  if (!valid) return;
+  if (!LIVE) { $("suStatus").textContent = "Preview mode — connect SCRIPT_URL to enable accounts."; return; }
+
+  const btn = $("suBtn"); btn.disabled = true;
+  $("suStatus").textContent = "Checking…";
+  try {
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action:"signup", username, password, clientId })
+    });
+    const out = await res.json();
+    if (!out.ok) { $("suStatus").textContent = out.error; $("suStatus").classList.add("bad"); }
+    else {
+      authState = { username: out.username, clientId: out.clientId || clientId };
+      writeAuth(authState); updateAuthUI();
+      showPage("rollcall");
+    }
+  } catch { $("suStatus").textContent = "Network error. Try again."; $("suStatus").classList.add("bad"); }
+  finally { btn.disabled = false; }
+});
+
+// ── Sign In ──
+$("signinForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = $("siUsername").value.trim().toLowerCase();
+  const password = $("siPassword").value;
+  let valid = true;
+
+  const markSi = (id, bad) => { $(id).classList.toggle("invalid", bad); if (bad) valid = false; };
+  markSi("fSiUser", !username);
+  markSi("fSiPw",   !password);
+  if (!valid) return;
+  if (!LIVE) { $("siStatus").textContent = "Preview mode — connect SCRIPT_URL to enable accounts."; return; }
+
+  const btn = $("siBtn"); btn.disabled = true;
+  $("siStatus").textContent = "Signing in…";
+  $("siStatus").classList.remove("bad");
+  try {
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action:"signin", username, password })
+    });
+    const out = await res.json();
+    if (!out.ok) { $("siStatus").textContent = out.error; $("siStatus").classList.add("bad"); }
+    else {
+      authState = { username: out.username, clientId: out.clientId };
+      writeAuth(authState); updateAuthUI();
+      showPage("rollcall");
+    }
+  } catch { $("siStatus").textContent = "Network error. Try again."; $("siStatus").classList.add("bad"); }
+  finally { btn.disabled = false; }
+});
+
 async function shareLink() {
   const url = location.origin + location.pathname;
   const text = "Answer the PSC Batch 2011 reunion roll call: " + url;
