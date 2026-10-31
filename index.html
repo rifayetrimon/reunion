@@ -622,7 +622,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   <div class="wrap">
 
     <div class="banner" id="demoBanner" hidden>
-      <strong>Preview mode.</strong> Answers aren't saved yet. Fill in <code>SCRIPT_URL</code> and Cloudinary details in CONFIG to go live.
+      <strong>Preview mode.</strong> Data won't be saved until you add your <code>GITHUB_TOKEN</code> to CONFIG.
     </div>
 
     <div class="hero">
@@ -982,9 +982,12 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 <script>
 /* ============ EDIT THESE ============ */
 const CONFIG = {
-  SCRIPT_URL:                "",
-  CLOUDINARY_CLOUD_NAME:     "hrjdqnxt",
-  CLOUDINARY_UPLOAD_PRESET:  "reunion_uploads",
+  GITHUB_TOKEN:  "",              // fine-grained PAT, contents:write on this repo only
+  GITHUB_OWNER:  "rifayetrimon",
+  GITHUB_REPO:   "reunion",
+  GITHUB_BRANCH: "main",
+  CLOUDINARY_CLOUD_NAME:    "hrjdqnxt",
+  CLOUDINARY_UPLOAD_PRESET: "reunion_uploads",
   SCHOOL:     "PSC Batch 2011",
   BATCH_LINE: "PSC · Batch of 2011 · Roll call",
   TITLE_HTML: 'PSC Batch 2011 <mark>Reunion</mark>',
@@ -994,8 +997,36 @@ const CONFIG = {
 /* ==================================== */
 
 const $ = (id) => document.getElementById(id);
-const LIVE        = !!CONFIG.SCRIPT_URL;
+const LIVE        = !!CONFIG.GITHUB_TOKEN;
 const CLOUD_READY = !!(CONFIG.CLOUDINARY_CLOUD_NAME && CONFIG.CLOUDINARY_UPLOAD_PRESET);
+
+// ── GitHub JSON store ──
+const GH_API = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/`;
+const GH_RAW = `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/`;
+const GH_HDR = () => ({ Authorization: `Bearer ${CONFIG.GITHUB_TOKEN}`, Accept: "application/vnd.github.v3+json", "Content-Type": "application/json" });
+
+async function ghRead(path) {
+  const res  = await fetch(GH_API + path, { headers: GH_HDR() });
+  if (!res.ok) throw new Error("Cannot read " + path);
+  const json = await res.json();
+  const text = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ""))));
+  return { data: JSON.parse(text), sha: json.sha };
+}
+
+async function ghWrite(path, data, sha, msg) {
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  const res = await fetch(GH_API + path, {
+    method: "PUT", headers: GH_HDR(),
+    body: JSON.stringify({ message: msg, content, sha, branch: CONFIG.GITHUB_BRANCH })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || "Write failed"); }
+}
+
+// ── Browser SHA-256 ──
+async function sha256(str) {
+  const buf  = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str + "psc2011reunion"));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
 
 let entries  = [];
 let photoData = "";
@@ -1168,12 +1199,19 @@ $("rsvp").addEventListener("submit", async (e) => {
     if (LIVE) {
       if (photoData && CLOUD_READY) { setStatus("Uploading photo…"); photoUrl = await uploadToCloudinary(photoData); }
       setStatus("Saving…");
-      const res = await fetch(CONFIG.SCRIPT_URL, { method:"POST", body:JSON.stringify({ ...d, photo:photoUrl }) });
-      const out = await res.json(); if (!out.ok) throw new Error(out.error);
+      const { data, sha } = await ghRead("details.json");
+      const entries = data.entries || [];
+      const idx = entries.findIndex(x => x.clientId === d.clientId);
+      const entry = { name: d.fullName, nickname: d.nickname, gender: d.gender,
+        location: d.location, profession: d.profession, attending: d.attending,
+        photo: photoUrl || (idx >= 0 ? entries[idx].photo : ""),
+        clientId: d.clientId, updatedAt: new Date().toISOString() };
+      if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+      await ghWrite("details.json", { entries }, sha, "entry: " + d.fullName);
     } else { await new Promise((r) => setTimeout(r, 600)); }
     const { website, ...keep } = d; writeSaved(keep);
     showThanks(d); loadList();
-  } catch { setStatus("Couldn't save. Check your connection and try again.", true); }
+  } catch (err) { setStatus("Couldn't save: " + err.message, true); }
   finally { btn.disabled = false; }
 });
 function setStatus(t, bad) { const s = $("status"); s.textContent = t; s.classList.toggle("bad", !!bad); }
@@ -1200,8 +1238,8 @@ $("copyLink").addEventListener("click", async () => {
 // ── Sign Up ──
 $("signupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const username = $("suUsername").value.trim().toLowerCase();
-  const password = $("suPassword").value;
+  const username  = $("suUsername").value.trim().toLowerCase();
+  const password  = $("suPassword").value;
   const password2 = $("suPassword2").value;
   let valid = true;
 
@@ -1210,36 +1248,36 @@ $("signupForm").addEventListener("submit", async (e) => {
     if (bad && msg) $(id.replace("Su","su") + "Err").textContent = msg;
     if (bad) valid = false;
   };
-
   if (!username || username.length < 3 || !/^[a-z0-9_]+$/.test(username))
     markSu("SuUser", true, "3–20 chars, letters/numbers/underscore only.");
   else markSu("SuUser", false);
-
   if (!password || password.length < 6) markSu("SuPw", true, "At least 6 characters.");
   else markSu("SuPw", false);
-
   if (password !== password2) markSu("SuPw2", true, "Passwords do not match.");
   else markSu("SuPw2", false);
-
   if (!valid) return;
-  if (!LIVE) { $("suStatus").textContent = "Preview mode — connect SCRIPT_URL to enable accounts."; return; }
+  if (!LIVE) { $("suStatus").textContent = "Add GITHUB_TOKEN to CONFIG to enable accounts."; return; }
 
   const btn = $("suBtn"); btn.disabled = true;
-  $("suStatus").textContent = "Checking…";
+  $("suStatus").textContent = "Checking…"; $("suStatus").classList.remove("bad");
   try {
-    const res = await fetch(CONFIG.SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({ action:"signup", username, password, clientId })
-    });
-    const out = await res.json();
-    if (!out.ok) { $("suStatus").textContent = out.error; $("suStatus").classList.add("bad"); }
-    else {
-      authState = { username: out.username, clientId: out.clientId || clientId };
-      writeAuth(authState); updateAuthUI();
-      showToast("🎉", "Account created! Welcome, @" + out.username);
-      showPage("rollcall");
+    const { data, sha } = await ghRead("users.json");
+    const users = data.users || [];
+    if (users.some(u => u.username === username)) {
+      $("suStatus").textContent = "Username already taken. Try another.";
+      $("suStatus").classList.add("bad");
+      $("fSuUser").classList.add("invalid");
+      return;
     }
-  } catch { $("suStatus").textContent = "Network error. Try again."; $("suStatus").classList.add("bad"); }
+    const hash = await sha256(password);
+    const cid  = clientId;
+    users.push({ username, passwordHash: hash, clientId: cid, createdAt: new Date().toISOString() });
+    await ghWrite("users.json", { users }, sha, "signup: @" + username);
+    authState = { username, clientId: cid };
+    writeAuth(authState); updateAuthUI();
+    showToast("🎉", "Account created! Welcome, @" + username);
+    showPage("rollcall");
+  } catch (err) { $("suStatus").textContent = err.message || "Error. Try again."; $("suStatus").classList.add("bad"); }
   finally { btn.disabled = false; }
 });
 
@@ -1249,30 +1287,26 @@ $("signinForm").addEventListener("submit", async (e) => {
   const username = $("siUsername").value.trim().toLowerCase();
   const password = $("siPassword").value;
   let valid = true;
-
   const markSi = (id, bad) => { $(id).classList.toggle("invalid", bad); if (bad) valid = false; };
-  markSi("fSiUser", !username);
-  markSi("fSiPw",   !password);
+  markSi("fSiUser", !username); markSi("fSiPw", !password);
   if (!valid) return;
-  if (!LIVE) { $("siStatus").textContent = "Preview mode — connect SCRIPT_URL to enable accounts."; return; }
+  if (!LIVE) { $("siStatus").textContent = "Add GITHUB_TOKEN to CONFIG to enable accounts."; return; }
 
   const btn = $("siBtn"); btn.disabled = true;
-  $("siStatus").textContent = "Signing in…";
-  $("siStatus").classList.remove("bad");
+  $("siStatus").textContent = "Signing in…"; $("siStatus").classList.remove("bad");
   try {
-    const res = await fetch(CONFIG.SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({ action:"signin", username, password })
-    });
-    const out = await res.json();
-    if (!out.ok) { $("siStatus").textContent = out.error; $("siStatus").classList.add("bad"); }
-    else {
-      authState = { username: out.username, clientId: out.clientId };
-      writeAuth(authState); updateAuthUI();
-      showToast("👋", "Welcome back, @" + out.username + "!");
-      showPage("rollcall");
-    }
-  } catch { $("siStatus").textContent = "Network error. Try again."; $("siStatus").classList.add("bad"); }
+    const res  = await fetch(GH_RAW + "users.json?t=" + Date.now());
+    const data = await res.json();
+    const users = data.users || [];
+    const hash  = await sha256(password);
+    const user  = users.find(u => u.username === username);
+    if (!user)                       { $("siStatus").textContent = "Username not found."; $("siStatus").classList.add("bad"); return; }
+    if (user.passwordHash !== hash)  { $("siStatus").textContent = "Incorrect password."; $("siStatus").classList.add("bad"); return; }
+    authState = { username: user.username, clientId: user.clientId };
+    writeAuth(authState); updateAuthUI();
+    showToast("👋", "Welcome back, @" + username + "!");
+    showPage("rollcall");
+  } catch (err) { $("siStatus").textContent = err.message || "Network error."; $("siStatus").classList.add("bad"); }
   finally { btn.disabled = false; }
 });
 
@@ -1288,8 +1322,14 @@ async function shareLink() {
 async function loadList() {
   if (!LIVE) { entries = []; render(); return; }
   try {
-    const out = await (await fetch(CONFIG.SCRIPT_URL + "?t=" + Date.now())).json();
-    entries = out.ok ? out.entries : []; render();
+    const res  = await fetch(GH_RAW + "details.json?t=" + Date.now());
+    const data = await res.json();
+    entries = (data.entries || []).map(x => ({
+      name: x.name, nickname: x.nickname, gender: x.gender,
+      location: x.location, profession: x.profession,
+      attending: x.attending, photo: x.photo
+    }));
+    render();
   } catch {
     $("grid").innerHTML        = '<p class="empty">Couldn\'t load the list. Refresh to try again.</p>';
     $("previewGrid").innerHTML = '<p class="empty">Couldn\'t load.</p>';
