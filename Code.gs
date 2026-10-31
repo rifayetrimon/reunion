@@ -55,16 +55,16 @@ function ensureUsersSheet_(ss) {
 }
 
 function handleSignup_(d) {
-  var username = String(d.username || "").trim().toLowerCase();
-  var password = String(d.password || "");
-  var clientId = clean_(d.clientId || "");
+  var username     = String(d.username     || "").trim().toLowerCase();
+  var passwordHash = String(d.passwordHash || "");
+  var clientId     = clean_(d.clientId     || "");
 
   if (!username || username.length < 3)
     return respond_({ ok: false, error: "Username must be at least 3 characters." });
   if (!/^[a-z0-9_]+$/.test(username))
     return respond_({ ok: false, error: "Only letters, numbers and underscore allowed." });
-  if (!password || password.length < 6)
-    return respond_({ ok: false, error: "Password must be at least 6 characters." });
+  if (!passwordHash)
+    return respond_({ ok: false, error: "Password is required." });
 
   var ss    = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ensureUsersSheet_(ss);
@@ -75,22 +75,21 @@ function handleSignup_(d) {
       return respond_({ ok: false, error: "Username already taken. Try another." });
   }
 
-  sheet.appendRow([username, hashPw_(password), clientId, new Date()]);
+  sheet.appendRow([username, passwordHash, clientId, new Date()]);
   return respond_({ ok: true, username: username, clientId: clientId });
 }
 
 function handleSignin_(d) {
-  var username = String(d.username || "").trim().toLowerCase();
-  var password = String(d.password || "");
+  var username     = String(d.username     || "").trim().toLowerCase();
+  var passwordHash = String(d.passwordHash || "");
 
   var ss    = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ensureUsersSheet_(ss);
   var rows  = sheet.getDataRange().getValues();
-  var hash  = hashPw_(password);
 
   for (var i = 1; i < rows.length; i++) {
     if (String(rows[i][0]).toLowerCase() === username) {
-      if (String(rows[i][1]) === hash)
+      if (String(rows[i][1]) === passwordHash)
         return respond_({ ok: true, username: username, clientId: String(rows[i][2]) });
       else
         return respond_({ ok: false, error: "Incorrect password." });
