@@ -1181,6 +1181,19 @@ function fillForm(d) {
   const g = document.querySelector(`input[name=gender][value="${d.gender}"]`);
   const r = document.querySelector(`input[name=attending][value="${d.attending}"]`);
   if (g) g.checked = true; if (r) r.checked = true;
+  // Restore photo preview
+  const box = $("photoBox");
+  if (d.photo) {
+    box.style.backgroundImage = `url("${d.photo}")`;
+    box.classList.add("has");
+    const sp = box.querySelector("span"); if (sp) sp.hidden = true;
+    $("photoRemove").hidden = false;
+  } else {
+    box.style.backgroundImage = "";
+    box.classList.remove("has");
+    const sp = box.querySelector("span"); if (sp) sp.hidden = false;
+    $("photoRemove").hidden = true;
+  }
 }
 
 async function loadUserEntry() {
