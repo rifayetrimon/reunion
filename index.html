@@ -253,6 +253,7 @@ form { display: grid; gap: 18px; }
 @media (max-width: 480px) { .idrow { grid-template-columns: 1fr; } }
 
 .photo-pick { display: grid; gap: 6px; justify-items: start; }
+.photo-hint { font-size: 11px; color: var(--text-4); margin: 0; }
 .photo-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .photo-box {
   width: 104px; aspect-ratio: 1; max-width: 100%; border-radius: 10px;
@@ -753,6 +754,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
             <input type="file" id="photo" accept="image/*">
             <label for="photo" class="photo-box" id="photoBox"><span>Tap to add<br>your photo</span></label>
             <button type="button" class="linkbtn" id="photoRemove" hidden>Remove</button>
+            <p class="photo-hint">Use a small image (under 1 MB) for faster upload.</p>
           </div>
           <div class="stack">
             <div class="field" id="fName">
