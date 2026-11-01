@@ -1352,16 +1352,7 @@ async function loadList() {
 
 // ── Render ──
 function getFilters() {
-  const isMobile = window.innerWidth < 900;
-  return {
-    att: isMobile
-      ? (document.querySelector("input[name=fltAttM]:checked") || {}).value || "all"
-      : (document.querySelector("input[name=fltAtt]:checked")  || {}).value || "all",
-    gen: isMobile
-      ? (document.querySelector("input[name=fltGenM]:checked") || {}).value || "all"
-      : (document.querySelector("input[name=fltGen]:checked")  || {}).value || "all",
-    q: ($("searchInput").value || $("searchInputMobile").value || "").trim().toLowerCase()
-  };
+  return { att: "all", gen: "all", q: "" };
 }
 
 function render() {
@@ -1378,13 +1369,6 @@ function render() {
   $("sFem").textContent   = fems;
 
 
-  // Sidebar counts
-  $("cTotal").textContent = total;
-  $("cMale").textContent  = males;
-  $("cFem").textContent   = fems;
-  $("cYes").textContent   = coming;
-  $("cMaybe").textContent = maybes;
-
   // Home preview — latest 6, no filters
   renderGrid($("previewGrid"), entries.slice(0, 6));
 
@@ -1399,14 +1383,13 @@ function render() {
     }
     return true;
   });
-  $("regTotal").textContent = filtered.length + " student" + (filtered.length !== 1 ? "s" : "");
   renderGrid($("grid"), filtered, entries.length);
 }
 
 function renderGrid(container, list, totalCount) {
   container.textContent = "";
   if (!list.length) {
-    const noQ = ($("searchInput").value || $("searchInputMobile").value || "").trim();
+    const noQ = "";
     container.innerHTML = `<div class="no-results"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>${noQ ? 'No results for "' + noQ + '".' : (totalCount ? "Nobody in this group yet." : "No answers yet. Be the first!")}</p></div>`;
     return;
   }
@@ -1437,11 +1420,6 @@ function renderGrid(container, list, totalCount) {
   });
 }
 
-// Filter / search listeners
-document.querySelectorAll("input[name=fltAtt], input[name=fltGen], input[name=fltAttM], input[name=fltGenM]")
-  .forEach((r) => r.addEventListener("change", render));
-$("searchInput").addEventListener("input", render);
-$("searchInputMobile").addEventListener("input", render);
 
 loadList();
 
