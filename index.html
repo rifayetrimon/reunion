@@ -442,6 +442,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 
 /* Register main area */
 .reg-main { display: grid; gap: 14px; }
+.reg-controls { display: grid; gap: 10px; }
 .reg-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
 .reg-header h2 { font-size: 17px; font-weight: 590; letter-spacing: -0.2px; color: var(--text-1); }
 .reg-total { font-family: var(--f-mono); font-size: 11px; color: var(--text-4); }
@@ -852,6 +853,19 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
           <h2>Class Register</h2>
         </div>
 
+
+        <div class="reg-controls">
+          <div class="search-box">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="searchInput" placeholder="Name, city, profession…" aria-label="Search students">
+          </div>
+          <div class="fchip-row">
+            <label class="fchip"><input type="radio" name="fltAtt" value="all" checked><span>All</span></label>
+            <label class="fchip"><input type="radio" name="fltAtt" value="Yes"><span>Coming</span></label>
+            <label class="fchip"><input type="radio" name="fltAtt" value="Maybe"><span>Maybe</span></label>
+            <label class="fchip"><input type="radio" name="fltAtt" value="No"><span>Absent</span></label>
+          </div>
+        </div>
 
         <div class="grid" id="grid"><p class="empty">Loading…</p></div>
       </div>
@@ -1352,7 +1366,11 @@ async function loadList() {
 
 // ── Render ──
 function getFilters() {
-  return { att: "all", gen: "all", q: "" };
+  return {
+    att: (document.querySelector("input[name=fltAtt]:checked") || {}).value || "all",
+    gen: "all",
+    q: ($("searchInput").value || "").trim().toLowerCase()
+  };
 }
 
 function render() {
@@ -1389,7 +1407,7 @@ function render() {
 function renderGrid(container, list, totalCount) {
   container.textContent = "";
   if (!list.length) {
-    const noQ = "";
+    const noQ = ($("searchInput").value || "").trim();
     container.innerHTML = `<div class="no-results"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>${noQ ? 'No results for "' + noQ + '".' : (totalCount ? "Nobody in this group yet." : "No answers yet. Be the first!")}</p></div>`;
     return;
   }
@@ -1420,6 +1438,9 @@ function renderGrid(container, list, totalCount) {
   });
 }
 
+
+document.querySelectorAll("input[name=fltAtt]").forEach((r) => r.addEventListener("change", render));
+$("searchInput").addEventListener("input", render);
 
 loadList();
 
