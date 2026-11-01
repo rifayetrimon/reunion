@@ -845,82 +845,13 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   <div class="reg-page-wrap">
     <div class="reg-layout">
 
-      <!-- Sidebar (desktop) / collapsible area (mobile handled by .mobile-filters) -->
-      <aside class="reg-sidebar">
-        <div class="sidebar-section">
-          <div class="sidebar-label">Search</div>
-          <div class="search-box">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="search" id="searchInput" placeholder="Name, city, profession…" aria-label="Search students">
-          </div>
-        </div>
-
-        <hr class="sidebar-divider">
-
-        <div class="sidebar-section">
-          <div class="sidebar-label">Status</div>
-          <div class="sfilter-group" role="radiogroup" aria-label="Filter by attendance">
-            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-all"   value="all" checked><label for="fAtt-all">All</label></div>
-            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-yes"   value="Yes"><label for="fAtt-yes">Coming</label></div>
-            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-maybe" value="Maybe"><label for="fAtt-maybe">Maybe</label></div>
-            <div class="sfilter-item"><input type="radio" name="fltAtt" id="fAtt-no"    value="No"><label for="fAtt-no">Absent</label></div>
-          </div>
-        </div>
-
-        <hr class="sidebar-divider">
-
-        <div class="sidebar-section">
-          <div class="sidebar-label">Gender</div>
-          <div class="sfilter-group" role="radiogroup" aria-label="Filter by gender">
-            <div class="sfilter-item"><input type="radio" name="fltGen" id="fGen-all"    value="all" checked><label for="fGen-all">All</label></div>
-            <div class="sfilter-item male"><input type="radio" name="fltGen" id="fGen-male"   value="Male"><label for="fGen-male"><span class="dot"></span>Male</label></div>
-            <div class="sfilter-item female"><input type="radio" name="fltGen" id="fGen-female" value="Female"><label for="fGen-female"><span class="dot"></span>Female</label></div>
-          </div>
-        </div>
-
-        <hr class="sidebar-divider">
-
-        <div class="sidebar-section">
-          <div class="sidebar-label">Count</div>
-          <div class="badge-stack">
-            <div class="badge-row"><span>Total</span><b id="cTotal">0</b></div>
-            <div class="badge-row male"><span>Male</span><b id="cMale">0</b></div>
-            <div class="badge-row female"><span>Female</span><b id="cFem">0</b></div>
-            <div class="badge-row"><span>Coming</span><b id="cYes">0</b></div>
-            <div class="badge-row"><span>Maybe</span><b id="cMaybe">0</b></div>
-          </div>
-        </div>
-      </aside>
 
       <!-- Main content -->
       <div class="reg-main">
         <div class="reg-header">
           <h2>Class Register</h2>
-          <span class="reg-total" id="regTotal">0 students</span>
         </div>
 
-        <!-- Mobile-only: search + filter chips -->
-        <div class="mobile-search">
-          <div class="search-box">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="search" id="searchInputMobile" placeholder="Search by name, city…" aria-label="Search students">
-          </div>
-        </div>
-        <div class="mobile-filters">
-          <div class="fchip-row">
-            <span class="fchip-label">Status</span>
-            <label class="fchip"><input type="radio" name="fltAttM" value="all" checked><span>All</span></label>
-            <label class="fchip"><input type="radio" name="fltAttM" value="Yes"><span>Coming</span></label>
-            <label class="fchip"><input type="radio" name="fltAttM" value="Maybe"><span>Maybe</span></label>
-            <label class="fchip"><input type="radio" name="fltAttM" value="No"><span>Absent</span></label>
-          </div>
-          <div class="fchip-row">
-            <span class="fchip-label">Gender</span>
-            <label class="fchip"><input type="radio" name="fltGenM" value="all" checked><span>All</span></label>
-            <label class="fchip male"><input type="radio" name="fltGenM" value="Male"><span>Male</span></label>
-            <label class="fchip female"><input type="radio" name="fltGenM" value="Female"><span>Female</span></label>
-          </div>
-        </div>
 
         <div class="grid" id="grid"><p class="empty">Loading…</p></div>
       </div>
