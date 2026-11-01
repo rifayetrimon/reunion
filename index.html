@@ -865,6 +865,11 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
             <label class="fchip"><input type="radio" name="fltAtt" value="Maybe"><span>Maybe</span></label>
             <label class="fchip"><input type="radio" name="fltAtt" value="No"><span>Absent</span></label>
           </div>
+          <div class="fchip-row">
+            <label class="fchip"><input type="radio" name="fltGen" value="all" checked><span>All</span></label>
+            <label class="fchip male"><input type="radio" name="fltGen" value="Male"><span>Male</span></label>
+            <label class="fchip female"><input type="radio" name="fltGen" value="Female"><span>Female</span></label>
+          </div>
         </div>
 
         <div class="grid" id="grid"><p class="empty">Loading…</p></div>
@@ -1368,7 +1373,7 @@ async function loadList() {
 function getFilters() {
   return {
     att: (document.querySelector("input[name=fltAtt]:checked") || {}).value || "all",
-    gen: "all",
+    gen: (document.querySelector("input[name=fltGen]:checked") || {}).value || "all",
     q: ($("searchInput").value || "").trim().toLowerCase()
   };
 }
@@ -1439,7 +1444,7 @@ function renderGrid(container, list, totalCount) {
 }
 
 
-document.querySelectorAll("input[name=fltAtt]").forEach((r) => r.addEventListener("change", render));
+document.querySelectorAll("input[name=fltAtt], input[name=fltGen]").forEach((r) => r.addEventListener("change", render));
 $("searchInput").addEventListener("input", render);
 
 loadList();
