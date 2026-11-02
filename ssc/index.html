@@ -518,7 +518,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 /* ─────────────────────────────────────
    STUDENT CARDS (shared)
 ───────────────────────────────────── */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr)); gap: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px,1fr)); gap: 12px; }
 
 .friend {
   display: grid; min-width: 0; border-radius: 10px; overflow: hidden;
@@ -537,7 +537,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   font-size: 32px; font-weight: 510; color: var(--text-3);
   position: relative; user-select: none;
 }
-.friend .pill-wrap { position: absolute; left: 8px; bottom: 8px; }
+.friend .pill-wrap { display: none; }
 .friend .info { padding: 9px 11px 11px; display: grid; gap: 3px; }
 .friend .nm   { font-size: 13px; font-weight: 590; line-height: 1.3; overflow-wrap: anywhere; color: var(--text-1); letter-spacing: -0.13px; }
 .friend .nick { color: var(--text-4); font-weight: 400; font-size: 11px; }
@@ -745,8 +745,8 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
     display: flex !important;
     flex-direction: row;
     align-items: center;
-    gap: 13px;
-    padding: 11px 0;
+    gap: 14px;
+    padding: 12px 0;
     border-radius: 0;
     border: none !important;
     border-bottom: 1px solid var(--border) !important;
@@ -758,42 +758,22 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 
   /* Circular avatar */
   .friend .pic {
-    width: 54px !important;
-    height: 54px !important;
+    width: 62px !important;
+    height: 62px !important;
     aspect-ratio: 1;
     border-radius: 50% !important;
     flex-shrink: 0;
-    font-size: 20px;
+    font-size: 22px;
     overflow: hidden;
-    position: static; /* friend becomes containing block for pill-wrap */
+    position: static;
   }
   .friend.Male   .pic { box-shadow: 0 0 0 2px rgba(94,106,210,.45); }
   .friend.Female .pic { box-shadow: 0 0 0 2px rgba(225,29,72,.38); }
 
-  /* Pill repositioned to right edge of card row */
-  .friend .pill-wrap {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    left: auto;
-    bottom: auto;
-  }
-  .friend .pill {
-    border-radius: 5px;
-    font-size: 10px;
-    font-weight: 700;
-    backdrop-filter: none;
-    padding: 3px 8px;
-  }
-  .friend .pill.Yes   { background: #dcfce7; color: #15803d; border-color: transparent; }
-  .friend .pill.Maybe { background: #fef9c3; color: #a16207; border-color: transparent; }
-  .friend .pill.No    { background: #fee2e2; color: #dc2626; border-color: transparent; }
-
-  /* Info text — pad right so text doesn't overlap pill */
-  .friend .info { flex: 1; min-width: 0; padding: 0; padding-right: 60px; }
-  .friend .nm   { font-size: 13px; font-weight: 600; }
-  .friend .meta { margin-top: 2px; }
+  /* Info text — full width, no pill to dodge */
+  .friend .info { flex: 1; min-width: 0; padding: 0; }
+  .friend .nm   { font-size: 13.5px; font-weight: 600; }
+  .friend .meta { margin-top: 3px; font-size: 11.5px; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
