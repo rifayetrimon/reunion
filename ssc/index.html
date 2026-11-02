@@ -11,19 +11,19 @@
 <style>
 /* ── Tokens ── */
 :root {
-  --bg:         #f5f6f8;
+  --bg:         #f0faf5;
   --surface-0:  #ffffff;
-  --surface-1:  #f8f9fb;
-  --surface-2:  #eef0f3;
-  --text-1:     #111827;
-  --text-2:     #374151;
-  --text-3:     #6b7280;
-  --text-4:     #9ca3af;
-  --accent:     #f59e0b;
-  --accent-lit: #d97706;
-  --accent-hov: #b45309;
+  --surface-1:  #f4fbf7;
+  --surface-2:  #e6f5ed;
+  --text-1:     #0b1f14;
+  --text-2:     #1e3a2a;
+  --text-3:     #4d7a60;
+  --text-4:     #7aaa90;
+  --accent:     #10b981;
+  --accent-lit: #059669;
+  --accent-hov: #047857;
   --yes:        #059669;
-  --maybe:      #b45309;
+  --maybe:      #047857;
   --no:         #9ca3af;
   --male:       #5e6ad2;
   --female:     #e11d48;
@@ -55,7 +55,7 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 /* ── Top nav ── */
 .topnav {
   position: fixed; inset: 0 0 auto 0; z-index: 200; height: var(--nav-h);
-  background: #111;
+  background: #0d1f1a;
   border-bottom: 1px solid rgba(255,255,255,.07);
   display: flex; align-items: center;
   padding: 0 max(20px, env(safe-area-inset-left,0px));
@@ -65,7 +65,7 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
   font-size: 14px; font-weight: 590; color: #fff;
   letter-spacing: -0.13px; white-space: nowrap; margin-right: auto;
 }
-.nav-brand span { color: #f59e0b; }
+.nav-brand span { color: #10b981; }
 
 .nav-tabs {
   display: flex; gap: 2px;
@@ -88,7 +88,7 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 
 .nav-cta {
   display: inline-flex; align-items: center;
-  background: var(--accent); color: #111; border: none;
+  background: var(--accent); color: #fff; border: none;
   border-radius: 6px; padding: 7px 16px;
   font-size: 13px; font-weight: 700; letter-spacing: -0.13px;
   white-space: nowrap; transition: background .15s, box-shadow .15s;
@@ -106,7 +106,7 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 .bottomnav {
   display: none;
   position: fixed; inset: auto 0 0 0; z-index: 200; height: var(--bot-h);
-  background: #111;
+  background: #0d1f1a;
   border-top: 1px solid rgba(255,255,255,.07);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -119,7 +119,7 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
   letter-spacing: .03em; padding: 8px 4px; transition: color .15s;
 }
 .bnav-tab svg { transition: color .15s; }
-.bnav-tab.active { color: #f59e0b; }
+.bnav-tab.active { color: #10b981; }
 .bnav-tab:hover  { color: rgba(255,255,255,.7); }
 
 /* ── Pages ── */
@@ -137,13 +137,13 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
    HOME PAGE
 ───────────────────────────────────── */
 .hero {
-  background: linear-gradient(135deg, #111 0%, #1c1200 100%);
+  background: linear-gradient(135deg, #0d1f1a 0%, #05150f 100%);
   border-radius: 16px; padding: 36px 32px 30px;
   margin-bottom: 16px; position: relative; overflow: hidden;
 }
 .hero::before {
   content: ""; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(245,158,11,.12) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 80% 50%, rgba(16,185,129,.15) 0%, transparent 65%);
   pointer-events: none;
 }
 @media (max-width: 600px) { .hero { padding: 24px 18px 22px; border-radius: 14px; } }
@@ -165,11 +165,11 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 }
 .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 24px; }
 .hero-cta .btn-primary {
-  background: #f59e0b; color: #111;
-  box-shadow: 0 2px 10px rgba(245,158,11,.4);
+  background: #10b981; color: #fff;
+  box-shadow: 0 2px 10px rgba(16,185,129,.35);
   font-weight: 700;
 }
-.hero-cta .btn-primary:hover { background: #d97706; color: #fff; }
+.hero-cta .btn-primary:hover { background: #059669; color: #fff; }
 .hero-cta .btn-ghost {
   background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,.8);
 }
@@ -562,11 +562,11 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 
 /* ── Banner ── */
 .banner {
-  background: #fffbeb; border: 1px solid #fde68a;
-  border-radius: 8px; padding: 11px 15px; font-size: 13px; color: #92400e;
+  background: #ecfdf5; border: 1px solid #6ee7b7;
+  border-radius: 8px; padding: 11px 15px; font-size: 13px; color: #065f46;
   margin-bottom: 4px;
 }
-.banner strong { color: #92400e; font-weight: 590; }
+.banner strong { color: #065f46; font-weight: 590; }
 .banner code { font-family: var(--f-mono); font-size: 11px; background: rgba(0,0,0,.06); border-radius: 3px; padding: 1px 5px; }
 
 /* ── Auth pages ── */
@@ -675,7 +675,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 
   /* Dark header band */
   .reg-header {
-    background: #111;
+    background: #0d1f1a;
     padding: 22px max(16px,env(safe-area-inset-left,0px)) 4px;
   }
   .reg-header h2 {
@@ -687,7 +687,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 
   /* Controls stay dark */
   .reg-controls {
-    background: #111;
+    background: #0d1f1a;
     padding: 10px max(16px,env(safe-area-inset-left,0px)) 16px;
     border-bottom: 1px solid rgba(255,255,255,.07);
     gap: 8px;
@@ -703,11 +703,11 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   .search-box input::placeholder { color: rgba(255,255,255,.3); }
   .search-box svg { color: rgba(255,255,255,.3); }
   .search-box input:focus-visible {
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245,158,11,.18);
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16,185,129,.2);
   }
 
-  /* Filter chips — dark + amber when active */
+  /* Filter chips — dark + green when active */
   .fchip span {
     background: rgba(255,255,255,.05);
     border-color: rgba(255,255,255,.11);
@@ -720,9 +720,9 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   .fchip input:checked + span,
   .fchip.male input:checked + span,
   .fchip.female input:checked + span {
-    background: #f59e0b;
-    color: #111;
-    border-color: #f59e0b;
+    background: #10b981;
+    color: #fff;
+    border-color: #10b981;
     font-weight: 700;
   }
 
@@ -914,7 +914,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   <div class="form-wrap">
 
     <section class="card" id="formCard" aria-labelledby="formTitle">
-      <div id="loadingBanner" hidden style="background:rgba(245,158,11,.12);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.9rem;color:var(--fg);display:flex;align-items:center;gap:8px;">
+      <div id="loadingBanner" hidden style="background:rgba(16,185,129,.1);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.9rem;color:var(--fg);display:flex;align-items:center;gap:8px;">
         <span style="display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0"></span>
         Loading your details…
       </div>
