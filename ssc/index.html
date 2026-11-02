@@ -790,6 +790,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   .friend .nm   { font-size: 13px; font-weight: 600; }
   .friend .meta { margin-top: 2px; }
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -913,6 +914,10 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   <div class="form-wrap">
 
     <section class="card" id="formCard" aria-labelledby="formTitle">
+      <div id="loadingBanner" hidden style="background:rgba(245,158,11,.12);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.9rem;color:var(--fg);display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0"></span>
+        Loading your details…
+      </div>
       <header>
         <h2 id="formTitle">Answer the roll call</h2>
         <p>Fill in your details — takes about a minute.</p>
@@ -1383,19 +1388,19 @@ function fillForm(d) {
 
 async function loadUserEntry() {
   if (!LIVE || !authState || !authState.clientId) return;
-  const statusEl = $("status");
-  if (statusEl) { statusEl.textContent = "Loading your details…"; statusEl.classList.remove("bad"); }
+  const banner = $("loadingBanner");
+  if (banner) banner.hidden = false;
   try {
     const out = await scriptGet({ clientId: authState.clientId });
     if (out.ok && out.entry && out.entry.fullName) {
       fillForm(out.entry);
       writeSaved({ ...out.entry, clientId: authState.clientId });
-      if (statusEl) statusEl.textContent = "";
-    } else {
-      if (statusEl) statusEl.textContent = "";
     }
   } catch {
-    if (statusEl) statusEl.textContent = "";
+    const statusEl = $("status");
+    if (statusEl) { statusEl.textContent = "Couldn't load your details — check your connection and try again."; statusEl.classList.add("bad"); }
+  } finally {
+    if (banner) banner.hidden = true;
   }
 }
 
