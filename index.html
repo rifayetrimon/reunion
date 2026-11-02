@@ -996,7 +996,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
       <span class="modal-pill" id="mPill"></span>
     </div>
     <div class="modal-body">
-      <div class="modal-name" id="mName"><span id="mNick"></span></div>
+      <div class="modal-name" id="mName"><span id="mNameText"></span><span id="mNick"></span></div>
       <div class="modal-rows">
         <div class="modal-row"><span class="modal-row-label">Gender</span><span class="modal-row-val" id="mGender"></span></div>
         <div class="modal-row"><span class="modal-row-label">Location</span><span class="modal-row-val" id="mLocation"></span></div>
@@ -1463,7 +1463,7 @@ function openModal(x) {
   const pill = document.getElementById("mPill");
   pill.textContent = label[x.attending] || x.attending || "";
   pill.className = "modal-pill " + (x.attending || "");
-  document.getElementById("mName").textContent = x.name || "";
+  document.getElementById("mNameText").textContent = x.name || "";
   const nickEl = document.getElementById("mNick");
   nickEl.textContent = x.nickname ? "“" + x.nickname + "”" : "";
   document.getElementById("mGender").textContent     = x.gender     || "—";
