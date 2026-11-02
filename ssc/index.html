@@ -1455,6 +1455,7 @@ async function uploadToCloudinary(dataUrl) {
   const fd = new FormData();
   fd.append("file", dataUrlToBlob(dataUrl));
   fd.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
+  fd.append("folder", "ssc");
   const res = await fetch(`https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_CLOUD_NAME}/image/upload`, { method:"POST", body:fd });
   if (!res.ok) throw new Error("Photo upload failed (" + res.status + ")");
   return (await res.json()).secure_url;
