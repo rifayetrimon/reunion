@@ -608,7 +608,8 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   border: 1px solid var(--border);
   box-shadow: 0 24px 80px rgba(0,0,0,.22);
   width: 100%; max-width: 390px;
-  overflow: hidden;
+  max-height: calc(100svh - 32px);
+  overflow-y: auto; overflow-x: hidden;
   transform: translateY(16px) scale(.96); transition: transform .22s cubic-bezier(.34,1.26,.64,1);
 }
 .modal-backdrop.open .modal-box { transform: none; }
@@ -660,6 +661,10 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 }
 .modal-close:hover { background: rgba(0,0,0,.65); }
 .modal-photo { position: relative; }
+@media (max-width: 480px) {
+  .modal-photo { aspect-ratio: 3/2; }
+  .modal-avatar { font-size: 56px; }
+}
 .friend { cursor: pointer; }
 
 /* ═══════════════════════════════════════
