@@ -1,0 +1,1649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>School Reunion</title>
+<meta name="description" content="Answer the roll call for our school friends reunion.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+<style>
+/* ── Tokens ── */
+:root {
+  --bg:         #f5f6f8;
+  --surface-0:  #ffffff;
+  --surface-1:  #f8f9fb;
+  --surface-2:  #eef0f3;
+  --text-1:     #111827;
+  --text-2:     #374151;
+  --text-3:     #6b7280;
+  --text-4:     #9ca3af;
+  --accent:     #f59e0b;
+  --accent-lit: #d97706;
+  --accent-hov: #b45309;
+  --yes:        #059669;
+  --maybe:      #b45309;
+  --no:         #9ca3af;
+  --male:       #5e6ad2;
+  --female:     #e11d48;
+  --border:     rgba(0,0,0,0.08);
+  --border-sub: rgba(0,0,0,0.05);
+  --border-s:   #d1d5db;
+  --nav-h:      52px;
+  --bot-h:      60px;
+  --f-sans:     'Inter','SF Pro Display',-apple-system,system-ui,sans-serif;
+  --f-mono:     'Berkeley Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  color-scheme: light;
+}
+
+/* ── Reset ── */
+*,*::before,*::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--text-1);
+  font: 400 15px/1.55 var(--f-sans);
+  font-feature-settings: "cv01","ss03";
+  padding-top: var(--nav-h);
+}
+@media (max-width: 767px) { body { padding-bottom: var(--bot-h); } }
+p { margin: 0; }
+h1,h2,h3 { margin: 0; font-weight: 400; }
+button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
+
+/* ── Top nav ── */
+.topnav {
+  position: fixed; inset: 0 0 auto 0; z-index: 200; height: var(--nav-h);
+  background: #111;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center;
+  padding: 0 max(20px, env(safe-area-inset-left,0px));
+  gap: 0;
+}
+.nav-brand {
+  font-size: 14px; font-weight: 590; color: #fff;
+  letter-spacing: -0.13px; white-space: nowrap; margin-right: auto;
+}
+.nav-brand span { color: #f59e0b; }
+
+.nav-tabs {
+  display: flex; gap: 2px;
+  margin: 0 12px;
+}
+@media (max-width: 767px) { .nav-tabs { display: none; } }
+
+.nav-tab {
+  background: none; border: none; border-radius: 6px;
+  padding: 6px 14px; font-size: 13px; font-weight: 510;
+  color: rgba(255,255,255,.45); letter-spacing: -0.13px;
+  transition: background .15s, color .15s;
+}
+.nav-tab:hover  { background: rgba(255,255,255,.07); color: rgba(255,255,255,.8); }
+.nav-tab.active { background: rgba(255,255,255,.1); color: #fff; font-weight: 590; }
+
+/* Desktop auth area */
+.nav-auth { display: none; gap: 6px; align-items: center; flex-shrink: 0; }
+@media (min-width: 768px) { .nav-auth { display: flex; } }
+
+.nav-cta {
+  display: inline-flex; align-items: center;
+  background: var(--accent); color: #111; border: none;
+  border-radius: 6px; padding: 7px 16px;
+  font-size: 13px; font-weight: 700; letter-spacing: -0.13px;
+  white-space: nowrap; transition: background .15s, box-shadow .15s;
+  flex-shrink: 0; box-shadow: 0 1px 3px rgba(245,158,11,.4); cursor: pointer;
+}
+.nav-cta:hover { background: var(--accent-hov); color: #fff; box-shadow: 0 2px 6px rgba(245,158,11,.45); }
+
+.nav-username {
+  font-size: 13px; font-weight: 590; color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.08); border-radius: 6px; padding: 6px 12px;
+  border: 1px solid rgba(255,255,255,.1); letter-spacing: -0.13px;
+}
+
+/* ── Mobile bottom nav ── */
+.bottomnav {
+  display: none;
+  position: fixed; inset: auto 0 0 0; z-index: 200; height: var(--bot-h);
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (max-width: 767px) { .bottomnav { display: flex; } }
+
+.bnav-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; border: none; background: none;
+  color: rgba(255,255,255,.38); font-size: 10px; font-weight: 510;
+  letter-spacing: .03em; padding: 8px 4px; transition: color .15s;
+}
+.bnav-tab svg { transition: color .15s; }
+.bnav-tab.active { color: #f59e0b; }
+.bnav-tab:hover  { color: rgba(255,255,255,.7); }
+
+/* ── Pages ── */
+.page { display: none; min-height: calc(100vh - var(--nav-h)); }
+.page.active { display: block; }
+
+/* ── Shared wrap ── */
+.wrap {
+  max-width: 860px; margin: 0 auto;
+  padding: 32px max(16px, env(safe-area-inset-left,0px)) 48px;
+}
+@media (max-width: 767px) { .wrap { padding-top: 20px; padding-bottom: 32px; } }
+
+/* ─────────────────────────────────────
+   HOME PAGE
+───────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #111 0%, #1c1200 100%);
+  border-radius: 16px; padding: 36px 32px 30px;
+  margin-bottom: 16px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(245,158,11,.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+@media (max-width: 600px) { .hero { padding: 24px 18px 22px; border-radius: 14px; } }
+
+.eyebrow {
+  font-family: var(--f-mono); font-size: 11px; font-weight: 510;
+  letter-spacing: .13em; text-transform: uppercase;
+  color: rgba(255,255,255,0.7); margin-bottom: 12px;
+}
+.hero h1 {
+  font-size: clamp(26px, 5vw, 48px); font-weight: 700;
+  line-height: 1.05; letter-spacing: clamp(-0.5px, -0.02em, -1px);
+  color: #fff;
+}
+.hero h1 mark { background: none; color: rgba(255,255,255,0.85); padding: 0; }
+.hero .lede {
+  margin-top: 12px; font-size: 14px; line-height: 1.65;
+  color: rgba(255,255,255,0.8); max-width: 46ch; letter-spacing: -0.1px;
+}
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 24px; }
+.hero-cta .btn-primary {
+  background: #f59e0b; color: #111;
+  box-shadow: 0 2px 10px rgba(245,158,11,.4);
+  font-weight: 700;
+}
+.hero-cta .btn-primary:hover { background: #d97706; color: #fff; }
+.hero-cta .btn-ghost {
+  background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,.8);
+}
+.hero-cta .btn-ghost:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+/* Stat cards row */
+.stat-cards {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+}
+@media (max-width: 480px) { .stat-cards { grid-template-columns: repeat(2, 1fr); } }
+
+.stat-card {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 14px 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: center;
+}
+.stat-card .sc-val {
+  font-size: 28px; font-weight: 700; line-height: 1;
+  font-variant-numeric: tabular-nums; display: block; margin-bottom: 4px;
+}
+.stat-card .sc-lbl { font-size: 11px; font-weight: 510; color: var(--text-4); text-transform: uppercase; letter-spacing: .06em; }
+.sc-yes   .sc-val { color: var(--yes); }
+.sc-maybe .sc-val { color: var(--maybe); }
+.sc-male  .sc-val { color: var(--male); }
+.sc-fem   .sc-val { color: var(--female); }
+
+/* Quick action cards */
+.action-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+@media (min-width: 640px) { .action-cards { grid-template-columns: repeat(3, 1fr); } }
+
+.action-card {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px 16px; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: box-shadow .15s, border-color .15s, background .15s;
+  text-align: left; display: grid; gap: 8px;
+}
+.action-card:hover { border-color: #c4c9d4; box-shadow: 0 3px 10px rgba(0,0,0,0.09); background: var(--surface-1); }
+.action-card .ac-icon {
+  width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center;
+  font-size: 18px;
+}
+.action-card .ac-title { font-size: 13px; font-weight: 590; color: var(--text-1); letter-spacing: -0.13px; }
+.action-card .ac-desc  { font-size: 12px; color: var(--text-4); line-height: 1.5; }
+.ac-primary .ac-icon { background: rgba(245,158,11,.12); }
+.ac-view    .ac-icon { background: rgba(16,185,129,.1); }
+.ac-share   .ac-icon { background: rgba(180,83,9,.1); }
+
+.home-section { margin-bottom: 8px; }
+.home-section-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin-bottom: 14px;
+}
+.home-section-head h2 { font-size: 16px; font-weight: 590; color: var(--text-1); letter-spacing: -0.13px; }
+.view-all {
+  font-size: 12px; font-weight: 510; color: var(--accent);
+  background: none; border: none; padding: 0; letter-spacing: -0.1px;
+  transition: color .15s;
+}
+.view-all:hover { color: var(--accent-hov); }
+
+/* ─────────────────────────────────────
+   ROLL CALL PAGE
+───────────────────────────────────── */
+.form-wrap { max-width: 620px; margin: 0 auto; padding: 32px 16px 48px; display: grid; gap: 12px; }
+@media (max-width: 767px) { .form-wrap { padding-top: 20px; } }
+
+.card {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px 22px; display: grid; gap: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.card > header { display: grid; gap: 4px; }
+.card > header h2 { font-size: 19px; font-weight: 590; letter-spacing: -0.24px; color: var(--text-1); }
+.card > header p  { font-size: 13px; color: var(--text-3); }
+form { display: grid; gap: 18px; }
+
+/* Photo */
+.idrow { display: grid; grid-template-columns: 104px minmax(0,1fr); gap: 16px; align-items: start; }
+@media (max-width: 480px) { .idrow { grid-template-columns: 1fr; } }
+
+.photo-pick { display: grid; gap: 6px; justify-items: start; }
+.photo-hint { font-size: 11px; color: var(--text-4); margin: 0; }
+.photo-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.photo-box {
+  width: 104px; aspect-ratio: 1; max-width: 100%; border-radius: 10px;
+  border: 1.5px dashed var(--border-s); background: var(--surface-1) center/cover no-repeat;
+  display: grid; place-items: center; text-align: center; cursor: pointer;
+  color: var(--text-4); font-size: 11px; font-weight: 510;
+  padding: 12px; line-height: 1.5; transition: background .15s, border-color .15s;
+}
+.photo-box:hover { background-color: var(--surface-2); border-color: var(--accent); }
+.photo-box.has   { border-style: solid; color: transparent; }
+.photo-pick input:focus-visible + .photo-box { box-shadow: 0 0 0 2px var(--accent-lit); }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--text-4); font: inherit; font-size: 11px; font-weight: 510; cursor: pointer; transition: color .12s; }
+.linkbtn:hover { color: var(--text-2); }
+
+.stack { display: grid; gap: 14px; min-width: 0; }
+.row   { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+@media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+/* Fields */
+.field { display: grid; gap: 6px; min-width: 0; }
+label,.q { font-size: 13px; font-weight: 510; color: var(--text-2); letter-spacing: -0.13px; }
+.req  { color: var(--accent-lit); margin-left: 2px; }
+.hint { font-size: 12px; color: var(--text-4); font-weight: 400; }
+
+input[type=text] {
+  width: 100%; font: inherit; font-size: 14px; font-feature-settings: "cv01","ss03";
+  color: var(--text-1); background: var(--surface-0);
+  border: 1px solid var(--border-s); border-radius: 6px;
+  padding: 9px 11px; min-width: 0;
+  transition: border-color .15s, box-shadow .15s;
+}
+input[type=text]::placeholder { color: var(--text-4); }
+input[type=text]:hover        { border-color: #9ca3af; }
+input[type=text]:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
+.field.invalid input[type=text] { border-color: var(--female); }
+input[type=search] { -webkit-appearance: none; }
+input[type=search]::-webkit-search-cancel-button { display: none; }
+
+.err { color: var(--female); font-size: 12px; display: none; }
+.invalid > .err { display: block; }
+
+/* Gender */
+.gender-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.g-chip { position: relative; }
+.g-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.g-chip label {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  background: var(--surface-1); border: 1px solid var(--border-s);
+  border-radius: 6px; padding: 8px 18px;
+  font-size: 13px; font-weight: 510; color: var(--text-2);
+  transition: background .15s, border-color .15s, color .15s;
+}
+.g-chip label:hover { background: var(--surface-2); }
+.g-chip label .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.g-chip.male   label .dot { background: var(--male); }
+.g-chip.female label .dot { background: var(--female); }
+.g-chip.male   input:checked + label { border-color: rgba(94,106,210,.6);  color: var(--male);   background: rgba(94,106,210,.08); }
+.g-chip.female input:checked + label { border-color: rgba(225,29,72,.5);   color: var(--female); background: rgba(225,29,72,.06); }
+.g-chip input:focus-visible + label  { box-shadow: 0 0 0 2px var(--accent); }
+.field.invalid .g-chip label { border-color: rgba(225,29,72,.5); }
+
+/* Rollcall */
+.rollcall { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+@media (max-width: 400px) { .rollcall { grid-template-columns: 1fr; } }
+.rollcall input { position: absolute; opacity: 0; pointer-events: none; }
+.rollcall label {
+  display: grid; gap: 2px; cursor: pointer;
+  border: 1px solid var(--border-s); border-radius: 8px;
+  padding: 12px 14px; background: var(--surface-1);
+  transition: background .15s, border-color .15s;
+}
+.rollcall label:hover { background: var(--surface-2); }
+.rollcall .big   { font-size: 16px; font-weight: 510; color: var(--text-1); letter-spacing: -0.22px; }
+.rollcall .small { font-size: 11px; color: var(--text-4); font-weight: 400; margin-top: 1px; }
+.rollcall input:focus-visible + label { box-shadow: 0 0 0 2px var(--accent); }
+.rollcall input:checked + label       { border-color: rgba(94,106,210,.5); background: rgba(94,106,210,.06); }
+.rollcall input[value="Yes"]:checked   + label .big { color: var(--yes); }
+.rollcall input[value="Maybe"]:checked + label .big { color: var(--maybe); }
+.rollcall input[value="No"]:checked    + label .big { color: var(--no); }
+.invalid .rollcall label { border-color: rgba(225,29,72,.5); }
+
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Buttons */
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn-primary {
+  font: 510 13px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
+  letter-spacing: -0.13px; cursor: pointer; border-radius: 6px;
+  padding: 10px 20px; border: 0; background: var(--accent); color: #fff;
+  transition: background .15s; white-space: nowrap;
+}
+.btn-primary:hover        { background: var(--accent-hov); }
+.btn-primary:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.25); }
+.btn-primary[disabled]    { opacity: .45; cursor: progress; }
+.btn-ghost {
+  font: 510 13px/1 var(--f-sans); font-feature-settings: "cv01","ss03";
+  letter-spacing: -0.13px; cursor: pointer; border-radius: 6px;
+  padding: 10px 20px; border: 1px solid var(--border-s);
+  background: var(--surface-0); color: var(--text-2);
+  transition: background .15s, color .15s; white-space: nowrap;
+}
+.btn-ghost:hover        { background: var(--surface-2); color: var(--text-1); }
+.btn-ghost:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
+
+.status { font-size: 12px; color: var(--text-3); }
+.status.bad { color: var(--female); }
+
+.stamp {
+  display: inline-block; font-family: var(--f-mono);
+  font-size: 10px; font-weight: 510; letter-spacing: .14em; text-transform: uppercase;
+  border: 1.5px solid currentColor; border-radius: 4px;
+  padding: 4px 10px; transform: rotate(-3deg); width: max-content;
+}
+.thanks h2 { font-size: 22px; font-weight: 510; letter-spacing: -0.24px; }
+.thanks p  { font-size: 14px; color: var(--text-3); line-height: 1.65; }
+
+/* ─────────────────────────────────────
+   REGISTER PAGE
+───────────────────────────────────── */
+.reg-page-wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding: 28px max(16px, env(safe-area-inset-left,0px)) 48px;
+}
+@media (max-width: 767px) { .reg-page-wrap { padding-top: 16px; } }
+
+/* Desktop: sidebar + main */
+.reg-layout { display: grid; gap: 20px; }
+@media (min-width: 900px) {
+  .reg-layout { grid-template-columns: 1fr; align-items: start; }
+}
+
+/* Sidebar */
+.reg-sidebar {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px; display: grid; gap: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+@media (min-width: 900px) {
+  .reg-sidebar { position: sticky; top: calc(var(--nav-h) + 16px); }
+}
+
+.sidebar-section { display: grid; gap: 8px; }
+.sidebar-label {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 510;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-4);
+}
+.sidebar-divider { border: none; border-top: 1px solid var(--border-sub); margin: 0; }
+
+/* Search inside sidebar */
+.search-box { position: relative; }
+.search-box svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-4); pointer-events: none; }
+.search-box input {
+  width: 100%; font: 400 13px/1.5 var(--f-sans); font-feature-settings: "cv01","ss03";
+  color: var(--text-1); background: var(--surface-1);
+  border: 1px solid var(--border-s); border-radius: 6px; padding: 8px 10px 8px 32px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-box input::placeholder { color: var(--text-4); }
+.search-box input:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
+
+/* Sidebar radio filters — vertical on desktop */
+.sfilter-group { display: grid; gap: 2px; }
+.sfilter-item { position: relative; }
+.sfilter-item input { position: absolute; opacity: 0; pointer-events: none; }
+.sfilter-item label {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 400; color: var(--text-3);
+  padding: 6px 10px; border-radius: 6px;
+  transition: background .12s, color .12s;
+}
+.sfilter-item label:hover { background: var(--surface-1); color: var(--text-2); }
+.sfilter-item input:checked + label { background: var(--surface-2); color: var(--text-1); font-weight: 510; }
+.sfilter-item.male   input:checked + label { color: var(--male); background: rgba(94,106,210,.08); }
+.sfilter-item.female input:checked + label { color: var(--female); background: rgba(225,29,72,.06); }
+.sfilter-item label .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.sfilter-item.male   label .dot { background: var(--male); }
+.sfilter-item.female label .dot { background: var(--female); }
+.sfilter-item input:focus-visible + label { box-shadow: 0 0 0 2px var(--accent-lit) inset; }
+
+/* Count badges inside sidebar */
+.badge-stack { display: flex; flex-direction: column; gap: 5px; }
+.badge-row   { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-3); }
+.badge-row b { font-variant-numeric: tabular-nums; font-weight: 510; }
+.badge-row.male   { color: var(--male); }
+.badge-row.female { color: var(--female); }
+
+/* Register main area */
+.reg-main { display: grid; gap: 14px; }
+.reg-controls { display: grid; gap: 10px; }
+.reg-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.reg-header h2 { font-size: 17px; font-weight: 590; letter-spacing: -0.2px; color: var(--text-1); }
+.reg-total { font-family: var(--f-mono); font-size: 11px; color: var(--text-4); }
+
+/* Mobile-only filter chips (hidden on desktop where sidebar handles it) */
+.mobile-filters { display: grid; gap: 8px; }
+@media (min-width: 900px) { .mobile-filters { display: none; } }
+
+.fchip-row { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.fchip-label { font-family: var(--f-mono); font-size: 10px; font-weight: 510; letter-spacing: .1em; text-transform: uppercase; color: var(--text-4); margin-right: 2px; }
+.fchip { position: relative; }
+.fchip input { position: absolute; opacity: 0; pointer-events: none; }
+.fchip span {
+  display: inline-block; padding: 4px 11px; border-radius: 9999px;
+  border: 1px solid var(--border-s);
+  font-size: 12px; font-weight: 510; cursor: pointer;
+  background: var(--surface-0); color: var(--text-3);
+  transition: background .12s, color .12s, border-color .12s; white-space: nowrap;
+}
+.fchip span:hover { background: var(--surface-2); color: var(--text-2); }
+.fchip input:checked + span { background: var(--surface-2); color: var(--text-1); border-color: #9ca3af; }
+.fchip.male   input:checked + span { background: rgba(94,106,210,.1);  color: var(--male);   border-color: rgba(94,106,210,.5); }
+.fchip.female input:checked + span { background: rgba(225,29,72,.08);  color: var(--female); border-color: rgba(225,29,72,.45); }
+.fchip input:focus-visible + span { box-shadow: 0 0 0 2px var(--accent-lit); }
+
+/* Mobile search (above grid, below tabs) */
+.mobile-search { display: block; }
+@media (min-width: 900px) { .mobile-search { display: none; } }
+
+/* ── Toast popup ── */
+.toast {
+  position: fixed; bottom: calc(var(--bot-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
+  z-index: 9999; background: #111827; color: #fff;
+  border-radius: 10px; padding: 12px 20px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 510; letter-spacing: -0.13px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.toast-icon { font-size: 18px; flex-shrink: 0; }
+@media (min-width: 768px) { .toast { bottom: 24px; } }
+
+/* ─────────────────────────────────────
+   STUDENT CARDS (shared)
+───────────────────────────────────── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr)); gap: 10px; }
+
+.friend {
+  display: grid; min-width: 0; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--surface-0);
+  transition: background .15s, border-color .15s, box-shadow .15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.friend:hover  { background: var(--surface-1); border-color: #c4c9d4; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.friend.Male   { border-top: 2px solid rgba(94,106,210,.55); }
+.friend.Female { border-top: 2px solid rgba(225,29,72,.5); }
+
+.friend .pic {
+  aspect-ratio: 1; width: 100%;
+  background: var(--surface-1) center/cover no-repeat;
+  display: grid; place-items: center;
+  font-size: 32px; font-weight: 510; color: var(--text-3);
+  position: relative; user-select: none;
+}
+.friend .pill-wrap { position: absolute; left: 8px; bottom: 8px; }
+.friend .info { padding: 9px 11px 11px; display: grid; gap: 3px; }
+.friend .nm   { font-size: 13px; font-weight: 590; line-height: 1.3; overflow-wrap: anywhere; color: var(--text-1); letter-spacing: -0.13px; }
+.friend .nick { color: var(--text-4); font-weight: 400; font-size: 11px; }
+.friend .meta { font-size: 11px; color: var(--text-4); line-height: 1.55; margin-top: 2px; }
+.friend .meta span { display: block; }
+
+.pill {
+  display: inline-block; font-size: 10px; font-weight: 510; letter-spacing: .02em;
+  padding: 2px 7px; border-radius: 9999px;
+  background: rgba(255,255,255,0.88); border: 1px solid currentColor;
+  white-space: nowrap; backdrop-filter: blur(6px);
+}
+.pill.Yes   { color: var(--yes); }
+.pill.Maybe { color: var(--maybe); }
+.pill.No    { color: var(--no); }
+
+.ex-tag { font-family: var(--f-mono); font-size: 10px; color: var(--text-4); letter-spacing: .08em; text-transform: uppercase; padding: 0 11px 9px; }
+.empty  { color: var(--text-4); font-size: 13px; grid-column: 1/-1; padding: 8px 0; }
+.no-results { grid-column: 1/-1; text-align: center; padding: 48px 16px; color: var(--text-4); }
+.no-results svg { opacity: .22; display: block; margin: 0 auto 12px; }
+.no-results p   { font-size: 13px; }
+
+/* ── Banner ── */
+.banner {
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 8px; padding: 11px 15px; font-size: 13px; color: #92400e;
+  margin-bottom: 4px;
+}
+.banner strong { color: #92400e; font-weight: 590; }
+.banner code { font-family: var(--f-mono); font-size: 11px; background: rgba(0,0,0,.06); border-radius: 3px; padding: 1px 5px; }
+
+/* ── Auth pages ── */
+.auth-wrap { max-width: 420px; margin: 0 auto; padding: 40px 16px 48px; display: grid; gap: 12px; }
+@media (max-width: 767px) { .auth-wrap { padding-top: 24px; } }
+
+.auth-toggle { text-align: center; font-size: 13px; color: var(--text-3); }
+.auth-toggle button { background: none; border: none; color: var(--accent); font: inherit; font-weight: 510; cursor: pointer; padding: 0; }
+.auth-toggle button:hover { color: var(--accent-hov); }
+
+.account-card {
+  background: var(--surface-0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px 22px; display: grid; gap: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.account-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  display: grid; place-items: center;
+  font-size: 26px; font-weight: 700; color: #fff; user-select: none;
+}
+.account-info h3 { font-size: 18px; font-weight: 590; letter-spacing: -0.2px; color: var(--text-1); }
+.account-info p  { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+.account-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em; padding-top: 12px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ── Detail modal ── */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+  display: grid; place-items: center; padding: 16px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.modal-box {
+  background: var(--surface-0); border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 80px rgba(0,0,0,.22);
+  width: 100%; max-width: 390px;
+  overflow: hidden;
+  transform: translateY(16px) scale(.96); transition: transform .22s cubic-bezier(.34,1.26,.64,1);
+}
+.modal-backdrop.open .modal-box { transform: none; }
+.modal-photo {
+  width: 100%; aspect-ratio: 1/1;
+  background: linear-gradient(135deg,#1e1e3a 0%,#2a1a4a 100%);
+  display: grid; place-items: center;
+  position: relative; overflow: hidden;
+}
+.modal-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+  display: block;
+}
+.modal-photo.has-photo { background: #111; }
+.modal-avatar {
+  font-size: 72px; font-weight: 700; color: rgba(255,255,255,.8);
+  text-shadow: 0 2px 20px rgba(0,0,0,.3);
+  user-select: none;
+}
+.modal-photo .modal-pill {
+  position: absolute; right: 14px; bottom: 14px;
+  font-size: 11px; font-weight: 700; padding: 4px 12px;
+  border-radius: 9999px; border: 1.5px solid currentColor;
+  background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+  letter-spacing: .02em;
+}
+.modal-body { padding: 20px 22px 26px; display: grid; gap: 14px; }
+.modal-name { font-size: 21px; font-weight: 700; letter-spacing: -0.4px; color: var(--text-1); line-height: 1.25; }
+.modal-name span { font-size: 14px; font-weight: 400; color: var(--text-4); margin-left: 5px; }
+.modal-rows { display: grid; gap: 10px; }
+.modal-row { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; }
+.modal-row-label {
+  color: var(--text-4); min-width: 78px; flex-shrink: 0;
+  font-size: 11px; padding-top: 2px;
+  text-transform: uppercase; letter-spacing: .06em; font-weight: 510;
+}
+.modal-row-val { color: var(--text-1); font-weight: 450; word-break: break-word; line-height: 1.5; }
+.modal-row-val a { color: var(--accent); text-decoration: none; }
+.modal-row-val a:hover { color: var(--accent-hov); }
+.modal-close {
+  position: absolute; top: 12px; right: 14px;
+  background: rgba(0,0,0,.45); border: none; border-radius: 50%;
+  width: 32px; height: 32px; cursor: pointer; display: grid; place-items: center;
+  color: #fff; backdrop-filter: blur(8px);
+  transition: background .15s;
+}
+.modal-close:hover { background: rgba(0,0,0,.65); }
+.modal-photo { position: relative; }
+.friend { cursor: pointer; }
+
+/* ═══════════════════════════════════════
+   MOBILE — EDGE THEME  (max 899px)
+═══════════════════════════════════════ */
+@media (max-width: 899px) {
+
+  /* Strip horizontal padding so the dark band goes full-width */
+  .reg-page-wrap { padding-left: 0; padding-right: 0; padding-top: 0; }
+
+  /* Collapse gap so header + controls form one dark block */
+  .reg-main { gap: 0; }
+
+  /* Dark header band */
+  .reg-header {
+    background: #111;
+    padding: 22px max(16px,env(safe-area-inset-left,0px)) 4px;
+  }
+  .reg-header h2 {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  /* Controls stay dark */
+  .reg-controls {
+    background: #111;
+    padding: 10px max(16px,env(safe-area-inset-left,0px)) 16px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    gap: 8px;
+    margin-bottom: 0;
+  }
+
+  /* Search — dark themed */
+  .search-box input {
+    background: rgba(255,255,255,.08);
+    border-color: rgba(255,255,255,.12);
+    color: #fff;
+  }
+  .search-box input::placeholder { color: rgba(255,255,255,.3); }
+  .search-box svg { color: rgba(255,255,255,.3); }
+  .search-box input:focus-visible {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245,158,11,.18);
+  }
+
+  /* Filter chips — dark + amber when active */
+  .fchip span {
+    background: rgba(255,255,255,.05);
+    border-color: rgba(255,255,255,.11);
+    color: rgba(255,255,255,.4);
+  }
+  .fchip span:hover {
+    background: rgba(255,255,255,.1);
+    color: rgba(255,255,255,.7);
+  }
+  .fchip input:checked + span,
+  .fchip.male input:checked + span,
+  .fchip.female input:checked + span {
+    background: #f59e0b;
+    color: #111;
+    border-color: #f59e0b;
+    font-weight: 700;
+  }
+
+  /* Grid → single-column list */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0 max(16px,env(safe-area-inset-left,0px));
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+
+  /* Card → horizontal list row */
+  .friend {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 13px;
+    padding: 11px 0;
+    border-radius: 0;
+    border: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    box-shadow: none;
+    position: relative;
+    overflow: visible;
+  }
+  .friend:hover { background: transparent; box-shadow: none; }
+
+  /* Circular avatar */
+  .friend .pic {
+    width: 54px !important;
+    height: 54px !important;
+    aspect-ratio: 1;
+    border-radius: 50% !important;
+    flex-shrink: 0;
+    font-size: 20px;
+    overflow: hidden;
+    position: static; /* friend becomes containing block for pill-wrap */
+  }
+  .friend.Male   .pic { box-shadow: 0 0 0 2px rgba(94,106,210,.45); }
+  .friend.Female .pic { box-shadow: 0 0 0 2px rgba(225,29,72,.38); }
+
+  /* Pill repositioned to right edge of card row */
+  .friend .pill-wrap {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    left: auto;
+    bottom: auto;
+  }
+  .friend .pill {
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    backdrop-filter: none;
+    padding: 3px 8px;
+  }
+  .friend .pill.Yes   { background: #dcfce7; color: #15803d; border-color: transparent; }
+  .friend .pill.Maybe { background: #fef9c3; color: #a16207; border-color: transparent; }
+  .friend .pill.No    { background: #fee2e2; color: #dc2626; border-color: transparent; }
+
+  /* Info text — pad right so text doesn't overlap pill */
+  .friend .info { flex: 1; min-width: 0; padding: 0; padding-right: 60px; }
+  .friend .nm   { font-size: 13px; font-weight: 600; }
+  .friend .meta { margin-top: 2px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast" role="alert" aria-live="polite">
+  <span class="toast-icon" id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- ── Top navigation ── -->
+<header class="topnav">
+  <span class="nav-brand" id="navBrand">Reunion <span>·</span></span>
+  <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
+    <button class="nav-tab active" data-page="home"     role="tab">Home</button>
+    <button class="nav-tab"        data-page="rollcall" role="tab">Roll Call</button>
+    <button class="nav-tab"        data-page="register" role="tab">Register</button>
+  </nav>
+  <!-- logged-out -->
+  <div class="nav-auth" id="navAnon">
+    <button class="nav-tab" onclick="showPage('signin')">Sign in</button>
+    <button class="nav-cta" onclick="showPage('signup')">Sign up</button>
+  </div>
+  <!-- logged-in -->
+  <div class="nav-auth" id="navUser" hidden>
+    <span class="nav-username" id="navUsername"></span>
+    <button class="nav-tab" onclick="signOut()">Sign out</button>
+  </div>
+</header>
+
+<!-- ── Mobile bottom nav ── -->
+<nav class="bottomnav" aria-label="Mobile navigation">
+  <button class="bnav-tab active" data-page="home">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="bnav-tab" data-page="rollcall">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    <span>Roll Call</span>
+  </button>
+  <button class="bnav-tab" data-page="register">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Register</span>
+  </button>
+  <button class="bnav-tab" data-page="account">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <span id="bnavAccLabel">Account</span>
+  </button>
+</nav>
+
+<!-- ════════════════════════════════
+     PAGE: HOME
+════════════════════════════════ -->
+<section id="page-home" class="page active" role="tabpanel">
+  <div class="wrap">
+
+    <div class="banner" id="demoBanner" hidden>
+      <strong>Preview mode.</strong> Data won't be saved until you add your <code>SCRIPT_URL</code> to CONFIG.
+    </div>
+
+    <div class="hero">
+      <p class="eyebrow" id="batchLine"></p>
+      <h1 id="heroTitle"></h1>
+      <p class="lede" id="lede"></p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="showPage('rollcall')">Answer the roll call →</button>
+        <button class="btn-ghost"   onclick="showPage('register')">View class register</button>
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-cards" aria-live="polite">
+      <div class="stat-card sc-yes">
+        <span class="sc-val" id="sYes">0</span>
+        <span class="sc-lbl">Coming</span>
+      </div>
+      <div class="stat-card sc-maybe">
+        <span class="sc-val" id="sMaybe">0</span>
+        <span class="sc-lbl">Maybe</span>
+      </div>
+      <div class="stat-card sc-male">
+        <span class="sc-val" id="sMale">0</span>
+        <span class="sc-lbl">Male</span>
+      </div>
+      <div class="stat-card sc-fem">
+        <span class="sc-val" id="sFem">0</span>
+        <span class="sc-lbl">Female</span>
+      </div>
+    </div>
+
+    <!-- Quick action cards -->
+    <div class="action-cards">
+      <button class="action-card ac-primary" onclick="showPage('rollcall')">
+        <div class="ac-icon">✏️</div>
+        <div class="ac-title">Answer Roll Call</div>
+        <div class="ac-desc">Add your name to the list</div>
+      </button>
+      <button class="action-card ac-view" onclick="showPage('register')">
+        <div class="ac-icon">👥</div>
+        <div class="ac-title">Class Register</div>
+        <div class="ac-desc">See who has answered</div>
+      </button>
+      <button class="action-card ac-share" onclick="shareLink()">
+        <div class="ac-icon">🔗</div>
+        <div class="ac-title">Share Link</div>
+        <div class="ac-desc">Invite your classmates</div>
+      </button>
+    </div>
+
+    <div class="home-section">
+      <div class="home-section-head">
+        <h2>Recent classmates</h2>
+        <button class="view-all" onclick="showPage('register')">View all →</button>
+      </div>
+      <div class="grid" id="previewGrid"><p class="empty">No answers yet — be the first!</p></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     PAGE: ROLL CALL (form)
+════════════════════════════════ -->
+<section id="page-rollcall" class="page" role="tabpanel">
+  <div class="form-wrap">
+
+    <section class="card" id="formCard" aria-labelledby="formTitle">
+      <header>
+        <h2 id="formTitle">Answer the roll call</h2>
+        <p>Fill in your details — takes about a minute.</p>
+      </header>
+
+      <form id="rsvp" novalidate>
+
+        <div class="idrow">
+          <div class="photo-pick">
+            <input type="file" id="photo" accept="image/*">
+            <label for="photo" class="photo-box" id="photoBox"><span>Tap to add<br>your photo</span></label>
+            <button type="button" class="linkbtn" id="photoRemove" hidden>Remove</button>
+            <p class="photo-hint">Use a small image (under 1 MB) for faster upload.</p>
+          </div>
+          <div class="stack">
+            <div class="field" id="fName">
+              <label for="fullName">Full name<span class="req">*</span></label>
+              <input type="text" id="fullName" autocomplete="name" maxlength="80" placeholder="Your full name">
+              <span class="err">Please write your name.</span>
+            </div>
+            <div class="field">
+              <label for="nickname">School nickname <span class="hint">(optional)</span></label>
+              <input type="text" id="nickname" maxlength="40" placeholder="What everyone called you">
+            </div>
+          </div>
+        </div>
+
+        <div class="field" id="fGender">
+          <span class="q">Gender<span class="req">*</span></span>
+          <div class="gender-row" role="radiogroup" aria-label="Gender">
+            <div class="g-chip male">
+              <input type="radio" name="gender" id="g-male" value="Male">
+              <label for="g-male"><span class="dot"></span>Male</label>
+            </div>
+            <div class="g-chip female">
+              <input type="radio" name="gender" id="g-female" value="Female">
+              <label for="g-female"><span class="dot"></span>Female</label>
+            </div>
+          </div>
+          <span class="err">Please select your gender.</span>
+        </div>
+
+        <div class="row">
+          <div class="field" id="fLoc">
+            <label for="location">Where do you live now?<span class="req">*</span></label>
+            <input type="text" id="location" maxlength="60" placeholder="City, Country">
+            <span class="err">Please add your city.</span>
+          </div>
+          <div class="field">
+            <label for="mobile">Mobile number <span class="hint">(optional)</span></label>
+            <input type="text" id="mobile" maxlength="20" placeholder="+880 17XX XXX XXX" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="profession">What do you do now? <span class="hint">(optional)</span></label>
+          <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
+        </div>
+
+        <div class="field" id="fAtt">
+          <span class="q" id="attQ">Will you join the reunion?<span class="req">*</span></span>
+          <div class="rollcall" role="radiogroup" aria-labelledby="attQ">
+            <input type="radio" name="attending" id="att-yes"   value="Yes">
+            <label for="att-yes"><span class="big">Present!</span><span class="small">Count me in</span></label>
+            <input type="radio" name="attending" id="att-maybe" value="Maybe">
+            <label for="att-maybe"><span class="big">Maybe</span><span class="small">Depends on date</span></label>
+            <input type="radio" name="attending" id="att-no"    value="No">
+            <label for="att-no"><span class="big">Absent</span><span class="small">Not this time</span></label>
+          </div>
+          <span class="err">Pick one so we can plan numbers.</span>
+        </div>
+
+        <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="submitBtn">Submit my answer</button>
+          <span class="status" id="status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="card thanks" id="thanksCard" hidden aria-live="polite">
+      <span class="stamp" id="stampText"></span>
+      <h2 id="thanksTitle"></h2>
+      <p id="thanksBody"></p>
+      <div class="actions">
+        <button type="button" class="btn-primary" id="copyLink">Copy link to share</button>
+        <button type="button" class="btn-ghost"   id="editAgain">Change my answer</button>
+        <button type="button" class="btn-ghost"   onclick="showPage('register')">View class register</button>
+        <span class="status" id="copyStatus"></span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     PAGE: REGISTER
+════════════════════════════════ -->
+<section id="page-register" class="page" role="tabpanel">
+  <div class="reg-page-wrap">
+    <div class="reg-layout">
+
+
+      <!-- Main content -->
+      <div class="reg-main">
+        <div class="reg-header">
+          <h2>Class Register</h2>
+        </div>
+
+
+        <div class="reg-controls">
+          <div class="search-box">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="searchInput" placeholder="Name, city, profession…" aria-label="Search students">
+          </div>
+          <div class="fchip-row">
+            <label class="fchip"><input type="radio" name="fltAtt" value="all" checked><span>All</span></label>
+            <label class="fchip"><input type="radio" name="fltAtt" value="Yes"><span>Coming</span></label>
+            <label class="fchip"><input type="radio" name="fltAtt" value="Maybe"><span>Maybe</span></label>
+            <label class="fchip"><input type="radio" name="fltAtt" value="No"><span>Absent</span></label>
+          </div>
+          <div class="fchip-row">
+            <label class="fchip"><input type="radio" name="fltGen" value="all" checked><span>All</span></label>
+            <label class="fchip male"><input type="radio" name="fltGen" value="Male"><span>Male</span></label>
+            <label class="fchip female"><input type="radio" name="fltGen" value="Female"><span>Female</span></label>
+          </div>
+        </div>
+
+        <div class="grid" id="grid"><p class="empty">Loading…</p></div>
+      </div>
+
+    </div><!-- /.reg-layout -->
+
+    <footer class="foot" id="footNote"></footer>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     PAGE: SIGN UP
+════════════════════════════════ -->
+<section id="page-signup" class="page" role="tabpanel">
+  <div class="auth-wrap">
+    <section class="card">
+      <header>
+        <h2>Create account</h2>
+        <p>Pick a username and password to save your details.</p>
+      </header>
+      <form id="signupForm" novalidate>
+        <div class="field" id="fSuUser">
+          <label for="suUsername">Username<span class="req">*</span></label>
+          <input type="text" id="suUsername" maxlength="20" placeholder="letters, numbers, underscore" autocomplete="username">
+          <span class="err" id="suUserErr">At least 3 characters, letters/numbers/underscore only.</span>
+        </div>
+        <div class="field" id="fSuPw">
+          <label for="suPassword">Password<span class="req">*</span></label>
+          <input type="text" id="suPassword" maxlength="60" placeholder="At least 6 characters" autocomplete="new-password" style="letter-spacing:.1em">
+          <span class="err" id="suPwErr">At least 6 characters.</span>
+        </div>
+        <div class="field" id="fSuPw2">
+          <label for="suPassword2">Confirm password<span class="req">*</span></label>
+          <input type="text" id="suPassword2" maxlength="60" placeholder="Same password again" autocomplete="new-password" style="letter-spacing:.1em">
+          <span class="err" id="suPw2Err">Passwords do not match.</span>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="suBtn">Create account</button>
+          <span class="status" id="suStatus" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+    <p class="auth-toggle">Already have an account? <button onclick="showPage('signin')">Sign in</button></p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     PAGE: SIGN IN
+════════════════════════════════ -->
+<section id="page-signin" class="page" role="tabpanel">
+  <div class="auth-wrap">
+    <section class="card">
+      <header>
+        <h2>Sign in</h2>
+        <p>Sign in to view or update your details.</p>
+      </header>
+      <form id="signinForm" novalidate>
+        <div class="field" id="fSiUser">
+          <label for="siUsername">Username<span class="req">*</span></label>
+          <input type="text" id="siUsername" maxlength="20" placeholder="Your username" autocomplete="username">
+          <span class="err">Please enter your username.</span>
+        </div>
+        <div class="field" id="fSiPw">
+          <label for="siPassword">Password<span class="req">*</span></label>
+          <input type="text" id="siPassword" maxlength="60" placeholder="Your password" autocomplete="current-password" style="letter-spacing:.1em">
+          <span class="err">Please enter your password.</span>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="siBtn">Sign in</button>
+          <span class="status" id="siStatus" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+    <p class="auth-toggle">No account yet? <button onclick="showPage('signup')">Sign up</button></p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     PAGE: ACCOUNT
+════════════════════════════════ -->
+<section id="page-account" class="page" role="tabpanel">
+  <div class="auth-wrap">
+
+    <!-- Logged out state -->
+    <div id="acctLoggedOut">
+      <section class="card">
+        <header><h2>Account</h2><p>Sign in to manage your reunion details from any device.</p></header>
+        <div class="actions">
+          <button class="btn-primary" onclick="showPage('signin')">Sign in</button>
+          <button class="btn-ghost"   onclick="showPage('signup')">Create account</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Logged in state -->
+    <div id="acctLoggedIn" hidden>
+      <section class="account-card">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="account-avatar" id="acctAvatar"></div>
+          <div class="account-info">
+            <h3 id="acctUsername"></h3>
+            <p>PSC Batch 2010</p>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button class="btn-primary" onclick="showPage('rollcall')">Edit my details</button>
+          <button class="btn-ghost"   onclick="signOut()">Sign out</button>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</section>
+
+<!-- Detail modal -->
+<div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-label="Classmate details">
+  <div class="modal-box">
+    <div class="modal-photo" id="mPhoto">
+      <img id="mImg" class="modal-img" alt="Profile photo" hidden>
+      <span class="modal-avatar" id="mAvatar"></span>
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="modal-pill" id="mPill"></span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-name" id="mName"><span id="mNameText"></span><span id="mNick"></span></div>
+      <div class="modal-rows">
+        <div class="modal-row"><span class="modal-row-label">Gender</span><span class="modal-row-val" id="mGender"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Location</span><span class="modal-row-val" id="mLocation"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Profession</span><span class="modal-row-val" id="mProfession"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Mobile</span><span class="modal-row-val" id="mMobile"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ EDIT THESE ============ */
+const CONFIG = {
+  SCRIPT_URL:               "https://script.google.com/macros/s/AKfycbyXMXJ-pT-Wd-WUM2VsZ0yx2XcIaY2NqH5ona1ZE8_IWR9vf5ZG6h5HapTOFTVDmtS72A/exec",
+  CLOUDINARY_CLOUD_NAME:    "hrjdqnxt",
+  CLOUDINARY_UPLOAD_PRESET: "reunion_uploads",
+  SCHOOL:     "PSC Batch 2010",
+  BATCH_LINE: "PSC · Batch of 2010 · Roll call",
+  TITLE_HTML: 'PSC Batch 2010 <mark>Reunion</mark>',
+  LEDE:       "It's been years since the last bell. Tell us where you are now and whether you can make it.",
+  FOOTER:     "Organised by PSC Batch 2010"
+};
+/* ==================================== */
+
+const $ = (id) => document.getElementById(id);
+const LIVE        = !!CONFIG.SCRIPT_URL;
+const CLOUD_READY = !!(CONFIG.CLOUDINARY_CLOUD_NAME && CONFIG.CLOUDINARY_UPLOAD_PRESET);
+
+// ── Browser SHA-256 (for password hashing) ──
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str + "psc2011reunion"));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+// ── Apps Script helpers ──
+async function scriptPost(payload) {
+  const res = await fetch(CONFIG.SCRIPT_URL, { method:"POST", body: JSON.stringify(payload) });
+  return res.json();
+}
+async function scriptGet(params) {
+  const qs  = new URLSearchParams({ ...params, t: Date.now() }).toString();
+  const res = await fetch(CONFIG.SCRIPT_URL + "?" + qs);
+  return res.json();
+}
+
+let entries  = [];
+let photoData = "";
+
+// ── Apply CONFIG ──
+$("batchLine").textContent  = CONFIG.BATCH_LINE;
+$("heroTitle").innerHTML    = CONFIG.TITLE_HTML;
+$("lede").textContent       = CONFIG.LEDE;
+$("footNote").textContent   = CONFIG.FOOTER;
+$("navBrand").textContent   = CONFIG.SCHOOL;
+document.title              = CONFIG.SCHOOL + " Reunion";
+$("demoBanner").hidden      = LIVE;
+
+// ── Page navigation ──
+function showPage(name) {
+  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) => t.classList.toggle("active", t.dataset.page === name));
+  const pg = $("page-" + name); if (pg) pg.classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (history.pushState) history.pushState(null, "", "#" + name);
+  if (name === "rollcall" && authState) loadUserEntry();
+}
+document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) =>
+  t.addEventListener("click", () => showPage(t.dataset.page))
+);
+// hash routing on load
+(function() {
+  const h = location.hash.slice(1);
+  if (["home","rollcall","register","signup","signin","account"].includes(h)) showPage(h);
+})();
+
+// ── Auth state ──
+const AUTH_KEY = "reunion-auth-v1";
+function readAuth()   { try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch { return null; } }
+function writeAuth(v) { try { if (v) localStorage.setItem(AUTH_KEY, JSON.stringify(v)); else localStorage.removeItem(AUTH_KEY); } catch {} }
+
+let authState = readAuth(); // { username, clientId } or null
+
+function updateAuthUI() {
+  const loggedIn = !!(authState && authState.username);
+  $("navAnon").hidden  = loggedIn;
+  $("navUser").hidden  = !loggedIn;
+  if (loggedIn) {
+    $("navUsername").textContent  = "@" + authState.username;
+    $("acctAvatar").textContent   = authState.username.charAt(0).toUpperCase();
+    $("acctUsername").textContent = "@" + authState.username;
+    $("bnavAccLabel").textContent = authState.username;
+  } else {
+    $("bnavAccLabel").textContent = "Account";
+  }
+  $("acctLoggedOut").hidden = loggedIn;
+  $("acctLoggedIn").hidden  = !loggedIn;
+}
+updateAuthUI();
+
+function signOut() {
+  authState = null; writeAuth(null); updateAuthUI(); showPage("home");
+  showToast("✌️", "Signed out successfully.");
+}
+
+// ── Toast ──
+let toastTimer;
+function showToast(icon, msg, duration) {
+  duration = duration || 3500;
+  $("toastIcon").textContent = icon;
+  $("toastMsg").textContent  = msg;
+  const t = $("toast");
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), duration);
+}
+
+// ── Restore saved state ──
+const KEY = "reunion-rsvp-v3";
+function readSaved()   { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch { return null; } }
+function writeSaved(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} }
+const saved = readSaved() || {};
+// If logged in, use the account's clientId; otherwise fall back to device clientId
+const clientId = (authState && authState.clientId) ||
+                 saved.clientId ||
+                 (crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(16).slice(2));
+function fillForm(d) {
+  if (!d) return;
+  $("fullName").value   = d.fullName   || "";
+  $("nickname").value   = d.nickname   || "";
+  $("location").value   = d.location   || "";
+  $("mobile").value     = d.mobile     || "";
+  $("profession").value = d.profession || "";
+  const g = document.querySelector(`input[name=gender][value="${d.gender}"]`);
+  const r = document.querySelector(`input[name=attending][value="${d.attending}"]`);
+  if (g) g.checked = true; if (r) r.checked = true;
+  // Restore photo preview
+  const box = $("photoBox");
+  if (d.photo) {
+    box.style.backgroundImage = `url("${d.photo}")`;
+    box.classList.add("has");
+    const sp = box.querySelector("span"); if (sp) sp.hidden = true;
+    $("photoRemove").hidden = false;
+  } else {
+    box.style.backgroundImage = "";
+    box.classList.remove("has");
+    const sp = box.querySelector("span"); if (sp) sp.hidden = false;
+    $("photoRemove").hidden = true;
+  }
+}
+
+async function loadUserEntry() {
+  if (!LIVE || !authState || !authState.clientId) return;
+  try {
+    const out = await scriptGet({ clientId: authState.clientId });
+    if (out.ok && out.entry && out.entry.fullName) {
+      fillForm(out.entry);
+      writeSaved({ ...out.entry, clientId: authState.clientId });
+    }
+  } catch {}
+}
+
+if (saved.fullName) {
+  fillForm(saved);
+}
+
+if (authState) loadUserEntry();
+
+// ── Photo resize ──
+$("photo").addEventListener("change", async () => {
+  const f = $("photo").files[0]; if (!f) return;
+  if (!f.type.startsWith("image/")) { setStatus("Please choose an image file.", true); return; }
+  try {
+    const url = URL.createObjectURL(f);
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const s = Math.min(1, 600 / Math.max(img.width, img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    photoData = c.toDataURL("image/jpeg", 0.82);
+    URL.revokeObjectURL(url);
+    $("photoBox").style.backgroundImage = `url("${photoData}")`;
+    $("photoBox").classList.add("has");
+    const sp = $("photoBox").querySelector("span"); if (sp) sp.hidden = true;
+    $("photoRemove").hidden = false; setStatus("");
+  } catch { setStatus("Couldn't read that photo. Try another.", true); }
+});
+$("photoRemove").addEventListener("click", () => {
+  photoData = ""; $("photo").value = "";
+  $("photoBox").style.backgroundImage = ""; $("photoBox").classList.remove("has");
+  const sp = $("photoBox").querySelector("span"); if (sp) sp.hidden = false;
+  $("photoRemove").hidden = true;
+});
+
+// ── Cloudinary upload ──
+function dataUrlToBlob(d) {
+  const [h, data] = d.split(","); const mime = h.match(/:(.*?);/)[1];
+  const b = atob(data); const a = new Uint8Array(b.length);
+  for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i);
+  return new Blob([a], { type: mime });
+}
+async function uploadToCloudinary(dataUrl) {
+  const fd = new FormData();
+  fd.append("file", dataUrlToBlob(dataUrl));
+  fd.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_CLOUD_NAME}/image/upload`, { method:"POST", body:fd });
+  if (!res.ok) throw new Error("Photo upload failed (" + res.status + ")");
+  return (await res.json()).secure_url;
+}
+
+// ── Form ──
+function collect() {
+  const att = document.querySelector("input[name=attending]:checked");
+  const gen = document.querySelector("input[name=gender]:checked");
+  return { clientId,
+    fullName:   $("fullName").value.trim(),
+    nickname:   $("nickname").value.trim(),
+    gender:     gen ? gen.value : "",
+    location:   $("location").value.trim(),
+    mobile:     $("mobile").value.trim(),
+    profession: $("profession").value.trim(),
+    attending:  att ? att.value : "",
+    website:    $("website").value };
+}
+function validate(d) {
+  let first = null;
+  const mark = (el, bad) => { el.classList.toggle("invalid", bad); if (bad && !first) first = el; };
+  mark($("fName"),   d.fullName.length < 2);
+  mark($("fGender"), !d.gender);
+  mark($("fLoc"),    d.location.length < 2);
+  mark($("fAtt"),    !d.attending);
+  if (first) { first.scrollIntoView({ behavior:"smooth", block:"center" }); const i = first.querySelector("input"); if (i) i.focus({ preventScroll:true }); }
+  return !first;
+}
+document.querySelectorAll("#rsvp input[type=text]").forEach((el) =>
+  el.addEventListener("input", () => { const f = el.closest(".field"); if (f) f.classList.remove("invalid"); })
+);
+document.querySelectorAll("input[name=attending], input[name=gender]").forEach((el) =>
+  el.addEventListener("change", () => { const f = el.closest(".field"); if (f) f.classList.remove("invalid"); })
+);
+
+$("rsvp").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const d = collect();
+  if (!validate(d)) { setStatus("Please fill in the highlighted fields.", true); return; }
+  const btn = $("submitBtn"); btn.disabled = true;
+  try {
+    let photoUrl = "";
+    if (LIVE) {
+      if (photoData && CLOUD_READY) {
+        setStatus("Uploading photo…");
+        try { photoUrl = await uploadToCloudinary(photoData); }
+        catch (pe) { setStatus("Photo skipped (" + pe.message + "). Saving without photo…"); }
+      }
+      setStatus("Saving…");
+      const out = await scriptPost({ ...d, photo: photoUrl });
+      if (!out.ok) throw new Error(out.error);
+    } else { await new Promise((r) => setTimeout(r, 600)); }
+    const { website, ...keep } = d; writeSaved(keep);
+    showThanks(d); loadList();
+  } catch (err) { setStatus("Couldn't save: " + err.message, true); }
+  finally { btn.disabled = false; }
+});
+function setStatus(t, bad) { const s = $("status"); s.textContent = t; s.classList.toggle("bad", !!bad); }
+
+function showThanks(d) {
+  setStatus("");
+  const first = d.nickname || d.fullName.split(" ")[0];
+  const t = {
+    Yes:   ["Marked present", `Thanks, ${first}! See you there.`,          "yes"],
+    Maybe: ["Marked maybe",   `Thanks, ${first}. We'll keep you posted.`,  "maybe"],
+    No:    ["Marked absent",  `Thanks, ${first}. We'll miss you this time.`,"no"]
+  }[d.attending];
+  $("stampText").textContent = t[0]; $("stampText").style.color = `var(--${t[2]})`;
+  $("thanksTitle").textContent = t[1];
+  $("thanksBody").textContent  = LIVE ? "Your answer is saved. Share this page with classmates." : "Preview mode — nothing was saved yet.";
+  $("formCard").hidden = true; $("thanksCard").hidden = false;
+}
+$("editAgain").addEventListener("click", () => { $("thanksCard").hidden = true; $("formCard").hidden = false; });
+$("copyLink").addEventListener("click", async () => {
+  const url = location.origin + location.pathname;
+  try { await navigator.clipboard.writeText(url); $("copyStatus").textContent = "Link copied!"; }
+  catch { $("copyStatus").textContent = url; }
+});
+// ── Sign Up ──
+$("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username  = $("suUsername").value.trim().toLowerCase();
+  const password  = $("suPassword").value;
+  const password2 = $("suPassword2").value;
+  let valid = true;
+
+  const markSu = (id, bad, msg) => {
+    $("f" + id).classList.toggle("invalid", bad);
+    if (bad && msg) $(id.replace("Su","su") + "Err").textContent = msg;
+    if (bad) valid = false;
+  };
+  if (!username || username.length < 3 || !/^[a-z0-9_]+$/.test(username))
+    markSu("SuUser", true, "3–20 chars, letters/numbers/underscore only.");
+  else markSu("SuUser", false);
+  if (!password || password.length < 6) markSu("SuPw", true, "At least 6 characters.");
+  else markSu("SuPw", false);
+  if (password !== password2) markSu("SuPw2", true, "Passwords do not match.");
+  else markSu("SuPw2", false);
+  if (!valid) return;
+  if (!LIVE) { $("suStatus").textContent = "Add SCRIPT_URL to CONFIG to enable accounts."; return; }
+
+  const btn = $("suBtn"); btn.disabled = true;
+  $("suStatus").textContent = "Checking…"; $("suStatus").classList.remove("bad");
+  try {
+    const hash = await sha256(password);
+    const out  = await scriptPost({ action:"signup", username, passwordHash: hash, clientId });
+    if (!out.ok) {
+      $("suStatus").textContent = out.error; $("suStatus").classList.add("bad");
+      if (out.error.includes("taken")) $("fSuUser").classList.add("invalid");
+    } else {
+      authState = { username, clientId: out.clientId || clientId };
+      writeAuth(authState); updateAuthUI();
+      showToast("🎉", "Account created! Welcome, @" + username);
+      showPage("rollcall");
+    }
+  } catch (err) { $("suStatus").textContent = err.message || "Error. Try again."; $("suStatus").classList.add("bad"); }
+  finally { btn.disabled = false; }
+});
+
+// ── Sign In ──
+$("signinForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = $("siUsername").value.trim().toLowerCase();
+  const password = $("siPassword").value;
+  let valid = true;
+  const markSi = (id, bad) => { $(id).classList.toggle("invalid", bad); if (bad) valid = false; };
+  markSi("fSiUser", !username); markSi("fSiPw", !password);
+  if (!valid) return;
+  if (!LIVE) { $("siStatus").textContent = "Add SCRIPT_URL to CONFIG to enable accounts."; return; }
+
+  const btn = $("siBtn"); btn.disabled = true;
+  $("siStatus").textContent = "Signing in…"; $("siStatus").classList.remove("bad");
+  try {
+    const hash = await sha256(password);
+    const out  = await scriptPost({ action:"signin", username, passwordHash: hash });
+    if (!out.ok) { $("siStatus").textContent = out.error; $("siStatus").classList.add("bad"); }
+    else {
+      authState = { username: out.username, clientId: out.clientId };
+      writeAuth(authState); updateAuthUI();
+      showToast("👋", "Welcome back, @" + username + "!");
+      showPage("rollcall");
+      loadUserEntry();
+    }
+  } catch (err) { $("siStatus").textContent = err.message || "Network error."; $("siStatus").classList.add("bad"); }
+  finally { btn.disabled = false; }
+});
+
+async function shareLink() {
+  const url = location.origin + location.pathname;
+  const text = "Answer the PSC Batch 2010 reunion roll call: " + url;
+  if (navigator.share) { try { await navigator.share({ title:"PSC Batch 2011 Reunion", text, url }); return; } catch {} }
+  try { await navigator.clipboard.writeText(url); alert("Link copied! Share it with your classmates."); }
+  catch { alert(url); }
+}
+
+// ── Load data ──
+async function loadList() {
+  if (!LIVE) { entries = []; render(); return; }
+  try {
+    const out = await scriptGet({});
+    entries = out.ok ? out.entries : [];
+    render();
+  } catch {
+    $("grid").innerHTML        = '<p class="empty">Couldn\'t load the list. Refresh to try again.</p>';
+    $("previewGrid").innerHTML = '<p class="empty">Couldn\'t load.</p>';
+  }
+}
+
+// ── Render ──
+function getFilters() {
+  return {
+    att: (document.querySelector("input[name=fltAtt]:checked") || {}).value || "all",
+    gen: (document.querySelector("input[name=fltGen]:checked") || {}).value || "all",
+    q: ($("searchInput").value || "").trim().toLowerCase()
+  };
+}
+
+function render() {
+  const total  = entries.length;
+  const males  = entries.filter((x) => x.gender === "Male").length;
+  const fems   = entries.filter((x) => x.gender === "Female").length;
+  const coming = entries.filter((x) => x.attending === "Yes").length;
+  const maybes = entries.filter((x) => x.attending === "Maybe").length;
+
+  // Header stats
+  $("sYes").textContent   = coming;
+  $("sMaybe").textContent = maybes;
+  $("sMale").textContent  = males;
+  $("sFem").textContent   = fems;
+
+
+  // Home preview — latest 6, no filters
+  renderGrid($("previewGrid"), entries.slice(0, 6));
+
+  // Register — filtered
+  const { att, gen, q } = getFilters();
+  const filtered = entries.filter((x) => {
+    if (att !== "all" && x.attending !== att) return false;
+    if (gen !== "all" && x.gender    !== gen) return false;
+    if (q) {
+      const hay = [x.name, x.nickname, x.location, x.profession].join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  renderGrid($("grid"), filtered, entries.length);
+}
+
+function renderGrid(container, list, totalCount) {
+  container.textContent = "";
+  if (!list.length) {
+    const noQ = ($("searchInput").value || "").trim();
+    container.innerHTML = `<div class="no-results"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>${noQ ? 'No results for "' + noQ + '".' : (totalCount ? "Nobody in this group yet." : "No answers yet. Be the first!")}</p></div>`;
+    return;
+  }
+  const label = { Yes:"Coming", Maybe:"Maybe", No:"Absent" };
+  list.forEach((x) => {
+    const card = document.createElement("article");
+    card.className = "friend " + (x.gender || "");
+    card.addEventListener("click", () => openModal(x));
+
+    const pic = document.createElement("div"); pic.className = "pic";
+    if (x.photo) pic.style.backgroundImage = `url("${x.photo}")`;
+    else pic.textContent = (x.nickname || x.name || "?").trim().charAt(0).toUpperCase();
+    const pw = document.createElement("div"); pw.className = "pill-wrap";
+    const pl = document.createElement("span"); pl.className = "pill " + x.attending;
+    pl.textContent = label[x.attending] || x.attending; pw.append(pl); pic.append(pw);
+
+    const info = document.createElement("div"); info.className = "info";
+    const nm   = document.createElement("div"); nm.className = "nm"; nm.textContent = x.name;
+    if (x.nickname) { const nk = document.createElement("span"); nk.className = "nick"; nk.textContent = " “" + x.nickname + "”"; nm.append(nk); }
+    info.append(nm);
+    const meta = document.createElement("div"); meta.className = "meta";
+    if (x.location)   { const s = document.createElement("span"); s.textContent = x.location;   meta.append(s); }
+    if (x.profession) { const s = document.createElement("span"); s.textContent = x.profession; meta.append(s); }
+    info.append(meta);
+
+    card.append(pic, info);
+    container.append(card);
+  });
+}
+
+
+document.querySelectorAll("input[name=fltAtt], input[name=fltGen]").forEach((r) => r.addEventListener("change", render));
+$("searchInput").addEventListener("input", render);
+
+loadList();
+
+// ── Detail modal ──
+const modalBackdrop = document.getElementById("detailModal");
+const modalClose    = document.getElementById("modalClose");
+
+function openModal(x) {
+  const label = { Yes:"Coming ✓", Maybe:"Maybe", No:"Absent" };
+  const photo  = document.getElementById("mPhoto");
+  const avatar = document.getElementById("mAvatar");
+  const img    = document.getElementById("mImg");
+  if (x.photo) {
+    img.src = x.photo;
+    img.hidden = false;
+    photo.classList.add("has-photo");
+    avatar.textContent = "";
+  } else {
+    img.hidden = true;
+    img.src = "";
+    photo.classList.remove("has-photo");
+    avatar.textContent = (x.nickname || x.name || "?").charAt(0).toUpperCase();
+  }
+  const pill = document.getElementById("mPill");
+  pill.textContent = label[x.attending] || x.attending || "";
+  pill.className = "modal-pill " + (x.attending || "");
+  document.getElementById("mNameText").textContent = x.name || "";
+  const nickEl = document.getElementById("mNick");
+  nickEl.textContent = x.nickname ? "“" + x.nickname + "”" : "";
+  document.getElementById("mGender").textContent     = x.gender     || "—";
+  document.getElementById("mLocation").textContent   = x.location   || "—";
+  document.getElementById("mProfession").textContent = x.profession || "—";
+  const mobEl  = document.getElementById("mMobile");
+  const mobRow = mobEl.closest(".modal-row");
+  if (x.mobile) {
+    mobEl.innerHTML = `<a href="tel:${x.mobile}">${x.mobile}</a>`;
+    mobRow.hidden = false;
+  } else {
+    mobRow.hidden = true;
+  }
+  modalBackdrop.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() {
+  modalBackdrop.classList.remove("open");
+  document.body.style.overflow = "";
+}
+modalClose.addEventListener("click", closeModal);
+modalBackdrop.addEventListener("click", (e) => { if (e.target === modalBackdrop) closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+</script>
+</body>
+</html>
