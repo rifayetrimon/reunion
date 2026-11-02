@@ -289,6 +289,34 @@ input[type=text]:hover        { border-color: #9ca3af; }
 input[type=text]:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
 .field.invalid input[type=text] { border-color: var(--female); }
 input[type=search] { -webkit-appearance: none; }
+
+select {
+  width: 100%; font: inherit; font-size: 14px; font-feature-settings: "cv01","ss03";
+  color: var(--text-1); background: var(--surface-0);
+  border: 1px solid var(--border-s); border-radius: 6px;
+  padding: 9px 32px 9px 11px; min-width: 0; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 11px center;
+  transition: border-color .15s, box-shadow .15s;
+}
+select:hover { border-color: #9ca3af; }
+select:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(94,106,210,.15); }
+.field.invalid select { border-color: var(--female); }
+
+.sort-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: 1px solid var(--border-s);
+  border-radius: 6px; padding: 5px 12px;
+  font-size: 12px; font-weight: 510; color: var(--text-3); cursor: pointer;
+  transition: background .12s, color .12s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.sort-btn:hover { background: var(--surface-2); color: var(--text-1); }
+@media (max-width: 899px) {
+  .sort-btn { border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.45); background: none; }
+  .sort-btn:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); }
+}
 input[type=search]::-webkit-search-cancel-button { display: none; }
 
 .err { color: var(--female); font-size: 12px; display: none; }
@@ -932,6 +960,35 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
         </div>
 
         <div class="row">
+          <div class="field" id="fGroup">
+            <label for="group">Group<span class="req">*</span></label>
+            <select id="group">
+              <option value="">Select your group</option>
+              <option value="Science">Science</option>
+              <option value="Commerce">Commerce</option>
+              <option value="Humanities">Humanities</option>
+              <option value="Arts">Arts</option>
+            </select>
+            <span class="err">Please select your group.</span>
+          </div>
+          <div class="field" id="fBlood">
+            <label for="bloodGroup">Blood Group<span class="req">*</span></label>
+            <select id="bloodGroup">
+              <option value="">Select blood group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A−</option>
+              <option value="B+">B+</option>
+              <option value="B-">B−</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB−</option>
+              <option value="O+">O+</option>
+              <option value="O-">O−</option>
+            </select>
+            <span class="err">Please select your blood group.</span>
+          </div>
+        </div>
+
+        <div class="row">
           <div class="field" id="fLoc">
             <label for="location">Where do you live now?<span class="req">*</span></label>
             <input type="text" id="location" maxlength="60" placeholder="City, Country">
@@ -997,6 +1054,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
       <div class="reg-main">
         <div class="reg-header">
           <h2>Class Register</h2>
+          <button type="button" class="sort-btn" id="sortToggle">A → Z</button>
         </div>
 
 
@@ -1015,6 +1073,24 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
             <label class="fchip"><input type="radio" name="fltGen" value="all" checked><span>All</span></label>
             <label class="fchip male"><input type="radio" name="fltGen" value="Male"><span>Male</span></label>
             <label class="fchip female"><input type="radio" name="fltGen" value="Female"><span>Female</span></label>
+          </div>
+          <div class="fchip-row">
+            <label class="fchip"><input type="radio" name="fltGrp" value="all" checked><span>All Groups</span></label>
+            <label class="fchip"><input type="radio" name="fltGrp" value="Science"><span>Science</span></label>
+            <label class="fchip"><input type="radio" name="fltGrp" value="Commerce"><span>Commerce</span></label>
+            <label class="fchip"><input type="radio" name="fltGrp" value="Humanities"><span>Humanities</span></label>
+            <label class="fchip"><input type="radio" name="fltGrp" value="Arts"><span>Arts</span></label>
+          </div>
+          <div class="fchip-row">
+            <label class="fchip"><input type="radio" name="fltBld" value="all" checked><span>All Blood</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="A+"><span>A+</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="A-"><span>A−</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="B+"><span>B+</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="B-"><span>B−</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="AB+"><span>AB+</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="AB-"><span>AB−</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="O+"><span>O+</span></label>
+            <label class="fchip"><input type="radio" name="fltBld" value="O-"><span>O−</span></label>
           </div>
         </div>
 
@@ -1118,7 +1194,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
           <div class="account-avatar" id="acctAvatar"></div>
           <div class="account-info">
             <h3 id="acctUsername"></h3>
-            <p>PSC Batch 2010</p>
+            <p>SSC Batch 2016</p>
           </div>
         </div>
         <div class="account-actions">
@@ -1146,6 +1222,8 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
       <div class="modal-name" id="mName"><span id="mNameText"></span><span id="mNick"></span></div>
       <div class="modal-rows">
         <div class="modal-row"><span class="modal-row-label">Gender</span><span class="modal-row-val" id="mGender"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Group</span><span class="modal-row-val" id="mGroup"></span></div>
+        <div class="modal-row"><span class="modal-row-label">Blood Group</span><span class="modal-row-val" id="mBlood"></span></div>
         <div class="modal-row"><span class="modal-row-label">Location</span><span class="modal-row-val" id="mLocation"></span></div>
         <div class="modal-row"><span class="modal-row-label">Profession</span><span class="modal-row-val" id="mProfession"></span></div>
         <div class="modal-row"><span class="modal-row-label">Mobile</span><span class="modal-row-val" id="mMobile"></span></div>
@@ -1157,14 +1235,14 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 <script>
 /* ============ EDIT THESE ============ */
 const CONFIG = {
-  SCRIPT_URL:               "https://script.google.com/macros/s/AKfycbyXMXJ-pT-Wd-WUM2VsZ0yx2XcIaY2NqH5ona1ZE8_IWR9vf5ZG6h5HapTOFTVDmtS72A/exec",
+  SCRIPT_URL:               "",  // ← paste your SSC Apps Script deployment URL here
   CLOUDINARY_CLOUD_NAME:    "hrjdqnxt",
   CLOUDINARY_UPLOAD_PRESET: "reunion_uploads",
-  SCHOOL:     "PSC Batch 2010",
-  BATCH_LINE: "PSC · Batch of 2010 · Roll call",
-  TITLE_HTML: 'PSC Batch 2010 <mark>Reunion</mark>',
+  SCHOOL:     "SSC Batch 2016",
+  BATCH_LINE: "SSC · Batch of 2016 · Roll call",
+  TITLE_HTML: 'SSC Batch 2016 <mark>Reunion</mark>',
   LEDE:       "It's been years since the last bell. Tell us where you are now and whether you can make it.",
-  FOOTER:     "Organised by PSC Batch 2010"
+  FOOTER:     "Organised by SSC Batch 2016"
 };
 /* ==================================== */
 
@@ -1174,7 +1252,7 @@ const CLOUD_READY = !!(CONFIG.CLOUDINARY_CLOUD_NAME && CONFIG.CLOUDINARY_UPLOAD_
 
 // ── Browser SHA-256 (for password hashing) ──
 async function sha256(str) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str + "psc2011reunion"));
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str + "ssc2016reunion"));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
 }
 
@@ -1191,6 +1269,7 @@ async function scriptGet(params) {
 
 let entries  = [];
 let photoData = "";
+let sortDir   = "asc"; // "asc" = A→Z, "desc" = Z→A
 
 // ── Apply CONFIG ──
 $("batchLine").textContent  = CONFIG.BATCH_LINE;
@@ -1273,6 +1352,8 @@ function fillForm(d) {
   if (!d) return;
   $("fullName").value   = d.fullName   || "";
   $("nickname").value   = d.nickname   || "";
+  $("group").value      = d.group      || "";
+  $("bloodGroup").value = d.bloodGroup || "";
   $("location").value   = d.location   || "";
   $("mobile").value     = d.mobile     || "";
   $("profession").value = d.profession || "";
@@ -1361,6 +1442,8 @@ function collect() {
     fullName:   $("fullName").value.trim(),
     nickname:   $("nickname").value.trim(),
     gender:     gen ? gen.value : "",
+    group:      $("group").value,
+    bloodGroup: $("bloodGroup").value,
     location:   $("location").value.trim(),
     mobile:     $("mobile").value.trim(),
     profession: $("profession").value.trim(),
@@ -1372,6 +1455,8 @@ function validate(d) {
   const mark = (el, bad) => { el.classList.toggle("invalid", bad); if (bad && !first) first = el; };
   mark($("fName"),   d.fullName.length < 2);
   mark($("fGender"), !d.gender);
+  mark($("fGroup"),  !d.group);
+  mark($("fBlood"),  !d.bloodGroup);
   mark($("fLoc"),    d.location.length < 2);
   mark($("fAtt"),    !d.attending);
   if (first) { first.scrollIntoView({ behavior:"smooth", block:"center" }); const i = first.querySelector("input"); if (i) i.focus({ preventScroll:true }); }
@@ -1498,8 +1583,8 @@ $("signinForm").addEventListener("submit", async (e) => {
 
 async function shareLink() {
   const url = location.origin + location.pathname;
-  const text = "Answer the PSC Batch 2010 reunion roll call: " + url;
-  if (navigator.share) { try { await navigator.share({ title:"PSC Batch 2011 Reunion", text, url }); return; } catch {} }
+  const text = "Answer the SSC Batch 2016 reunion roll call: " + url;
+  if (navigator.share) { try { await navigator.share({ title:"SSC Batch 2016 Reunion", text, url }); return; } catch {} }
   try { await navigator.clipboard.writeText(url); alert("Link copied! Share it with your classmates."); }
   catch { alert(url); }
 }
@@ -1522,7 +1607,9 @@ function getFilters() {
   return {
     att: (document.querySelector("input[name=fltAtt]:checked") || {}).value || "all",
     gen: (document.querySelector("input[name=fltGen]:checked") || {}).value || "all",
-    q: ($("searchInput").value || "").trim().toLowerCase()
+    grp: (document.querySelector("input[name=fltGrp]:checked") || {}).value || "all",
+    bld: (document.querySelector("input[name=fltBld]:checked") || {}).value || "all",
+    q:   ($("searchInput").value || "").trim().toLowerCase()
   };
 }
 
@@ -1543,18 +1630,25 @@ function render() {
   // Home preview — latest 6, no filters
   renderGrid($("previewGrid"), entries.slice(0, 6));
 
-  // Register — filtered
-  const { att, gen, q } = getFilters();
+  // Register — filtered + sorted
+  const { att, gen, grp, bld, q } = getFilters();
   const filtered = entries.filter((x) => {
-    if (att !== "all" && x.attending !== att) return false;
-    if (gen !== "all" && x.gender    !== gen) return false;
+    if (att !== "all" && x.attending  !== att) return false;
+    if (gen !== "all" && x.gender     !== gen) return false;
+    if (grp !== "all" && x.group      !== grp) return false;
+    if (bld !== "all" && x.bloodGroup !== bld) return false;
     if (q) {
-      const hay = [x.name, x.nickname, x.location, x.profession].join(" ").toLowerCase();
+      const hay = [x.name, x.nickname, x.location, x.profession, x.group, x.bloodGroup].join(" ").toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
-  renderGrid($("grid"), filtered, entries.length);
+  const sorted = [...filtered].sort((a, b) => {
+    const na = (a.name || "").toLowerCase();
+    const nb = (b.name || "").toLowerCase();
+    return sortDir === "asc" ? na.localeCompare(nb) : nb.localeCompare(na);
+  });
+  renderGrid($("grid"), sorted, entries.length);
 }
 
 function renderGrid(container, list, totalCount) {
@@ -1592,8 +1686,13 @@ function renderGrid(container, list, totalCount) {
 }
 
 
-document.querySelectorAll("input[name=fltAtt], input[name=fltGen]").forEach((r) => r.addEventListener("change", render));
+document.querySelectorAll("input[name=fltAtt], input[name=fltGen], input[name=fltGrp], input[name=fltBld]").forEach((r) => r.addEventListener("change", render));
 $("searchInput").addEventListener("input", render);
+$("sortToggle").addEventListener("click", () => {
+  sortDir = sortDir === "asc" ? "desc" : "asc";
+  $("sortToggle").textContent = sortDir === "asc" ? "A → Z" : "Z → A";
+  render();
+});
 
 loadList();
 
@@ -1624,6 +1723,8 @@ function openModal(x) {
   const nickEl = document.getElementById("mNick");
   nickEl.textContent = x.nickname ? "“" + x.nickname + "”" : "";
   document.getElementById("mGender").textContent     = x.gender     || "—";
+  document.getElementById("mGroup").textContent      = x.group      || "—";
+  document.getElementById("mBlood").textContent      = x.bloodGroup || "—";
   document.getElementById("mLocation").textContent   = x.location   || "—";
   document.getElementById("mProfession").textContent = x.profession || "—";
   const mobEl  = document.getElementById("mMobile");

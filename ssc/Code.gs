@@ -1,29 +1,34 @@
-// Code.gs — Google Apps Script backend for the Reunion Roll Call
+// Code.gs — Google Apps Script backend for SSC Reunion Roll Call
 
 var SHEET_NAME = "Responses";
 var USERS_NAME = "Users";
 
+// Col 0=SubmittedAt 1=UpdatedAt 2=FullName 3=Nickname 4=Gender
+// 5=Group 6=BloodGroup 7=Location 8=Mobile 9=Profession 10=Attending
+// 11=PhotoURL 12=ClientID
 var HEADERS = [
   "Submitted at", "Updated at", "Full name", "Nickname", "Gender",
-  "Location", "Mobile", "Profession", "Attending", "Photo URL", "Client ID"
+  "Group", "Blood Group", "Location", "Mobile", "Profession",
+  "Attending", "Photo URL", "Client ID"
 ];
 var USER_HEADERS = ["Username", "Password Hash", "Client ID", "Created At"];
 
-// Salt — change this once before first deploy, then never again.
-var PW_SALT = "psc2011reunion";
+var PW_SALT = "ssc2016reunion";
+
+var VALID_GROUPS = ["Science", "Commerce", "Humanities", "Arts"];
+var VALID_BLOOD  = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
   var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-  // Only initialise if the sheet is truly empty (no header row yet)
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADERS);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
     sheet.setFrozenRows(1);
     Logger.log("Responses sheet created.");
   } else {
-    Logger.log("Responses sheet already has data — skipped to protect existing entries.");
+    Logger.log("Responses sheet already has data — skipped.");
   }
 
   var users = ss.getSheetByName(USERS_NAME) || ss.insertSheet(USERS_NAME);
@@ -33,7 +38,7 @@ function setup() {
     users.setFrozenRows(1);
     Logger.log("Users sheet created.");
   } else {
-    Logger.log("Users sheet already has data — skipped to protect existing entries.");
+    Logger.log("Users sheet already has data — skipped.");
   }
 
   Logger.log("Setup complete.");
@@ -123,15 +128,22 @@ function doPost(e) {
     var sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet) { setup(); sheet = ss.getSheetByName(SHEET_NAME); }
 
+    // Validate required fields
+    var group      = clean_(d.group      || "");
+    var bloodGroup = clean_(d.bloodGroup || "");
+    if (VALID_GROUPS.indexOf(group) < 0)
+      return respond_({ ok: false, error: "Please select a valid Group." });
+    if (VALID_BLOOD.indexOf(bloodGroup) < 0)
+      return respond_({ ok: false, error: "Please select a valid Blood Group." });
+
     var clientId    = clean_(d.clientId || "");
     var now         = new Date();
     var values      = sheet.getDataRange().getValues();
     var existingRow = -1;
 
-    // Find clientId column from header
-    var header  = values[0] || [];
+    var header = values[0] || [];
     var cidCol  = header.indexOf("Client ID");
-    if (cidCol < 0) cidCol = 10; // fallback
+    if (cidCol < 0) cidCol = 12;
 
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
@@ -140,7 +152,7 @@ function doPost(e) {
     }
 
     var photoCol = header.indexOf("Photo URL");
-    if (photoCol < 0) photoCol = 9; // fallback
+    if (photoCol < 0) photoCol = 11;
     var photoUrl = existingRow > 0 ? String(values[existingRow - 1][photoCol] || "") : "";
     if (d.photo && String(d.photo).indexOf("https://") === 0) photoUrl = d.photo;
 
@@ -150,6 +162,8 @@ function doPost(e) {
       clean_(d.fullName),
       clean_(d.nickname),
       clean_(d.gender),
+      group,
+      bloodGroup,
       clean_(d.location),
       clean_(d.mobile),
       clean_(d.profession),
@@ -179,27 +193,26 @@ function doGet(e) {
     var values   = sheet.getDataRange().getValues();
     var clientId = (e && e.parameter && e.parameter.clientId) ? String(e.parameter.clientId) : "";
 
-    // Detect column layout from the header row
-    var header    = values[0] || [];
-    var hasMobile = header.indexOf("Mobile") >= 0;
-    var cidCol    = hasMobile ? 10 : 9; // Client ID column index
+    var header = values[0] || [];
+    var cidCol = header.indexOf("Client ID");
+    if (cidCol < 0) cidCol = 12;
 
-    // Return a single user's own entry for pre-filling the form
+    // Return single user entry for form pre-fill
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
         var r = values[i];
         if (String(r[cidCol]) === clientId) {
-          var c10 = String(r[10] || "");
-          var rNew = c10.length > 0 && c10.indexOf("https://") < 0;
           return respond_({ ok: true, entry: {
-            fullName:   String(r[2] || ""),
-            nickname:   String(r[3] || ""),
-            gender:     String(r[4] || ""),
-            location:   String(r[5] || ""),
-            mobile:     rNew ? String(r[6] || "") : "",
-            profession: rNew ? String(r[7] || "") : String(r[6] || ""),
-            attending:  rNew ? String(r[8] || "") : String(r[7] || ""),
-            photo:      rNew ? String(r[9] || "") : String(r[8] || "")
+            fullName:   String(r[2]  || ""),
+            nickname:   String(r[3]  || ""),
+            gender:     String(r[4]  || ""),
+            group:      String(r[5]  || ""),
+            bloodGroup: String(r[6]  || ""),
+            location:   String(r[7]  || ""),
+            mobile:     String(r[8]  || ""),
+            profession: String(r[9]  || ""),
+            attending:  String(r[10] || ""),
+            photo:      String(r[11] || "")
           }});
         }
       }
@@ -211,19 +224,17 @@ function doGet(e) {
     for (var j = 1; j < values.length; j++) {
       var row = values[j];
       if (!row[2]) continue;
-      // Per-row format: old rows have clientId at col 9 (col 10 is empty/absent)
-      // New rows have clientId at col 10 (non-empty, not a URL)
-      var col10 = String(row[10] || "");
-      var rowNew = col10.length > 0 && col10.indexOf("https://") < 0;
       entries.push({
         name:       String(row[2]),
-        nickname:   String(row[3] || ""),
-        gender:     String(row[4] || ""),
-        location:   String(row[5] || ""),
-        mobile:     rowNew ? String(row[6] || "") : "",
-        profession: rowNew ? String(row[7] || "") : String(row[6] || ""),
-        attending:  rowNew ? String(row[8] || "") : String(row[7] || ""),
-        photo:      rowNew ? String(row[9] || "") : String(row[8] || "")
+        nickname:   String(row[3]  || ""),
+        gender:     String(row[4]  || ""),
+        group:      String(row[5]  || ""),
+        bloodGroup: String(row[6]  || ""),
+        location:   String(row[7]  || ""),
+        mobile:     String(row[8]  || ""),
+        profession: String(row[9]  || ""),
+        attending:  String(row[10] || ""),
+        photo:      String(row[11] || "")
       });
     }
     return respond_({ ok: true, entries: entries });
