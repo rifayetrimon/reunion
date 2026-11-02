@@ -1380,13 +1380,20 @@ function fillForm(d) {
 
 async function loadUserEntry() {
   if (!LIVE || !authState || !authState.clientId) return;
+  const statusEl = $("status");
+  if (statusEl) { statusEl.textContent = "Loading your details…"; statusEl.classList.remove("bad"); }
   try {
     const out = await scriptGet({ clientId: authState.clientId });
     if (out.ok && out.entry && out.entry.fullName) {
       fillForm(out.entry);
       writeSaved({ ...out.entry, clientId: authState.clientId });
+      if (statusEl) statusEl.textContent = "";
+    } else {
+      if (statusEl) statusEl.textContent = "";
     }
-  } catch {}
+  } catch {
+    if (statusEl) statusEl.textContent = "";
+  }
 }
 
 if (saved.fullName) {
@@ -1441,7 +1448,8 @@ async function uploadToCloudinary(dataUrl) {
 // ── Form ──
 function collect() {
   const gen = document.querySelector("input[name=gender]:checked");
-  return { clientId,
+  const cid = (authState && authState.clientId) || clientId;
+  return { clientId: cid,
     fullName:   $("fullName").value.trim(),
     nickname:   $("nickname").value.trim(),
     gender:        gen ? gen.value : "",
@@ -1574,7 +1582,6 @@ $("signinForm").addEventListener("submit", async (e) => {
       writeAuth(authState); updateAuthUI();
       showToast("👋", "Welcome back, @" + username + "!");
       showPage("rollcall");
-      loadUserEntry();
     }
   } catch (err) { $("siStatus").textContent = err.message || "Network error."; $("siStatus").classList.add("bad"); }
   finally { btn.disabled = false; }
