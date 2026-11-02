@@ -5,13 +5,11 @@ var USERS_NAME = "Users";
 
 // Col 0=SubmittedAt 1=UpdatedAt 2=FullName 3=Nickname 4=Gender
 // 5=Group 6=BloodGroup 7=Location 8=Mobile 9=Profession
-// 10=JobPlace 11=University 12=HomeDistrict 13=Email 14=Facebook
-// 15=MaritalStatus 16=PhotoURL 17=ClientID
+// 10=JobPlace 11=University 12=MaritalStatus 13=PhotoURL 14=ClientID
 var HEADERS = [
   "Submitted at", "Updated at", "Full name", "Nickname", "Gender",
   "Group", "Blood Group", "Location", "Mobile", "Profession",
-  "Job Place", "University", "Home District", "Email", "Facebook",
-  "Marital Status", "Photo URL", "Client ID"
+  "Job Place", "University", "Marital Status", "Photo URL", "Client ID"
 ];
 var USER_HEADERS = ["Username", "Password Hash", "Client ID", "Created At"];
 
@@ -145,7 +143,7 @@ function doPost(e) {
 
     var header = values[0] || [];
     var cidCol  = header.indexOf("Client ID");
-    if (cidCol < 0) cidCol = 17;
+    if (cidCol < 0) cidCol = 14;
 
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
@@ -154,7 +152,7 @@ function doPost(e) {
     }
 
     var photoCol = header.indexOf("Photo URL");
-    if (photoCol < 0) photoCol = 16;
+    if (photoCol < 0) photoCol = 13;
     var photoUrl = existingRow > 0 ? String(values[existingRow - 1][photoCol] || "") : "";
     if (d.photo && String(d.photo).indexOf("https://") === 0) photoUrl = d.photo;
 
@@ -171,9 +169,6 @@ function doPost(e) {
       clean_(d.profession),
       clean_(d.jobPlace),
       clean_(d.university),
-      clean_(d.homeDistrict),
-      clean_(d.email),
-      clean_(d.facebook),
       clean_(d.maritalStatus),
       photoUrl,
       clientId
@@ -202,7 +197,7 @@ function doGet(e) {
 
     var header = values[0] || [];
     var cidCol = header.indexOf("Client ID");
-    if (cidCol < 0) cidCol = 17;
+    if (cidCol < 0) cidCol = 14;
 
     // Return single user entry for form pre-fill
     if (clientId) {
@@ -220,11 +215,8 @@ function doGet(e) {
             profession:    String(r[9]  || ""),
             jobPlace:      String(r[10] || ""),
             university:    String(r[11] || ""),
-            homeDistrict:  String(r[12] || ""),
-            email:         String(r[13] || ""),
-            facebook:      String(r[14] || ""),
-            maritalStatus: String(r[15] || ""),
-            photo:         String(r[16] || "")
+            maritalStatus: String(r[12] || ""),
+            photo:         String(r[13] || "")
           }});
         }
       }
@@ -247,11 +239,8 @@ function doGet(e) {
         profession:    String(row[9]  || ""),
         jobPlace:      String(row[10] || ""),
         university:    String(row[11] || ""),
-        homeDistrict:  String(row[12] || ""),
-        email:         String(row[13] || ""),
-        facebook:      String(row[14] || ""),
-        maritalStatus: String(row[15] || ""),
-        photo:         String(row[16] || "")
+        maritalStatus: String(row[12] || ""),
+        photo:         String(row[13] || "")
       });
     }
     return respond_({ ok: true, entries: entries });

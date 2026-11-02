@@ -1007,26 +1007,9 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
           </div>
         </div>
 
-        <div class="row">
-          <div class="field">
-            <label for="university">University / College <span class="hint">(optional)</span></label>
-            <input type="text" id="university" maxlength="80" placeholder="Where you studied after SSC">
-          </div>
-          <div class="field">
-            <label for="homeDistrict">Home District <span class="hint">(optional)</span></label>
-            <input type="text" id="homeDistrict" maxlength="60" placeholder="Where you're originally from">
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label for="email">Email <span class="hint">(optional)</span></label>
-            <input type="text" id="email" maxlength="80" placeholder="your@email.com" autocomplete="email">
-          </div>
-          <div class="field">
-            <label for="facebook">Facebook <span class="hint">(optional)</span></label>
-            <input type="text" id="facebook" maxlength="120" placeholder="Profile name or URL">
-          </div>
+        <div class="field">
+          <label for="university">University / College <span class="hint">(optional)</span></label>
+          <input type="text" id="university" maxlength="80" placeholder="Where you studied after SSC">
         </div>
 
         <div class="field">
@@ -1241,13 +1224,10 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
         <div class="modal-row"><span class="modal-row-label">Blood Group</span><span class="modal-row-val" id="mBlood"></span></div>
         <div class="modal-row" hidden><span class="modal-row-label">Marital</span><span class="modal-row-val" id="mMarital"></span></div>
         <div class="modal-row"><span class="modal-row-label">Location</span><span class="modal-row-val" id="mLocation"></span></div>
-        <div class="modal-row" hidden><span class="modal-row-label">Home District</span><span class="modal-row-val" id="mHomeDistrict"></span></div>
         <div class="modal-row" hidden><span class="modal-row-label">Profession</span><span class="modal-row-val" id="mProfession"></span></div>
         <div class="modal-row" hidden><span class="modal-row-label">Workplace</span><span class="modal-row-val" id="mJobPlace"></span></div>
         <div class="modal-row" hidden><span class="modal-row-label">University</span><span class="modal-row-val" id="mUniversity"></span></div>
         <div class="modal-row" hidden><span class="modal-row-label">Mobile</span><span class="modal-row-val" id="mMobile"></span></div>
-        <div class="modal-row" hidden><span class="modal-row-label">Email</span><span class="modal-row-val" id="mEmail"></span></div>
-        <div class="modal-row" hidden><span class="modal-row-label">Facebook</span><span class="modal-row-val" id="mFacebook"></span></div>
       </div>
     </div>
   </div>
@@ -1380,9 +1360,6 @@ function fillForm(d) {
   $("profession").value    = d.profession    || "";
   $("jobPlace").value      = d.jobPlace      || "";
   $("university").value    = d.university    || "";
-  $("homeDistrict").value  = d.homeDistrict  || "";
-  $("email").value         = d.email         || "";
-  $("facebook").value      = d.facebook      || "";
   $("maritalStatus").value = d.maritalStatus || "";
   const g = document.querySelector(`input[name=gender][value="${d.gender}"]`);
   if (g) g.checked = true;
@@ -1475,9 +1452,6 @@ function collect() {
     profession:    $("profession").value.trim(),
     jobPlace:      $("jobPlace").value.trim(),
     university:    $("university").value.trim(),
-    homeDistrict:  $("homeDistrict").value.trim(),
-    email:         $("email").value.trim(),
-    facebook:      $("facebook").value.trim(),
     maritalStatus: $("maritalStatus").value,
     website:       $("website").value };
 }
@@ -1658,7 +1632,7 @@ function render() {
     if (grp !== "all" && x.group      !== grp) return false;
     if (bld !== "all" && x.bloodGroup !== bld) return false;
     if (q) {
-      const hay = [x.name, x.nickname, x.location, x.profession, x.group, x.bloodGroup, x.jobPlace, x.university, x.homeDistrict].join(" ").toLowerCase();
+      const hay = [x.name, x.nickname, x.location, x.profession, x.group, x.bloodGroup, x.jobPlace, x.university].join(" ").toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -1746,7 +1720,6 @@ function openModal(x) {
   setRow("mBlood",        x.bloodGroup);
   setRow("mMarital",      x.maritalStatus);
   setRow("mLocation",     x.location);
-  setRow("mHomeDistrict", x.homeDistrict);
   setRow("mProfession",   x.profession);
   setRow("mJobPlace",     x.jobPlace);
   setRow("mUniversity",   x.university);
@@ -1754,8 +1727,6 @@ function openModal(x) {
   const mobRow = mobEl.closest(".modal-row");
   if (x.mobile) { mobEl.innerHTML = `<a href="tel:${x.mobile}">${x.mobile}</a>`; mobRow.hidden = false; }
   else { mobRow.hidden = true; }
-  setRow("mEmail",    x.email,    x.email ? "mailto:" + x.email : null);
-  setRow("mFacebook", x.facebook, x.facebook && x.facebook.startsWith("http") ? x.facebook : null);
   modalBackdrop.classList.add("open");
   document.body.style.overflow = "hidden";
 }
