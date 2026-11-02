@@ -1687,14 +1687,14 @@ function renderGrid(container, list, totalCount) {
     if (x.photo) pic.style.backgroundImage = `url("${x.photo}")`;
     else pic.textContent = (x.nickname || x.name || "?").trim().charAt(0).toUpperCase();
 
-    const info = document.createElement(“div”); info.className = “info”;
-    const nm   = document.createElement(“div”); nm.className = “nm”; nm.textContent = x.name;
-    if (x.nickname) { const nk = document.createElement(“span”); nk.className = “nick”; nk.textContent = “ “” + x.nickname + “””; nm.append(nk); }
+    const info = document.createElement("div"); info.className = "info";
+    const nm   = document.createElement("div"); nm.className = "nm"; nm.textContent = x.name;
+    if (x.nickname) { const nk = document.createElement("span"); nk.className = "nick"; nk.textContent = " “" + x.nickname + "”"; nm.append(nk); }
     info.append(nm);
-    const meta = document.createElement(“div”); meta.className = “meta”;
-    if (x.group)      { const s = document.createElement(“span”); s.textContent = x.group;      meta.append(s); }
-    if (x.location)   { const s = document.createElement(“span”); s.textContent = x.location;   meta.append(s); }
-    if (x.profession) { const s = document.createElement(“span”); s.textContent = x.profession; meta.append(s); }
+    const meta = document.createElement("div"); meta.className = "meta";
+    if (x.group)      { const s = document.createElement("span"); s.textContent = x.group;      meta.append(s); }
+    if (x.location)   { const s = document.createElement("span"); s.textContent = x.location;   meta.append(s); }
+    if (x.profession) { const s = document.createElement("span"); s.textContent = x.profession; meta.append(s); }
     info.append(meta);
 
     card.append(pic, info);
