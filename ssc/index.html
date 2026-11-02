@@ -1288,6 +1288,10 @@ $("demoBanner").hidden      = LIVE;
 
 // ── Page navigation ──
 function showPage(name) {
+  if (name === "rollcall" && !authState) {
+    showToast("🔒", "Please sign in to access the Roll Call.");
+    name = "signin";
+  }
   document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
   document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) => t.classList.toggle("active", t.dataset.page === name));
   const pg = $("page-" + name); if (pg) pg.classList.add("active");
