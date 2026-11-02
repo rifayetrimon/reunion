@@ -177,9 +177,9 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 
 /* Stat cards row */
 .stat-cards {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap: 10px; margin-bottom: 16px;
 }
-@media (max-width: 480px) { .stat-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .stat-cards { grid-template-columns: repeat(3, 1fr); } }
 
 .stat-card {
   background: var(--surface-0); border: 1px solid var(--border);
@@ -195,6 +195,10 @@ button { cursor: pointer; font: inherit; font-feature-settings: "cv01","ss03"; }
 .sc-maybe .sc-val { color: var(--maybe); }
 .sc-male  .sc-val { color: var(--male); }
 .sc-fem   .sc-val { color: var(--female); }
+.sc-sci   .sc-val { color: #3b82f6; }
+.sc-com   .sc-val { color: #f59e0b; }
+.sc-hum   .sc-val { color: #8b5cf6; }
+.sc-art   .sc-val { color: #ec4899; }
 
 /* Quick action cards */
 .action-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
@@ -859,6 +863,22 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
       <div class="stat-card">
         <span class="sc-val" id="sTotal" style="color:var(--accent)">0</span>
         <span class="sc-lbl">Registered</span>
+      </div>
+      <div class="stat-card sc-sci">
+        <span class="sc-val" id="sSci">0</span>
+        <span class="sc-lbl">Science</span>
+      </div>
+      <div class="stat-card sc-com">
+        <span class="sc-val" id="sCom">0</span>
+        <span class="sc-lbl">Commerce</span>
+      </div>
+      <div class="stat-card sc-hum">
+        <span class="sc-val" id="sHum">0</span>
+        <span class="sc-lbl">Humanities</span>
+      </div>
+      <div class="stat-card sc-art">
+        <span class="sc-val" id="sArt">0</span>
+        <span class="sc-lbl">Arts</span>
       </div>
     </div>
 
@@ -1615,11 +1635,19 @@ function render() {
   const total = entries.length;
   const males = entries.filter((x) => x.gender === "Male").length;
   const fems  = entries.filter((x) => x.gender === "Female").length;
+  const sci   = entries.filter((x) => x.group === "Science").length;
+  const com   = entries.filter((x) => x.group === "Commerce").length;
+  const hum   = entries.filter((x) => x.group === "Humanities").length;
+  const art   = entries.filter((x) => x.group === "Arts").length;
 
   // Header stats
   $("sMale").textContent  = males;
   $("sFem").textContent   = fems;
   $("sTotal").textContent = total;
+  $("sSci").textContent   = sci;
+  $("sCom").textContent   = com;
+  $("sHum").textContent   = hum;
+  $("sArt").textContent   = art;
 
 
   // Home preview — latest 10, no filters
