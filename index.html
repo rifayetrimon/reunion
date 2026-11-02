@@ -586,12 +586,19 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 }
 .modal-backdrop.open .modal-box { transform: none; }
 .modal-photo {
-  width: 100%; aspect-ratio: 3/2;
-  background: linear-gradient(135deg,#1e1e3a 0%,#2a1a4a 100%) center/cover no-repeat;
+  width: 100%; aspect-ratio: 1/1;
+  background: linear-gradient(135deg,#1e1e3a 0%,#2a1a4a 100%);
   display: grid; place-items: center;
-  position: relative;
+  position: relative; overflow: hidden;
 }
-.modal-photo.has-photo { background-color: var(--surface-1); }
+.modal-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+  display: block;
+}
+.modal-photo.has-photo { background: #111; }
 .modal-avatar {
   font-size: 72px; font-weight: 700; color: rgba(255,255,255,.8);
   text-shadow: 0 2px 20px rgba(0,0,0,.3);
@@ -1129,6 +1136,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-label="Classmate details">
   <div class="modal-box">
     <div class="modal-photo" id="mPhoto">
+      <img id="mImg" class="modal-img" alt="Profile photo" hidden>
       <span class="modal-avatar" id="mAvatar"></span>
       <button class="modal-close" id="modalClose" aria-label="Close">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -1598,12 +1606,15 @@ function openModal(x) {
   const label = { Yes:"Coming ✓", Maybe:"Maybe", No:"Absent" };
   const photo  = document.getElementById("mPhoto");
   const avatar = document.getElementById("mAvatar");
+  const img    = document.getElementById("mImg");
   if (x.photo) {
-    photo.style.backgroundImage = `url("${x.photo}")`;
+    img.src = x.photo;
+    img.hidden = false;
     photo.classList.add("has-photo");
     avatar.textContent = "";
   } else {
-    photo.style.backgroundImage = "";
+    img.hidden = true;
+    img.src = "";
     photo.classList.remove("has-photo");
     avatar.textContent = (x.nickname || x.name || "?").charAt(0).toUpperCase();
   }
