@@ -1324,7 +1324,10 @@ function updateAuthUI() {
 updateAuthUI();
 
 function signOut() {
-  authState = null; writeAuth(null); updateAuthUI(); showPage("home");
+  authState = null; writeAuth(null); updateAuthUI();
+  writeSaved(null);
+  fillForm({ fullName:"", nickname:"", gender:"", group:"", bloodGroup:"", location:"", mobile:"", profession:"", jobPlace:"", university:"", maritalStatus:"", photo:"" });
+  showPage("home");
   showToast("✌️", "Signed out successfully.");
 }
 
