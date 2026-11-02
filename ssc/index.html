@@ -996,9 +996,48 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
           </div>
         </div>
 
+        <div class="row">
+          <div class="field">
+            <label for="profession">Profession <span class="hint">(optional)</span></label>
+            <input type="text" id="profession" maxlength="60" placeholder="Doctor, Engineer, Teacher…">
+          </div>
+          <div class="field">
+            <label for="jobPlace">Job / Workplace <span class="hint">(optional)</span></label>
+            <input type="text" id="jobPlace" maxlength="80" placeholder="Company or organisation name">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="university">University / College <span class="hint">(optional)</span></label>
+            <input type="text" id="university" maxlength="80" placeholder="Where you studied after SSC">
+          </div>
+          <div class="field">
+            <label for="homeDistrict">Home District <span class="hint">(optional)</span></label>
+            <input type="text" id="homeDistrict" maxlength="60" placeholder="Where you're originally from">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="email">Email <span class="hint">(optional)</span></label>
+            <input type="text" id="email" maxlength="80" placeholder="your@email.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="facebook">Facebook <span class="hint">(optional)</span></label>
+            <input type="text" id="facebook" maxlength="120" placeholder="Profile name or URL">
+          </div>
+        </div>
+
         <div class="field">
-          <label for="profession">What do you do now? <span class="hint">(optional)</span></label>
-          <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
+          <label for="maritalStatus">Marital Status <span class="hint">(optional)</span></label>
+          <select id="maritalStatus">
+            <option value="">Prefer not to say</option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Divorced">Divorced</option>
+            <option value="Widowed">Widowed</option>
+          </select>
         </div>
 
         <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
@@ -1200,9 +1239,15 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
         <div class="modal-row"><span class="modal-row-label">Gender</span><span class="modal-row-val" id="mGender"></span></div>
         <div class="modal-row"><span class="modal-row-label">Group</span><span class="modal-row-val" id="mGroup"></span></div>
         <div class="modal-row"><span class="modal-row-label">Blood Group</span><span class="modal-row-val" id="mBlood"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">Marital</span><span class="modal-row-val" id="mMarital"></span></div>
         <div class="modal-row"><span class="modal-row-label">Location</span><span class="modal-row-val" id="mLocation"></span></div>
-        <div class="modal-row"><span class="modal-row-label">Profession</span><span class="modal-row-val" id="mProfession"></span></div>
-        <div class="modal-row"><span class="modal-row-label">Mobile</span><span class="modal-row-val" id="mMobile"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">Home District</span><span class="modal-row-val" id="mHomeDistrict"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">Profession</span><span class="modal-row-val" id="mProfession"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">Workplace</span><span class="modal-row-val" id="mJobPlace"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">University</span><span class="modal-row-val" id="mUniversity"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">Mobile</span><span class="modal-row-val" id="mMobile"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">Email</span><span class="modal-row-val" id="mEmail"></span></div>
+        <div class="modal-row" hidden><span class="modal-row-label">Facebook</span><span class="modal-row-val" id="mFacebook"></span></div>
       </div>
     </div>
   </div>
@@ -1326,13 +1371,19 @@ const clientId = (authState && authState.clientId) ||
                  (crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(16).slice(2));
 function fillForm(d) {
   if (!d) return;
-  $("fullName").value   = d.fullName   || "";
-  $("nickname").value   = d.nickname   || "";
-  $("group").value      = d.group      || "";
-  $("bloodGroup").value = d.bloodGroup || "";
-  $("location").value   = d.location   || "";
-  $("mobile").value     = d.mobile     || "";
-  $("profession").value = d.profession || "";
+  $("fullName").value      = d.fullName      || "";
+  $("nickname").value      = d.nickname      || "";
+  $("group").value         = d.group         || "";
+  $("bloodGroup").value    = d.bloodGroup    || "";
+  $("location").value      = d.location      || "";
+  $("mobile").value        = d.mobile        || "";
+  $("profession").value    = d.profession    || "";
+  $("jobPlace").value      = d.jobPlace      || "";
+  $("university").value    = d.university    || "";
+  $("homeDistrict").value  = d.homeDistrict  || "";
+  $("email").value         = d.email         || "";
+  $("facebook").value      = d.facebook      || "";
+  $("maritalStatus").value = d.maritalStatus || "";
   const g = document.querySelector(`input[name=gender][value="${d.gender}"]`);
   if (g) g.checked = true;
   // Restore photo preview
@@ -1415,13 +1466,19 @@ function collect() {
   return { clientId,
     fullName:   $("fullName").value.trim(),
     nickname:   $("nickname").value.trim(),
-    gender:     gen ? gen.value : "",
-    group:      $("group").value,
-    bloodGroup: $("bloodGroup").value,
-    location:   $("location").value.trim(),
-    mobile:     $("mobile").value.trim(),
-    profession: $("profession").value.trim(),
-    website:    $("website").value };
+    gender:        gen ? gen.value : "",
+    group:         $("group").value,
+    bloodGroup:    $("bloodGroup").value,
+    location:      $("location").value.trim(),
+    mobile:        $("mobile").value.trim(),
+    profession:    $("profession").value.trim(),
+    jobPlace:      $("jobPlace").value.trim(),
+    university:    $("university").value.trim(),
+    homeDistrict:  $("homeDistrict").value.trim(),
+    email:         $("email").value.trim(),
+    facebook:      $("facebook").value.trim(),
+    maritalStatus: $("maritalStatus").value,
+    website:       $("website").value };
 }
 function validate(d) {
   let first = null;
@@ -1600,7 +1657,7 @@ function render() {
     if (grp !== "all" && x.group      !== grp) return false;
     if (bld !== "all" && x.bloodGroup !== bld) return false;
     if (q) {
-      const hay = [x.name, x.nickname, x.location, x.profession, x.group, x.bloodGroup].join(" ").toLowerCase();
+      const hay = [x.name, x.nickname, x.location, x.profession, x.group, x.bloodGroup, x.jobPlace, x.university, x.homeDistrict].join(" ").toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -1677,19 +1734,27 @@ function openModal(x) {
   document.getElementById("mNameText").textContent = x.name || "";
   const nickEl = document.getElementById("mNick");
   nickEl.textContent = x.nickname ? "“" + x.nickname + "”" : "";
-  document.getElementById("mGender").textContent     = x.gender     || "—";
-  document.getElementById("mGroup").textContent      = x.group      || "—";
-  document.getElementById("mBlood").textContent      = x.bloodGroup || "—";
-  document.getElementById("mLocation").textContent   = x.location   || "—";
-  document.getElementById("mProfession").textContent = x.profession || "—";
+  function setRow(id, val, link) {
+    const el  = document.getElementById(id);
+    const row = el.closest(".modal-row");
+    if (val) { el.innerHTML = link ? `<a href="${link}" target="_blank" rel="noopener">${val}</a>` : val; row.hidden = false; }
+    else { row.hidden = true; }
+  }
+  document.getElementById("mGender").textContent = x.gender || "—";
+  setRow("mGroup",        x.group);
+  setRow("mBlood",        x.bloodGroup);
+  setRow("mMarital",      x.maritalStatus);
+  setRow("mLocation",     x.location);
+  setRow("mHomeDistrict", x.homeDistrict);
+  setRow("mProfession",   x.profession);
+  setRow("mJobPlace",     x.jobPlace);
+  setRow("mUniversity",   x.university);
   const mobEl  = document.getElementById("mMobile");
   const mobRow = mobEl.closest(".modal-row");
-  if (x.mobile) {
-    mobEl.innerHTML = `<a href="tel:${x.mobile}">${x.mobile}</a>`;
-    mobRow.hidden = false;
-  } else {
-    mobRow.hidden = true;
-  }
+  if (x.mobile) { mobEl.innerHTML = `<a href="tel:${x.mobile}">${x.mobile}</a>`; mobRow.hidden = false; }
+  else { mobRow.hidden = true; }
+  setRow("mEmail",    x.email,    x.email ? "mailto:" + x.email : null);
+  setRow("mFacebook", x.facebook, x.facebook && x.facebook.startsWith("http") ? x.facebook : null);
   modalBackdrop.classList.add("open");
   document.body.style.overflow = "hidden";
 }
