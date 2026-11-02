@@ -17,43 +17,8 @@ var USER_HEADERS = ["Username", "Password Hash", "Client ID", "Created At"];
 
 var PW_SALT = "ssc2016reunion";
 
-// Cloudinary credentials — fill in from your Cloudinary dashboard → Settings → Access Keys
-var CLOUDINARY_CLOUD_NAME = "hrjdqnxt";
-var CLOUDINARY_API_KEY    = "";   // ← paste your API Key here
-var CLOUDINARY_API_SECRET = "";   // ← paste your API Secret here
-
 var VALID_GROUPS = ["Science", "Commerce", "Humanities", "Arts"];
 var VALID_BLOOD  = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-// Extract Cloudinary public_id from a secure_url
-// e.g. https://res.cloudinary.com/xxx/image/upload/v123/ssc/abc.jpg → ssc/abc
-function extractPublicId_(url) {
-  if (!url) return null;
-  var match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
-  return match ? match[1] : null;
-}
-
-// Delete a Cloudinary asset by public_id (requires API key + secret)
-function cloudinaryDelete_(publicId) {
-  if (!CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET || !publicId) return;
-  try {
-    var ts  = Math.floor(Date.now() / 1000).toString();
-    var str = "public_id=" + publicId + "&timestamp=" + ts + CLOUDINARY_API_SECRET;
-    var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_1, str);
-    var sig   = bytes.map(function(b) { return ("0" + (b & 0xFF).toString(16)).slice(-2); }).join("");
-    UrlFetchApp.fetch(
-      "https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD_NAME + "/image/destroy",
-      {
-        method: "POST",
-        payload: { public_id: publicId, api_key: CLOUDINARY_API_KEY, timestamp: ts, signature: sig },
-        muteHttpExceptions: true
-      }
-    );
-    Logger.log("Cloudinary deleted: " + publicId);
-  } catch(e) {
-    Logger.log("Cloudinary delete failed: " + e.message);
-  }
-}
 
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -190,15 +155,8 @@ function doPost(e) {
 
     var photoCol = header.indexOf("Photo URL");
     if (photoCol < 0) photoCol = 16;
-    var oldPhotoUrl = existingRow > 0 ? String(values[existingRow - 1][photoCol] || "") : "";
-    var photoUrl    = oldPhotoUrl;
-    if (d.photo && String(d.photo).indexOf("https://") === 0) {
-      photoUrl = d.photo;
-      // Delete old photo from Cloudinary if it was replaced
-      if (oldPhotoUrl && oldPhotoUrl !== photoUrl) {
-        cloudinaryDelete_(extractPublicId_(oldPhotoUrl));
-      }
-    }
+    var photoUrl = existingRow > 0 ? String(values[existingRow - 1][photoCol] || "") : "";
+    if (d.photo && String(d.photo).indexOf("https://") === 0) photoUrl = d.photo;
 
     var row = [
       existingRow > 0 ? values[existingRow - 1][0] : now,
