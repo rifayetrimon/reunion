@@ -589,9 +589,9 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   width: 100%; aspect-ratio: 4/3;
   background: var(--surface-1) center/cover no-repeat;
   display: grid; place-items: center;
-  font-size: 64px; font-weight: 510; color: var(--text-3);
   position: relative;
 }
+.modal-avatar { font-size: 64px; font-weight: 510; color: var(--text-3); }
 .modal-photo .modal-pill {
   position: absolute; right: 12px; bottom: 12px;
   font-size: 11px; font-weight: 590; padding: 3px 10px;
@@ -989,6 +989,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-label="Classmate details">
   <div class="modal-box">
     <div class="modal-photo" id="mPhoto">
+      <span class="modal-avatar" id="mAvatar"></span>
       <button class="modal-close" id="modalClose" aria-label="Close">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
@@ -1455,9 +1456,10 @@ const modalClose    = document.getElementById("modalClose");
 
 function openModal(x) {
   const label = { Yes:"Coming ✓", Maybe:"Maybe", No:"Absent" };
-  const photo = document.getElementById("mPhoto");
-  if (x.photo) { photo.style.backgroundImage = `url("${x.photo}")`; photo.textContent = ""; }
-  else { photo.style.backgroundImage = ""; photo.textContent = (x.nickname || x.name || "?").charAt(0).toUpperCase(); }
+  const photo  = document.getElementById("mPhoto");
+  const avatar = document.getElementById("mAvatar");
+  if (x.photo) { photo.style.backgroundImage = `url("${x.photo}")`; avatar.textContent = ""; }
+  else { photo.style.backgroundImage = ""; avatar.textContent = (x.nickname || x.name || "?").charAt(0).toUpperCase(); }
   const pill = document.getElementById("mPill");
   pill.textContent = label[x.attending] || x.attending || "";
   pill.className = "modal-pill " + (x.attending || "");
