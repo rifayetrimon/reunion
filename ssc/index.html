@@ -862,14 +862,6 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 
     <!-- Stat cards -->
     <div class="stat-cards" aria-live="polite">
-      <div class="stat-card sc-yes">
-        <span class="sc-val" id="sYes">0</span>
-        <span class="sc-lbl">Coming</span>
-      </div>
-      <div class="stat-card sc-maybe">
-        <span class="sc-val" id="sMaybe">0</span>
-        <span class="sc-lbl">Maybe</span>
-      </div>
       <div class="stat-card sc-male">
         <span class="sc-val" id="sMale">0</span>
         <span class="sc-lbl">Male</span>
@@ -877,6 +869,10 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
       <div class="stat-card sc-fem">
         <span class="sc-val" id="sFem">0</span>
         <span class="sc-lbl">Female</span>
+      </div>
+      <div class="stat-card">
+        <span class="sc-val" id="sTotal" style="color:var(--accent)">0</span>
+        <span class="sc-lbl">Registered</span>
       </div>
     </div>
 
@@ -1005,19 +1001,6 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
           <input type="text" id="profession" maxlength="60" placeholder="Job, study, business…">
         </div>
 
-        <div class="field" id="fAtt">
-          <span class="q" id="attQ">Will you join the reunion?<span class="req">*</span></span>
-          <div class="rollcall" role="radiogroup" aria-labelledby="attQ">
-            <input type="radio" name="attending" id="att-yes"   value="Yes">
-            <label for="att-yes"><span class="big">Present!</span><span class="small">Count me in</span></label>
-            <input type="radio" name="attending" id="att-maybe" value="Maybe">
-            <label for="att-maybe"><span class="big">Maybe</span><span class="small">Depends on date</span></label>
-            <input type="radio" name="attending" id="att-no"    value="No">
-            <label for="att-no"><span class="big">Absent</span><span class="small">Not this time</span></label>
-          </div>
-          <span class="err">Pick one so we can plan numbers.</span>
-        </div>
-
         <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
 
         <div class="actions">
@@ -1062,12 +1045,6 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
           <div class="search-box">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <input type="search" id="searchInput" placeholder="Name, city, profession…" aria-label="Search students">
-          </div>
-          <div class="fchip-row">
-            <label class="fchip"><input type="radio" name="fltAtt" value="all" checked><span>All</span></label>
-            <label class="fchip"><input type="radio" name="fltAtt" value="Yes"><span>Coming</span></label>
-            <label class="fchip"><input type="radio" name="fltAtt" value="Maybe"><span>Maybe</span></label>
-            <label class="fchip"><input type="radio" name="fltAtt" value="No"><span>Absent</span></label>
           </div>
           <div class="fchip-row">
             <label class="fchip"><input type="radio" name="fltGen" value="all" checked><span>All</span></label>
@@ -1216,7 +1193,6 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
       <button class="modal-close" id="modalClose" aria-label="Close">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
-      <span class="modal-pill" id="mPill"></span>
     </div>
     <div class="modal-body">
       <div class="modal-name" id="mName"><span id="mNameText"></span><span id="mNick"></span></div>
@@ -1358,8 +1334,7 @@ function fillForm(d) {
   $("mobile").value     = d.mobile     || "";
   $("profession").value = d.profession || "";
   const g = document.querySelector(`input[name=gender][value="${d.gender}"]`);
-  const r = document.querySelector(`input[name=attending][value="${d.attending}"]`);
-  if (g) g.checked = true; if (r) r.checked = true;
+  if (g) g.checked = true;
   // Restore photo preview
   const box = $("photoBox");
   if (d.photo) {
@@ -1436,7 +1411,6 @@ async function uploadToCloudinary(dataUrl) {
 
 // ── Form ──
 function collect() {
-  const att = document.querySelector("input[name=attending]:checked");
   const gen = document.querySelector("input[name=gender]:checked");
   return { clientId,
     fullName:   $("fullName").value.trim(),
@@ -1447,7 +1421,6 @@ function collect() {
     location:   $("location").value.trim(),
     mobile:     $("mobile").value.trim(),
     profession: $("profession").value.trim(),
-    attending:  att ? att.value : "",
     website:    $("website").value };
 }
 function validate(d) {
@@ -1458,14 +1431,13 @@ function validate(d) {
   mark($("fGroup"),  !d.group);
   mark($("fBlood"),  !d.bloodGroup);
   mark($("fLoc"),    d.location.length < 2);
-  mark($("fAtt"),    !d.attending);
   if (first) { first.scrollIntoView({ behavior:"smooth", block:"center" }); const i = first.querySelector("input"); if (i) i.focus({ preventScroll:true }); }
   return !first;
 }
-document.querySelectorAll("#rsvp input[type=text]").forEach((el) =>
+document.querySelectorAll("#rsvp input[type=text], #rsvp select").forEach((el) =>
   el.addEventListener("input", () => { const f = el.closest(".field"); if (f) f.classList.remove("invalid"); })
 );
-document.querySelectorAll("input[name=attending], input[name=gender]").forEach((el) =>
+document.querySelectorAll("input[name=gender]").forEach((el) =>
   el.addEventListener("change", () => { const f = el.closest(".field"); if (f) f.classList.remove("invalid"); })
 );
 
@@ -1496,14 +1468,9 @@ function setStatus(t, bad) { const s = $("status"); s.textContent = t; s.classLi
 function showThanks(d) {
   setStatus("");
   const first = d.nickname || d.fullName.split(" ")[0];
-  const t = {
-    Yes:   ["Marked present", `Thanks, ${first}! See you there.`,          "yes"],
-    Maybe: ["Marked maybe",   `Thanks, ${first}. We'll keep you posted.`,  "maybe"],
-    No:    ["Marked absent",  `Thanks, ${first}. We'll miss you this time.`,"no"]
-  }[d.attending];
-  $("stampText").textContent = t[0]; $("stampText").style.color = `var(--${t[2]})`;
-  $("thanksTitle").textContent = t[1];
-  $("thanksBody").textContent  = LIVE ? "Your answer is saved. Share this page with classmates." : "Preview mode — nothing was saved yet.";
+  $("stampText").textContent = "Saved!"; $("stampText").style.color = "var(--yes)";
+  $("thanksTitle").textContent = `Thanks, ${first}! Your details are saved.`;
+  $("thanksBody").textContent  = LIVE ? "Share this page with classmates." : "Preview mode — nothing was saved yet.";
   $("formCard").hidden = true; $("thanksCard").hidden = false;
 }
 $("editAgain").addEventListener("click", () => { $("thanksCard").hidden = true; $("formCard").hidden = false; });
@@ -1605,7 +1572,6 @@ async function loadList() {
 // ── Render ──
 function getFilters() {
   return {
-    att: (document.querySelector("input[name=fltAtt]:checked") || {}).value || "all",
     gen: (document.querySelector("input[name=fltGen]:checked") || {}).value || "all",
     grp: (document.querySelector("input[name=fltGrp]:checked") || {}).value || "all",
     bld: (document.querySelector("input[name=fltBld]:checked") || {}).value || "all",
@@ -1614,26 +1580,22 @@ function getFilters() {
 }
 
 function render() {
-  const total  = entries.length;
-  const males  = entries.filter((x) => x.gender === "Male").length;
-  const fems   = entries.filter((x) => x.gender === "Female").length;
-  const coming = entries.filter((x) => x.attending === "Yes").length;
-  const maybes = entries.filter((x) => x.attending === "Maybe").length;
+  const total = entries.length;
+  const males = entries.filter((x) => x.gender === "Male").length;
+  const fems  = entries.filter((x) => x.gender === "Female").length;
 
   // Header stats
-  $("sYes").textContent   = coming;
-  $("sMaybe").textContent = maybes;
   $("sMale").textContent  = males;
   $("sFem").textContent   = fems;
+  $("sTotal").textContent = total;
 
 
   // Home preview — latest 6, no filters
   renderGrid($("previewGrid"), entries.slice(0, 6));
 
   // Register — filtered + sorted
-  const { att, gen, grp, bld, q } = getFilters();
+  const { gen, grp, bld, q } = getFilters();
   const filtered = entries.filter((x) => {
-    if (att !== "all" && x.attending  !== att) return false;
     if (gen !== "all" && x.gender     !== gen) return false;
     if (grp !== "all" && x.group      !== grp) return false;
     if (bld !== "all" && x.bloodGroup !== bld) return false;
@@ -1658,7 +1620,6 @@ function renderGrid(container, list, totalCount) {
     container.innerHTML = `<div class="no-results"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>${noQ ? 'No results for "' + noQ + '".' : (totalCount ? "Nobody in this group yet." : "No answers yet. Be the first!")}</p></div>`;
     return;
   }
-  const label = { Yes:"Coming", Maybe:"Maybe", No:"Absent" };
   list.forEach((x) => {
     const card = document.createElement("article");
     card.className = "friend " + (x.gender || "");
@@ -1667,17 +1628,15 @@ function renderGrid(container, list, totalCount) {
     const pic = document.createElement("div"); pic.className = "pic";
     if (x.photo) pic.style.backgroundImage = `url("${x.photo}")`;
     else pic.textContent = (x.nickname || x.name || "?").trim().charAt(0).toUpperCase();
-    const pw = document.createElement("div"); pw.className = "pill-wrap";
-    const pl = document.createElement("span"); pl.className = "pill " + x.attending;
-    pl.textContent = label[x.attending] || x.attending; pw.append(pl); pic.append(pw);
 
-    const info = document.createElement("div"); info.className = "info";
-    const nm   = document.createElement("div"); nm.className = "nm"; nm.textContent = x.name;
-    if (x.nickname) { const nk = document.createElement("span"); nk.className = "nick"; nk.textContent = " “" + x.nickname + "”"; nm.append(nk); }
+    const info = document.createElement(“div”); info.className = “info”;
+    const nm   = document.createElement(“div”); nm.className = “nm”; nm.textContent = x.name;
+    if (x.nickname) { const nk = document.createElement(“span”); nk.className = “nick”; nk.textContent = “ “” + x.nickname + “””; nm.append(nk); }
     info.append(nm);
-    const meta = document.createElement("div"); meta.className = "meta";
-    if (x.location)   { const s = document.createElement("span"); s.textContent = x.location;   meta.append(s); }
-    if (x.profession) { const s = document.createElement("span"); s.textContent = x.profession; meta.append(s); }
+    const meta = document.createElement(“div”); meta.className = “meta”;
+    if (x.group)      { const s = document.createElement(“span”); s.textContent = x.group;      meta.append(s); }
+    if (x.location)   { const s = document.createElement(“span”); s.textContent = x.location;   meta.append(s); }
+    if (x.profession) { const s = document.createElement(“span”); s.textContent = x.profession; meta.append(s); }
     info.append(meta);
 
     card.append(pic, info);
@@ -1686,7 +1645,7 @@ function renderGrid(container, list, totalCount) {
 }
 
 
-document.querySelectorAll("input[name=fltAtt], input[name=fltGen], input[name=fltGrp], input[name=fltBld]").forEach((r) => r.addEventListener("change", render));
+document.querySelectorAll("input[name=fltGen], input[name=fltGrp], input[name=fltBld]").forEach((r) => r.addEventListener("change", render));
 $("searchInput").addEventListener("input", render);
 $("sortToggle").addEventListener("click", () => {
   sortDir = sortDir === "asc" ? "desc" : "asc";
@@ -1701,7 +1660,6 @@ const modalBackdrop = document.getElementById("detailModal");
 const modalClose    = document.getElementById("modalClose");
 
 function openModal(x) {
-  const label = { Yes:"Coming ✓", Maybe:"Maybe", No:"Absent" };
   const photo  = document.getElementById("mPhoto");
   const avatar = document.getElementById("mAvatar");
   const img    = document.getElementById("mImg");
@@ -1716,9 +1674,6 @@ function openModal(x) {
     photo.classList.remove("has-photo");
     avatar.textContent = (x.nickname || x.name || "?").charAt(0).toUpperCase();
   }
-  const pill = document.getElementById("mPill");
-  pill.textContent = label[x.attending] || x.attending || "";
-  pill.className = "modal-pill " + (x.attending || "");
   document.getElementById("mNameText").textContent = x.name || "";
   const nickEl = document.getElementById("mNick");
   nickEl.textContent = x.nickname ? "“" + x.nickname + "”" : "";

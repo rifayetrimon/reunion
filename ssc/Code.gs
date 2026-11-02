@@ -4,12 +4,12 @@ var SHEET_NAME = "Responses";
 var USERS_NAME = "Users";
 
 // Col 0=SubmittedAt 1=UpdatedAt 2=FullName 3=Nickname 4=Gender
-// 5=Group 6=BloodGroup 7=Location 8=Mobile 9=Profession 10=Attending
-// 11=PhotoURL 12=ClientID
+// 5=Group 6=BloodGroup 7=Location 8=Mobile 9=Profession
+// 10=PhotoURL 11=ClientID
 var HEADERS = [
   "Submitted at", "Updated at", "Full name", "Nickname", "Gender",
   "Group", "Blood Group", "Location", "Mobile", "Profession",
-  "Attending", "Photo URL", "Client ID"
+  "Photo URL", "Client ID"
 ];
 var USER_HEADERS = ["Username", "Password Hash", "Client ID", "Created At"];
 
@@ -143,7 +143,7 @@ function doPost(e) {
 
     var header = values[0] || [];
     var cidCol  = header.indexOf("Client ID");
-    if (cidCol < 0) cidCol = 12;
+    if (cidCol < 0) cidCol = 11;
 
     if (clientId) {
       for (var i = 1; i < values.length; i++) {
@@ -152,7 +152,7 @@ function doPost(e) {
     }
 
     var photoCol = header.indexOf("Photo URL");
-    if (photoCol < 0) photoCol = 11;
+    if (photoCol < 0) photoCol = 10;
     var photoUrl = existingRow > 0 ? String(values[existingRow - 1][photoCol] || "") : "";
     if (d.photo && String(d.photo).indexOf("https://") === 0) photoUrl = d.photo;
 
@@ -167,7 +167,6 @@ function doPost(e) {
       clean_(d.location),
       clean_(d.mobile),
       clean_(d.profession),
-      clean_(d.attending),
       photoUrl,
       clientId
     ];
@@ -195,7 +194,7 @@ function doGet(e) {
 
     var header = values[0] || [];
     var cidCol = header.indexOf("Client ID");
-    if (cidCol < 0) cidCol = 12;
+    if (cidCol < 0) cidCol = 11;
 
     // Return single user entry for form pre-fill
     if (clientId) {
@@ -211,8 +210,7 @@ function doGet(e) {
             location:   String(r[7]  || ""),
             mobile:     String(r[8]  || ""),
             profession: String(r[9]  || ""),
-            attending:  String(r[10] || ""),
-            photo:      String(r[11] || "")
+            photo:      String(r[10] || "")
           }});
         }
       }
@@ -233,8 +231,7 @@ function doGet(e) {
         location:   String(row[7]  || ""),
         mobile:     String(row[8]  || ""),
         profession: String(row[9]  || ""),
-        attending:  String(row[10] || ""),
-        photo:      String(row[11] || "")
+        photo:      String(row[10] || "")
       });
     }
     return respond_({ ok: true, entries: entries });
