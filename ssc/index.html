@@ -1622,8 +1622,8 @@ function render() {
   $("sTotal").textContent = total;
 
 
-  // Home preview — latest 6, no filters
-  renderGrid($("previewGrid"), entries.slice(0, 6));
+  // Home preview — latest 10, no filters
+  renderGrid($("previewGrid"), entries.slice(0, 10));
 
   // Register — filtered + sorted
   const { gen, grp, bld, q } = getFilters();
