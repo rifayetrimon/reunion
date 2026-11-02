@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>School Reunion</title>
-<meta name="description" content="Answer the roll call for our school friends reunion.">
+<title>SSC Batch 2016</title>
+<meta name="description" content="Answer the roll call for SSC Batch 2016.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
@@ -803,7 +803,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 
 <!-- ── Top navigation ── -->
 <header class="topnav">
-  <span class="nav-brand" id="navBrand">Reunion <span>·</span></span>
+  <span class="nav-brand" id="navBrand">SSC 2016 <span>·</span></span>
   <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
     <button class="nav-tab active" data-page="home"     role="tab">Home</button>
     <button class="nav-tab"        data-page="rollcall" role="tab">Roll Call</button>
@@ -1183,7 +1183,7 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
     <!-- Logged out state -->
     <div id="acctLoggedOut">
       <section class="card">
-        <header><h2>Account</h2><p>Sign in to manage your reunion details from any device.</p></header>
+        <header><h2>Account</h2><p>Sign in to manage your details from any device.</p></header>
         <div class="actions">
           <button class="btn-primary" onclick="showPage('signin')">Sign in</button>
           <button class="btn-ghost"   onclick="showPage('signup')">Create account</button>
@@ -1246,7 +1246,7 @@ const CONFIG = {
   CLOUDINARY_UPLOAD_PRESET: "reunion_uploads",
   SCHOOL:     "SSC Batch 2016",
   BATCH_LINE: "SSC · Batch of 2016 · Roll call",
-  TITLE_HTML: 'SSC Batch 2016 <mark>Reunion</mark>',
+  TITLE_HTML: 'SSC Batch <mark>2016</mark>',
   LEDE:       "It's been years since the last bell. Tell us where you are now and whether you can make it.",
   FOOTER:     "Organised by SSC Batch 2016"
 };
@@ -1593,8 +1593,8 @@ $("signinForm").addEventListener("submit", async (e) => {
 
 async function shareLink() {
   const url = location.origin + location.pathname;
-  const text = "Answer the SSC Batch 2016 reunion roll call: " + url;
-  if (navigator.share) { try { await navigator.share({ title:"SSC Batch 2016 Reunion", text, url }); return; } catch {} }
+  const text = "Answer the SSC Batch 2016 roll call: " + url;
+  if (navigator.share) { try { await navigator.share({ title:"SSC Batch 2016", text, url }); return; } catch {} }
   try { await navigator.clipboard.writeText(url); alert("Link copied! Share it with your classmates."); }
   catch { alert(url); }
 }
