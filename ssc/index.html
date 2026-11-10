@@ -599,6 +599,95 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em; padding-top: 12px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
+/* ── Admin Panel ── */
+.admin-wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding: 28px max(16px, env(safe-area-inset-left,0px)) 48px;
+}
+@media (max-width: 767px) { .admin-wrap { padding-top: 16px; } }
+
+.admin-header { margin-bottom: 20px; }
+.admin-header h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text-1); }
+.admin-header p  { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+
+.admin-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;
+}
+@media (max-width: 540px) { .admin-stats { grid-template-columns: repeat(2, 1fr); } }
+.sc-pend .sc-val { color: #b45309; }
+.sc-appr .sc-val { color: var(--accent); }
+.sc-rejt .sc-val { color: #ef4444; }
+
+.admin-tabs {
+  display: flex; gap: 0; margin-bottom: 16px;
+  border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none;
+}
+.admin-tabs::-webkit-scrollbar { display: none; }
+.admin-tab-btn {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  padding: 8px 16px; font-size: 13px; font-weight: 510; color: var(--text-3);
+  cursor: pointer; margin-bottom: -1px; white-space: nowrap;
+  transition: color .15s, border-color .15s; flex-shrink: 0;
+}
+.admin-tab-btn:hover { color: var(--text-1); }
+.admin-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 590; }
+.atab-cnt {
+  display: inline-block; margin-left: 5px; padding: 1px 7px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; background: var(--surface-2); color: var(--text-3);
+}
+.admin-tab-btn.active .atab-cnt { background: rgba(16,185,129,.12); color: var(--accent); }
+
+.admin-list { }
+.admin-entry {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  background: var(--surface-0); transition: background .12s;
+}
+.admin-entry:first-child { border-top: 1px solid var(--border); border-radius: 10px 10px 0 0; }
+.admin-entry:last-child  { border-bottom: 1px solid var(--border); border-radius: 0 0 10px 10px; }
+.admin-entry:only-child  { border-radius: 10px; }
+.admin-entry:hover { background: var(--surface-1); }
+
+.admin-photo {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface-2) top center/cover no-repeat;
+  display: grid; place-items: center;
+  font-size: 18px; font-weight: 700; color: var(--text-3); overflow: hidden;
+}
+.admin-photo.Male   { box-shadow: 0 0 0 2px rgba(94,106,210,.4); }
+.admin-photo.Female { box-shadow: 0 0 0 2px rgba(225,29,72,.35); }
+
+.admin-info { flex: 1; min-width: 0; }
+.admin-name { font-size: 14px; font-weight: 590; color: var(--text-1); letter-spacing: -0.13px; }
+.admin-meta { font-size: 12px; color: var(--text-4); margin-top: 2px; }
+
+.admin-right { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; flex-shrink: 0; }
+.spill {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .03em;
+}
+.spill.pending  { background: rgba(245,158,11,.1);  color: #b45309; border: 1px solid rgba(245,158,11,.25); }
+.spill.approved { background: rgba(16,185,129,.1);  color: #047857; border: 1px solid rgba(16,185,129,.25); }
+.spill.rejected { background: rgba(239,68,68,.08);  color: #b91c1c; border: 1px solid rgba(239,68,68,.2); }
+.spill.legacy   { background: var(--surface-2); color: var(--text-4); border: 1px solid var(--border); }
+
+.admin-btns { display: flex; gap: 5px; }
+.btn-app, .btn-rej {
+  font: 510 11px/1 var(--f-sans); cursor: pointer; border-radius: 5px;
+  padding: 5px 11px; border: 1px solid; transition: all .15s; white-space: nowrap;
+}
+.btn-app { background: rgba(16,185,129,.08); color: #047857; border-color: rgba(16,185,129,.25); }
+.btn-app:hover { background: rgba(16,185,129,.18); }
+.btn-app.on { background: #10b981; color: #fff; border-color: #10b981; }
+.btn-rej { background: rgba(239,68,68,.06); color: #b91c1c; border-color: rgba(239,68,68,.2); }
+.btn-rej:hover { background: rgba(239,68,68,.14); }
+.btn-rej.on { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+.admin-empty {
+  text-align: center; padding: 48px 16px; color: var(--text-4); font-size: 13px;
+  background: var(--surface-0); border: 1px solid var(--border); border-radius: 10px;
+}
+
 /* ── Detail modal ── */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 200;
@@ -794,9 +883,10 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
 <header class="topnav">
   <span class="nav-brand" id="navBrand">SSC 2016 <span>·</span></span>
   <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
-    <button class="nav-tab active" data-page="home"     role="tab">Home</button>
-    <button class="nav-tab"        data-page="rollcall" role="tab">Roll Call</button>
-    <button class="nav-tab"        data-page="register" role="tab">Register</button>
+    <button class="nav-tab active"  data-page="home"     role="tab">Home</button>
+    <button id="navRollCallTab" class="nav-tab" data-page="rollcall" role="tab">Roll Call</button>
+    <button class="nav-tab"         data-page="register" role="tab">Register</button>
+    <button id="navAdminTab"    class="nav-tab" data-page="admin"    role="tab" hidden>Admin</button>
   </nav>
   <!-- logged-out -->
   <div class="nav-auth" id="navAnon">
@@ -816,9 +906,13 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Home</span>
   </button>
-  <button class="bnav-tab" data-page="rollcall">
+  <button id="bnavRollCallTab" class="bnav-tab" data-page="rollcall">
     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
     <span>Roll Call</span>
+  </button>
+  <button id="bnavAdminTab" class="bnav-tab" data-page="admin" hidden>
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Admin</span>
   </button>
   <button class="bnav-tab" data-page="register">
     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -1216,6 +1310,48 @@ footer.foot { text-align: center; color: var(--text-4); font-family: var(--f-mon
   </div>
 </section>
 
+<!-- ════════════════════════════════
+     PAGE: ADMIN
+════════════════════════════════ -->
+<section id="page-admin" class="page" role="tabpanel">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h2>Admin Panel</h2>
+      <p>Review and approve incoming roll call submissions.</p>
+    </div>
+
+    <div class="admin-stats">
+      <div class="stat-card sc-pend">
+        <span class="sc-val" id="aPend">—</span>
+        <span class="sc-lbl">Pending</span>
+      </div>
+      <div class="stat-card sc-appr">
+        <span class="sc-val" id="aAppr">—</span>
+        <span class="sc-lbl">Approved</span>
+      </div>
+      <div class="stat-card sc-rejt">
+        <span class="sc-val" id="aRejt">—</span>
+        <span class="sc-lbl">Rejected</span>
+      </div>
+      <div class="stat-card">
+        <span class="sc-val" id="aTotal" style="color:var(--text-3)">—</span>
+        <span class="sc-lbl">Total</span>
+      </div>
+    </div>
+
+    <div class="admin-tabs" role="tablist">
+      <button class="admin-tab-btn active" data-afilter="all">All <span class="atab-cnt" id="atAll">0</span></button>
+      <button class="admin-tab-btn" data-afilter="Pending">Pending <span class="atab-cnt" id="atPend">0</span></button>
+      <button class="admin-tab-btn" data-afilter="Approved">Approved <span class="atab-cnt" id="atAppr">0</span></button>
+      <button class="admin-tab-btn" data-afilter="Rejected">Rejected <span class="atab-cnt" id="atRejt">0</span></button>
+    </div>
+
+    <div id="adminList" class="admin-list">
+      <p class="admin-empty">Sign in as admin to view submissions.</p>
+    </div>
+  </div>
+</section>
+
 <!-- Detail modal -->
 <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-label="Classmate details">
   <div class="modal-box">
@@ -1297,12 +1433,18 @@ function showPage(name) {
     showToast("🔒", "Please sign in to access the Roll Call.");
     name = "signin";
   }
+  if (name === "rollcall" && authState && authState.isAdmin) name = "admin";
+  if (name === "admin" && (!authState || !authState.isAdmin)) {
+    showToast("🔒", "Admin access only.");
+    name = "signin";
+  }
   document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
   document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) => t.classList.toggle("active", t.dataset.page === name));
   const pg = $("page-" + name); if (pg) pg.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
   if (history.pushState) history.pushState(null, "", "#" + name);
   if (name === "rollcall" && authState) loadUserEntry();
+  if (name === "admin" && authState && authState.isAdmin) loadAdminEntries();
 }
 document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) => {
   if (t.dataset.page) t.addEventListener("click", () => showPage(t.dataset.page));
@@ -1310,7 +1452,7 @@ document.querySelectorAll(".nav-tab, .bnav-tab").forEach((t) => {
 // hash routing on load
 (function() {
   const h = location.hash.slice(1);
-  if (["home","rollcall","register","signup","signin","account"].includes(h)) showPage(h);
+  if (["home","rollcall","register","signup","signin","account","admin"].includes(h)) showPage(h);
 })();
 
 // ── Auth state ──
@@ -1322,18 +1464,24 @@ let authState = readAuth(); // { username, clientId } or null
 
 function updateAuthUI() {
   const loggedIn = !!(authState && authState.username);
+  const isAdmin  = loggedIn && !!authState.isAdmin;
   $("navAnon").hidden  = loggedIn;
   $("navUser").hidden  = !loggedIn;
   if (loggedIn) {
-    $("navUsername").textContent  = "@" + authState.username;
+    $("navUsername").textContent  = isAdmin ? "Admin" : "@" + authState.username;
     $("acctAvatar").textContent   = authState.username.charAt(0).toUpperCase();
-    $("acctUsername").textContent = "@" + authState.username;
-    $("bnavAccLabel").textContent = authState.username;
+    $("acctUsername").textContent = isAdmin ? "admin" : "@" + authState.username;
+    $("bnavAccLabel").textContent = isAdmin ? "Admin" : authState.username;
   } else {
     $("bnavAccLabel").textContent = "Account";
   }
   $("acctLoggedOut").hidden = loggedIn;
   $("acctLoggedIn").hidden  = !loggedIn;
+  // Admin nav — show/hide admin tab, swap roll call tab
+  if ($("navAdminTab"))    $("navAdminTab").hidden    = !isAdmin;
+  if ($("bnavAdminTab"))   $("bnavAdminTab").hidden   = !isAdmin;
+  if ($("navRollCallTab")) $("navRollCallTab").hidden  = isAdmin;
+  if ($("bnavRollCallTab"))$("bnavRollCallTab").hidden = isAdmin;
 }
 updateAuthUI();
 
@@ -1591,10 +1739,19 @@ $("signinForm").addEventListener("submit", async (e) => {
     const out  = await scriptPost({ action:"signin", username, passwordHash: hash });
     if (!out.ok) { $("siStatus").textContent = out.error; $("siStatus").classList.add("bad"); }
     else {
-      authState = { username: out.username, clientId: out.clientId };
+      authState = {
+        username: out.username,
+        clientId: out.clientId,
+        ...(out.isAdmin ? { isAdmin: true, adminHash: hash } : {})
+      };
       writeAuth(authState); updateAuthUI();
-      showToast("👋", "Welcome back, @" + username + "!");
-      showPage("rollcall");
+      if (out.isAdmin) {
+        showToast("🛡️", "Welcome, Admin!");
+        showPage("admin");
+      } else {
+        showToast("👋", "Welcome back, @" + username + "!");
+        showPage("rollcall");
+      }
     }
   } catch (err) { $("siStatus").textContent = err.message || "Network error."; $("siStatus").classList.add("bad"); }
   finally { btn.disabled = false; }
@@ -1765,6 +1922,122 @@ function closeModal() {
 modalClose.addEventListener("click", closeModal);
 modalBackdrop.addEventListener("click", (e) => { if (e.target === modalBackdrop) closeModal(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+// ── Admin Panel ──
+let adminEntries = [];
+let adminFilter  = "all";
+
+function esc(s) {
+  return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+async function loadAdminEntries() {
+  if (!authState || !authState.isAdmin || !authState.adminHash) return;
+  $("adminList").innerHTML = '<p class="admin-empty">Loading submissions…</p>';
+  try {
+    const out = await scriptGet({ adminHash: authState.adminHash });
+    adminEntries = out.ok ? (out.entries || []) : [];
+    renderAdmin();
+  } catch {
+    $("adminList").innerHTML = '<p class="admin-empty">Couldn\'t load entries. Refresh to try again.</p>';
+  }
+}
+
+function renderAdmin() {
+  const pend  = adminEntries.filter(x => x.status === "Pending").length;
+  const appr  = adminEntries.filter(x => x.status === "Approved" || x.status === "").length;
+  const rejt  = adminEntries.filter(x => x.status === "Rejected").length;
+  const total = adminEntries.length;
+
+  $("aPend").textContent  = pend;
+  $("aAppr").textContent  = appr;
+  $("aRejt").textContent  = rejt;
+  $("aTotal").textContent = total;
+  $("atAll").textContent  = total;
+  $("atPend").textContent = pend;
+  $("atAppr").textContent = appr;
+  $("atRejt").textContent = rejt;
+
+  let list = adminEntries;
+  if (adminFilter === "Pending")  list = adminEntries.filter(x => x.status === "Pending");
+  if (adminFilter === "Approved") list = adminEntries.filter(x => x.status === "Approved" || x.status === "");
+  if (adminFilter === "Rejected") list = adminEntries.filter(x => x.status === "Rejected");
+
+  const container = $("adminList");
+  if (!list.length) {
+    container.innerHTML = '<p class="admin-empty">No entries in this category.</p>';
+    return;
+  }
+
+  container.textContent = "";
+  list.forEach(x => {
+    const el = document.createElement("div");
+    el.className = "admin-entry";
+
+    const st = x.status || "";
+    const pillClass = !st ? "legacy" : st.toLowerCase();
+    const pillText  = !st ? "Legacy" : st;
+    const isApproved = st === "Approved" || st === "";
+    const isRejected = st === "Rejected";
+
+    const meta = [x.group, x.location, x.profession].filter(Boolean).join(" · ");
+    let dateStr = "";
+    if (x.submittedAt) {
+      try { dateStr = new Date(x.submittedAt).toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"2-digit" }); } catch {}
+    }
+
+    el.innerHTML = `
+      <div class="admin-photo ${esc(x.gender)}" ${x.photo ? `style="background-image:url('${esc(x.photo)}')"` : ""}>
+        ${!x.photo ? esc((x.nickname || x.name || "?").charAt(0).toUpperCase()) : ""}
+      </div>
+      <div class="admin-info">
+        <div class="admin-name">${esc(x.name)}${x.nickname ? ` <span style="color:var(--text-4);font-weight:400;font-size:12px">"${esc(x.nickname)}"</span>` : ""}</div>
+        <div class="admin-meta">${esc(meta)}${dateStr ? ` · ${esc(dateStr)}` : ""}</div>
+      </div>
+      <div class="admin-right">
+        <span class="spill ${pillClass}">${pillText}</span>
+        <div class="admin-btns">
+          <button class="btn-app${isApproved ? " on" : ""}" data-cid="${esc(x.clientId)}">✓ Approve</button>
+          <button class="btn-rej${isRejected ? " on" : ""}" data-cid="${esc(x.clientId)}">✗ Reject</button>
+        </div>
+      </div>`;
+
+    el.querySelector(".btn-app").addEventListener("click", function() { updateStatus(this, x.clientId, "Approved"); });
+    el.querySelector(".btn-rej").addEventListener("click", function() { updateStatus(this, x.clientId, "Rejected"); });
+    container.append(el);
+  });
+}
+
+async function updateStatus(btn, clientId, status) {
+  if (!authState || !authState.isAdmin || !authState.adminHash) return;
+  const entry = adminEntries.find(x => x.clientId === clientId);
+  if (!entry) return;
+  if (status === "Approved" && (entry.status === "Approved" || entry.status === "")) return;
+  if (status === "Rejected" && entry.status === "Rejected") return;
+
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = "…";
+  try {
+    const out = await scriptPost({ action:"updateStatus", clientId, status, adminHash: authState.adminHash });
+    if (!out.ok) throw new Error(out.error || "Failed");
+    entry.status = status;
+    renderAdmin();
+    showToast(status === "Approved" ? "✅" : "🚫", `${entry.name || "Entry"} ${status.toLowerCase()}.`);
+  } catch (err) {
+    showToast("⚠️", err.message || "Could not update. Try again.");
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
+}
+
+document.querySelectorAll(".admin-tab-btn").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".admin-tab-btn").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    adminFilter = tab.dataset.afilter;
+    renderAdmin();
+  });
+});
 </script>
 </body>
 </html>
